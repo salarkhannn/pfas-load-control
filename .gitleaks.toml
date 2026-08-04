@@ -1,0 +1,9 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Local environment override files are excluded from source control"
+paths = [
+  '''(^|/)\.env$''',
+  '''(^|/)\.env\.(local|development|production|test)$''',
+]
