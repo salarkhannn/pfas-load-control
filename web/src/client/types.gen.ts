@@ -4,6 +4,116 @@ export type ClientOptions = {
     baseUrl: 'http://localhost:8080' | (string & {});
 };
 
+export type Analyte = {
+    basis?: string;
+    canonicalAnalyte: string;
+    detectionLimit?: string;
+    id?: string;
+    isNonDetect: boolean;
+    normalizedDetectionLimitUgKgDry?: string;
+    normalizedReportingLimitUgKgDry?: string;
+    normalizedValueUgKgDry?: string;
+    qualifier?: string;
+    reportedAnalyte: string;
+    reportingLimit?: string;
+    resultText: string;
+    sourceBounds?: SourceBounds;
+    sourceExcerpt: string;
+    sourcePage: number;
+    unit?: string;
+    value?: string;
+};
+
+export type AnalyteEvidence = {
+    canonicalAnalyte: string;
+    isNonDetect: boolean;
+    normalizedValueUgKgDry?: string;
+    resultText: string;
+    sourcePage: number;
+    upperBoundUgKgDry?: string;
+};
+
+export type Batch = {
+    facilityId: string;
+    facilityName: string;
+    id: string;
+    identifier: string;
+    jurisdiction: string;
+    percentSolids?: string;
+    wetMassKg?: string;
+};
+
+export type CsvResult = {
+    field?: Field;
+    problem?: string;
+    row: number;
+};
+
+export type Candidate = {
+    confidence?: number;
+    label?: string;
+    latitude?: number;
+    longitude?: number;
+    matchMethod?: string;
+    resolvedAddress?: string;
+};
+
+export type Context = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    batches: Array<Batch> | null;
+    facilities: Array<Facility> | null;
+};
+
+export type Correction = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    analytes: [
+        Analyte,
+        Analyte
+    ] | null;
+    basis?: string;
+    collectionDate?: string;
+    laboratory?: string;
+    matrix?: string;
+    method?: string;
+    sampleIdentifier?: string;
+};
+
+export type CreateEvaluationOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    created: boolean;
+    evaluation: Evaluation;
+};
+
+export type CreateInput = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    county?: string;
+    geojson?: string;
+    locator?: string;
+    locatorKind: 'ADDRESS' | 'COORDINATE' | 'APN' | 'GEOJSON';
+    name: string;
+};
+
+export type CreatePolicyDecisionOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    created: boolean;
+    decision: Decision;
+};
+
 export type CreateRunOutputBody = {
     /**
      * A URL to the JSON Schema for this object.
@@ -22,6 +132,74 @@ export type DataGap = {
     resolvedAt?: string;
     status: string;
     stepId?: string;
+};
+
+export type Decision = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    analytes: Array<AnalyteEvidence> | null;
+    batchIdentifier: string;
+    blockingReason?: string;
+    createdAt: string;
+    explanation: string;
+    facilityName: string;
+    id: string;
+    inputHash: string;
+    jurisdiction: string;
+    matchedRuleId?: string;
+    maximumApplicationRateDryTonsPerAcre?: string;
+    prohibitedActions: Array<string> | null;
+    reportId: string;
+    reportVersion: number;
+    requirements: Array<Requirement> | null;
+    rulePack: RulePack;
+    tier: string;
+};
+
+export type Details = {
+    accessConstraints?: string;
+    agronomicRateDryTonsPerAcre?: string;
+    cropOrUse?: string;
+    knownConstraints?: string;
+    miEnviroSiteId?: string;
+    priorLoadingDryTons?: string;
+    rmpApproved?: boolean;
+    rmpDocumentReference?: string;
+    usableAcres?: string;
+};
+
+export type DetailsInput = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    accessConstraints?: string;
+    agronomicRateDryTonsPerAcre?: string;
+    cropOrUse?: string;
+    knownConstraints?: string;
+    miEnviroSiteId?: string;
+    priorLoadingDryTons?: string;
+    rmpApproved?: boolean;
+    rmpDocumentReference?: string;
+    usableAcres?: string;
+};
+
+export type Draft = {
+    analytes: Array<Analyte> | null;
+    basis?: string;
+    collectionDate?: string;
+    confirmedAt?: string;
+    createdAt?: string;
+    id?: string;
+    laboratory?: string;
+    matrix?: string;
+    method?: string;
+    sampleIdentifier?: string;
+    source: string;
+    status: string;
+    version: number;
 };
 
 export type ErrorDetail = {
@@ -70,12 +248,280 @@ export type ErrorModel = {
     type?: string;
 };
 
+export type Evaluation = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    aggregationVersion: string;
+    catalogVersion?: string;
+    completedAt?: string;
+    createdAt: string;
+    facts: Array<FieldFact> | null;
+    failureCode?: string;
+    failureDetail?: string;
+    fieldId: string;
+    fieldSetVersion: string;
+    gaps: Array<PhysicalDataGap> | null;
+    geometryVersion: number;
+    id: string;
+    projectedCredits: number;
+    sampleCount: number;
+    samples: Array<SamplePoint> | null;
+    startedAt?: string;
+    status: string;
+    supplemental: Array<SupplementalEvidence> | null;
+    updatedAt: string;
+};
+
+export type Facility = {
+    id: string;
+    jurisdiction: string;
+    name: string;
+};
+
+export type Field = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    createdAt: string;
+    details: Details;
+    facility: FieldFacility;
+    gaps: Array<FieldGap> | null;
+    geometry?: Geometry;
+    id: string;
+    location?: Location;
+    locatorInput: string;
+    locatorKind: string;
+    name: string;
+    status: string;
+    updatedAt: string;
+};
+
+export type FieldContext = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    facilities: Array<FieldFacility> | null;
+    fields: Array<Field> | null;
+};
+
+export type FieldFacility = {
+    id: string;
+    jurisdiction: string;
+    name: string;
+};
+
+export type FieldFact = {
+    absentCount: number;
+    aggregateMethod: string;
+    category: string;
+    critical: boolean;
+    failedCount: number;
+    fetchedAt?: string;
+    label: string;
+    name: string;
+    okCount: number;
+    samples: Array<SampleFact> | null;
+    source?: string;
+    sourceUrl?: string;
+    state: string;
+    unit?: string;
+    value?: unknown;
+};
+
+export type FieldGap = {
+    code: string;
+    createdAt: string;
+    detail: string;
+    id: string;
+    resolution: string;
+};
+
+export type FieldGeometryInputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    geojson: string;
+};
+
+export type Gap = {
+    code: string;
+    createdAt?: string;
+    detail: string;
+    fieldName: string;
+    id?: string;
+    resolution: string;
+    resolvedAt?: string;
+    status: string;
+};
+
+export type Geometry = {
+    areaAcres: string;
+    confirmedAt: string;
+    geojson: unknown;
+    hash: string;
+    source: string;
+    version: number;
+};
+
 export type HealthOutputBody = {
     /**
      * A URL to the JSON Schema for this object.
      */
     readonly $schema?: string;
     status: 'ok';
+};
+
+export type Import = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    results: Array<CsvResult> | null;
+};
+
+export type LabUploadOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    created: boolean;
+    report: Report;
+};
+
+export type Location = {
+    candidates: Array<Candidate> | null;
+    confidence?: string;
+    county?: string;
+    disposition: string;
+    fetchedAt: string;
+    fips?: string;
+    hint?: string;
+    id: string;
+    latitude?: string;
+    longitude?: string;
+    matchMethod?: string;
+    parcel?: Parcel;
+    parcelUnavailable: boolean;
+    reason?: string;
+    requestId?: string;
+    resolvedAddress?: string;
+    responseHash: string;
+    sourceUrl: string;
+    state?: string;
+};
+
+export type LocationSelection = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    candidateIndex: number;
+};
+
+export type Page = {
+    extractionMethod: string;
+    height?: string;
+    number: number;
+    text: string;
+    width?: string;
+};
+
+export type Parcel = {
+    apn?: string;
+    geometry?: unknown;
+    id?: string;
+    matchDistanceM?: string;
+    matchType?: string;
+    source?: string;
+};
+
+export type PhysicalDataGap = {
+    code: string;
+    critical: boolean;
+    detail: string;
+    source: string;
+};
+
+export type Report = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    batch: Batch;
+    confirmedAt?: string;
+    createdAt: string;
+    draft?: Draft;
+    facility: Facility;
+    failureCode?: string;
+    gaps: Array<Gap> | null;
+    id: string;
+    mediaType: string;
+    originalFilename: string;
+    pages: Array<Page> | null;
+    sha256: string;
+    sizeBytes: number;
+    status: string;
+    updatedAt: string;
+};
+
+export type Requirement = {
+    authorityType: string;
+    detail: string;
+    id: string;
+    ruleId: string;
+    sourceTitle: string;
+    sourceUrl: string;
+    timing: string;
+    title: string;
+};
+
+export type RequirementDefinition = {
+    detail: string;
+    id: string;
+    tiers: Array<string> | null;
+    timing: string;
+    title: string;
+};
+
+export type Rule = {
+    explanation: string;
+    id: string;
+    maximumApplicationRateDryTonsPerAcre?: string;
+    operator: string;
+    prohibitedActions?: Array<string> | null;
+    thresholdUgKgDry: string;
+    tier: string;
+};
+
+export type RulePack = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    acceptedAnalyticalMethodTokens: Array<string> | null;
+    authorityType: string;
+    checksum: string;
+    code: string;
+    effectiveFrom: string;
+    elevatedThresholdUgKgDry: string;
+    explanation: string;
+    jurisdiction: string;
+    prohibitedThresholdUgKgDry: string;
+    requirements: Array<RequirementDefinition> | null;
+    retrievedAt: string;
+    reviewStatus: string;
+    reviewedAt: string;
+    reviewedBy: string;
+    rules: Array<Rule> | null;
+    schemaVersion: number;
+    sourceTitle: string;
+    sourceUrl: string;
+    version: string;
 };
 
 export type Run = {
@@ -96,6 +542,35 @@ export type Run = {
     updatedAt: string;
 };
 
+export type SampleFact = {
+    confidence?: string;
+    datasetVintage?: string;
+    error?: string;
+    fetchedAt?: string;
+    index: number;
+    label: string;
+    latitude: number;
+    longitude: number;
+    notes?: string;
+    source?: string;
+    sourceUrl?: string;
+    status: string;
+    unit?: string;
+    value?: unknown;
+};
+
+export type SamplePoint = {
+    index: number;
+    label: string;
+    latitude: number;
+    longitude: number;
+};
+
+export type SourceBounds = {
+    end: number;
+    start: number;
+};
+
 export type Step = {
     attemptCount: number;
     completedAt?: string;
@@ -105,6 +580,19 @@ export type Step = {
     status: string;
     summary?: unknown;
     toolName: string;
+};
+
+export type SupplementalEvidence = {
+    caveat?: string;
+    fetchedAt: string;
+    kind: string;
+    provider: string;
+    sourceUrl: string;
+    sourceVintage?: string;
+    status: string;
+    summary: string;
+    title: string;
+    value?: unknown;
 };
 
 export type ToolCall = {
@@ -125,9 +613,83 @@ export type ToolCall = {
     stepId: string;
 };
 
+export type CsvResultWritable = {
+    field?: FieldWritable;
+    problem?: string;
+    row: number;
+};
+
+export type ContextWritable = {
+    batches: Array<Batch> | null;
+    facilities: Array<Facility> | null;
+};
+
+export type CorrectionWritable = {
+    analytes: [
+        Analyte,
+        Analyte
+    ] | null;
+    basis?: string;
+    collectionDate?: string;
+    laboratory?: string;
+    matrix?: string;
+    method?: string;
+    sampleIdentifier?: string;
+};
+
+export type CreateEvaluationOutputBodyWritable = {
+    created: boolean;
+    evaluation: EvaluationWritable;
+};
+
+export type CreateInputWritable = {
+    county?: string;
+    geojson?: string;
+    locator?: string;
+    locatorKind: 'ADDRESS' | 'COORDINATE' | 'APN' | 'GEOJSON';
+    name: string;
+};
+
+export type CreatePolicyDecisionOutputBodyWritable = {
+    created: boolean;
+    decision: DecisionWritable;
+};
+
 export type CreateRunOutputBodyWritable = {
     created: boolean;
     run: RunWritable;
+};
+
+export type DecisionWritable = {
+    analytes: Array<AnalyteEvidence> | null;
+    batchIdentifier: string;
+    blockingReason?: string;
+    createdAt: string;
+    explanation: string;
+    facilityName: string;
+    id: string;
+    inputHash: string;
+    jurisdiction: string;
+    matchedRuleId?: string;
+    maximumApplicationRateDryTonsPerAcre?: string;
+    prohibitedActions: Array<string> | null;
+    reportId: string;
+    reportVersion: number;
+    requirements: Array<Requirement> | null;
+    rulePack: RulePackWritable;
+    tier: string;
+};
+
+export type DetailsInputWritable = {
+    accessConstraints?: string;
+    agronomicRateDryTonsPerAcre?: string;
+    cropOrUse?: string;
+    knownConstraints?: string;
+    miEnviroSiteId?: string;
+    priorLoadingDryTons?: string;
+    rmpApproved?: boolean;
+    rmpDocumentReference?: string;
+    usableAcres?: string;
 };
 
 export type ErrorModelWritable = {
@@ -157,8 +719,107 @@ export type ErrorModelWritable = {
     type?: string;
 };
 
+export type EvaluationWritable = {
+    aggregationVersion: string;
+    catalogVersion?: string;
+    completedAt?: string;
+    createdAt: string;
+    facts: Array<FieldFact> | null;
+    failureCode?: string;
+    failureDetail?: string;
+    fieldId: string;
+    fieldSetVersion: string;
+    gaps: Array<PhysicalDataGap> | null;
+    geometryVersion: number;
+    id: string;
+    projectedCredits: number;
+    sampleCount: number;
+    samples: Array<SamplePoint> | null;
+    startedAt?: string;
+    status: string;
+    supplemental: Array<SupplementalEvidence> | null;
+    updatedAt: string;
+};
+
+export type FieldWritable = {
+    createdAt: string;
+    details: Details;
+    facility: FieldFacility;
+    gaps: Array<FieldGap> | null;
+    geometry?: Geometry;
+    id: string;
+    location?: Location;
+    locatorInput: string;
+    locatorKind: string;
+    name: string;
+    status: string;
+    updatedAt: string;
+};
+
+export type FieldContextWritable = {
+    facilities: Array<FieldFacility> | null;
+    fields: Array<FieldWritable> | null;
+};
+
+export type FieldGeometryInputBodyWritable = {
+    geojson: string;
+};
+
 export type HealthOutputBodyWritable = {
     status: 'ok';
+};
+
+export type ImportWritable = {
+    results: Array<CsvResultWritable> | null;
+};
+
+export type LabUploadOutputBodyWritable = {
+    created: boolean;
+    report: ReportWritable;
+};
+
+export type LocationSelectionWritable = {
+    candidateIndex: number;
+};
+
+export type ReportWritable = {
+    batch: Batch;
+    confirmedAt?: string;
+    createdAt: string;
+    draft?: Draft;
+    facility: Facility;
+    failureCode?: string;
+    gaps: Array<Gap> | null;
+    id: string;
+    mediaType: string;
+    originalFilename: string;
+    pages: Array<Page> | null;
+    sha256: string;
+    sizeBytes: number;
+    status: string;
+    updatedAt: string;
+};
+
+export type RulePackWritable = {
+    acceptedAnalyticalMethodTokens: Array<string> | null;
+    authorityType: string;
+    checksum: string;
+    code: string;
+    effectiveFrom: string;
+    elevatedThresholdUgKgDry: string;
+    explanation: string;
+    jurisdiction: string;
+    prohibitedThresholdUgKgDry: string;
+    requirements: Array<RequirementDefinition> | null;
+    retrievedAt: string;
+    reviewStatus: string;
+    reviewedAt: string;
+    reviewedBy: string;
+    rules: Array<Rule> | null;
+    schemaVersion: number;
+    sourceTitle: string;
+    sourceUrl: string;
+    version: string;
 };
 
 export type RunWritable = {
@@ -174,6 +835,635 @@ export type RunWritable = {
     toolCalls: Array<ToolCall> | null;
     updatedAt: string;
 };
+
+export type GetCandidateFieldData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/candidate-fields/{id}';
+};
+
+export type GetCandidateFieldErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type GetCandidateFieldError = GetCandidateFieldErrors[keyof GetCandidateFieldErrors];
+
+export type GetCandidateFieldResponses = {
+    /**
+     * OK
+     */
+    200: Field;
+};
+
+export type GetCandidateFieldResponse = GetCandidateFieldResponses[keyof GetCandidateFieldResponses];
+
+export type UpdateFieldDetailsData = {
+    body: DetailsInputWritable;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/candidate-fields/{id}/details';
+};
+
+export type UpdateFieldDetailsErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type UpdateFieldDetailsError = UpdateFieldDetailsErrors[keyof UpdateFieldDetailsErrors];
+
+export type UpdateFieldDetailsResponses = {
+    /**
+     * OK
+     */
+    200: Field;
+};
+
+export type UpdateFieldDetailsResponse = UpdateFieldDetailsResponses[keyof UpdateFieldDetailsResponses];
+
+export type SetFieldGeometryData = {
+    body: FieldGeometryInputBodyWritable;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/candidate-fields/{id}/geometry';
+};
+
+export type SetFieldGeometryErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type SetFieldGeometryError = SetFieldGeometryErrors[keyof SetFieldGeometryErrors];
+
+export type SetFieldGeometryResponses = {
+    /**
+     * OK
+     */
+    200: Field;
+};
+
+export type SetFieldGeometryResponse = SetFieldGeometryResponses[keyof SetFieldGeometryResponses];
+
+export type SelectFieldLocationData = {
+    body: LocationSelectionWritable;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/candidate-fields/{id}/location-selection';
+};
+
+export type SelectFieldLocationErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type SelectFieldLocationError = SelectFieldLocationErrors[keyof SelectFieldLocationErrors];
+
+export type SelectFieldLocationResponses = {
+    /**
+     * OK
+     */
+    200: Field;
+};
+
+export type SelectFieldLocationResponse = SelectFieldLocationResponses[keyof SelectFieldLocationResponses];
+
+export type ConfirmFieldParcelData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/candidate-fields/{id}/parcel-confirmation';
+};
+
+export type ConfirmFieldParcelErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ConfirmFieldParcelError = ConfirmFieldParcelErrors[keyof ConfirmFieldParcelErrors];
+
+export type ConfirmFieldParcelResponses = {
+    /**
+     * OK
+     */
+    200: Field;
+};
+
+export type ConfirmFieldParcelResponse = ConfirmFieldParcelResponses[keyof ConfirmFieldParcelResponses];
+
+export type StartPhysicalEvaluationData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/candidate-fields/{id}/physical-evaluations';
+};
+
+export type StartPhysicalEvaluationErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type StartPhysicalEvaluationError = StartPhysicalEvaluationErrors[keyof StartPhysicalEvaluationErrors];
+
+export type StartPhysicalEvaluationResponses = {
+    /**
+     * Accepted
+     */
+    202: CreateEvaluationOutputBody;
+};
+
+export type StartPhysicalEvaluationResponse = StartPhysicalEvaluationResponses[keyof StartPhysicalEvaluationResponses];
+
+export type GetLatestPhysicalEvaluationData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/candidate-fields/{id}/physical-evaluations/latest';
+};
+
+export type GetLatestPhysicalEvaluationErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type GetLatestPhysicalEvaluationError = GetLatestPhysicalEvaluationErrors[keyof GetLatestPhysicalEvaluationErrors];
+
+export type GetLatestPhysicalEvaluationResponses = {
+    /**
+     * OK
+     */
+    200: Evaluation;
+};
+
+export type GetLatestPhysicalEvaluationResponse = GetLatestPhysicalEvaluationResponses[keyof GetLatestPhysicalEvaluationResponses];
+
+export type ResolveCandidateFieldData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/candidate-fields/{id}/resolution';
+};
+
+export type ResolveCandidateFieldErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ResolveCandidateFieldError = ResolveCandidateFieldErrors[keyof ResolveCandidateFieldErrors];
+
+export type ResolveCandidateFieldResponses = {
+    /**
+     * OK
+     */
+    200: Field;
+};
+
+export type ResolveCandidateFieldResponse = ResolveCandidateFieldResponses[keyof ResolveCandidateFieldResponses];
+
+export type CreateCandidateFieldData = {
+    body: CreateInputWritable;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        facilityId: string;
+    };
+    query?: never;
+    url: '/api/v1/facilities/{facilityId}/candidate-fields';
+};
+
+export type CreateCandidateFieldErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type CreateCandidateFieldError = CreateCandidateFieldErrors[keyof CreateCandidateFieldErrors];
+
+export type CreateCandidateFieldResponses = {
+    /**
+     * Created
+     */
+    201: Field;
+};
+
+export type CreateCandidateFieldResponse = CreateCandidateFieldResponses[keyof CreateCandidateFieldResponses];
+
+export type ImportCandidateFieldsData = {
+    body?: {
+        csv: Blob | File;
+    };
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        facilityId: string;
+    };
+    query?: never;
+    url: '/api/v1/facilities/{facilityId}/candidate-fields/import';
+};
+
+export type ImportCandidateFieldsErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ImportCandidateFieldsError = ImportCandidateFieldsErrors[keyof ImportCandidateFieldsErrors];
+
+export type ImportCandidateFieldsResponses = {
+    /**
+     * Created
+     */
+    201: Import;
+};
+
+export type ImportCandidateFieldsResponse = ImportCandidateFieldsResponses[keyof ImportCandidateFieldsResponses];
+
+export type GetFieldContextData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path?: never;
+    query?: {
+        facilityId?: string;
+    };
+    url: '/api/v1/field-context';
+};
+
+export type GetFieldContextErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type GetFieldContextError = GetFieldContextErrors[keyof GetFieldContextErrors];
+
+export type GetFieldContextResponses = {
+    /**
+     * OK
+     */
+    200: FieldContext;
+};
+
+export type GetFieldContextResponse = GetFieldContextResponses[keyof GetFieldContextResponses];
+
+export type GetLabIntakeContextData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/lab-context';
+};
+
+export type GetLabIntakeContextErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type GetLabIntakeContextError = GetLabIntakeContextErrors[keyof GetLabIntakeContextErrors];
+
+export type GetLabIntakeContextResponses = {
+    /**
+     * OK
+     */
+    200: Context;
+};
+
+export type GetLabIntakeContextResponse = GetLabIntakeContextResponses[keyof GetLabIntakeContextResponses];
+
+export type UploadLabReportData = {
+    body?: {
+        batchId: string;
+        facilityName: string;
+        percentSolids?: string;
+        report: Blob | File;
+        wetMassKg?: string;
+    };
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/lab-reports';
+};
+
+export type UploadLabReportErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type UploadLabReportError = UploadLabReportErrors[keyof UploadLabReportErrors];
+
+export type UploadLabReportResponses = {
+    /**
+     * Created
+     */
+    201: LabUploadOutputBody;
+};
+
+export type UploadLabReportResponse = UploadLabReportResponses[keyof UploadLabReportResponses];
+
+export type GetLabReportData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/lab-reports/{id}';
+};
+
+export type GetLabReportErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type GetLabReportError = GetLabReportErrors[keyof GetLabReportErrors];
+
+export type GetLabReportResponses = {
+    /**
+     * OK
+     */
+    200: Report;
+};
+
+export type GetLabReportResponse = GetLabReportResponses[keyof GetLabReportResponses];
+
+export type GetPolicyClassificationData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/lab-reports/{id}/classification';
+};
+
+export type GetPolicyClassificationErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type GetPolicyClassificationError = GetPolicyClassificationErrors[keyof GetPolicyClassificationErrors];
+
+export type GetPolicyClassificationResponses = {
+    /**
+     * OK
+     */
+    200: Decision;
+};
+
+export type GetPolicyClassificationResponse = GetPolicyClassificationResponses[keyof GetPolicyClassificationResponses];
+
+export type ClassifyLabReportData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/lab-reports/{id}/classification';
+};
+
+export type ClassifyLabReportErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ClassifyLabReportError = ClassifyLabReportErrors[keyof ClassifyLabReportErrors];
+
+export type ClassifyLabReportResponses = {
+    /**
+     * Created
+     */
+    201: CreatePolicyDecisionOutputBody;
+};
+
+export type ClassifyLabReportResponse = ClassifyLabReportResponses[keyof ClassifyLabReportResponses];
+
+export type ConfirmLabReportData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/lab-reports/{id}/confirmation';
+};
+
+export type ConfirmLabReportErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ConfirmLabReportError = ConfirmLabReportErrors[keyof ConfirmLabReportErrors];
+
+export type ConfirmLabReportResponses = {
+    /**
+     * OK
+     */
+    200: Report;
+};
+
+export type ConfirmLabReportResponse = ConfirmLabReportResponses[keyof ConfirmLabReportResponses];
+
+export type GetLabReportContentData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/lab-reports/{id}/content';
+};
+
+export type GetLabReportContentErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type GetLabReportContentError = GetLabReportContentErrors[keyof GetLabReportContentErrors];
+
+export type GetLabReportContentResponses = {
+    /**
+     * OK
+     */
+    200: string;
+};
+
+export type GetLabReportContentResponse = GetLabReportContentResponses[keyof GetLabReportContentResponses];
+
+export type CorrectLabReportData = {
+    body: CorrectionWritable;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/lab-reports/{id}/evidence';
+};
+
+export type CorrectLabReportErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type CorrectLabReportError = CorrectLabReportErrors[keyof CorrectLabReportErrors];
+
+export type CorrectLabReportResponses = {
+    /**
+     * OK
+     */
+    200: Report;
+};
+
+export type CorrectLabReportResponse = CorrectLabReportResponses[keyof CorrectLabReportResponses];
+
+export type GetPhysicalEvaluationData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/physical-evaluations/{id}';
+};
+
+export type GetPhysicalEvaluationErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type GetPhysicalEvaluationError = GetPhysicalEvaluationErrors[keyof GetPhysicalEvaluationErrors];
+
+export type GetPhysicalEvaluationResponses = {
+    /**
+     * OK
+     */
+    200: Evaluation;
+};
+
+export type GetPhysicalEvaluationResponse = GetPhysicalEvaluationResponses[keyof GetPhysicalEvaluationResponses];
+
+export type GetActiveMichiganRulePackData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/policy/rule-packs/mi/active';
+};
+
+export type GetActiveMichiganRulePackErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type GetActiveMichiganRulePackError = GetActiveMichiganRulePackErrors[keyof GetActiveMichiganRulePackErrors];
+
+export type GetActiveMichiganRulePackResponses = {
+    /**
+     * OK
+     */
+    200: RulePack;
+};
+
+export type GetActiveMichiganRulePackResponse = GetActiveMichiganRulePackResponses[keyof GetActiveMichiganRulePackResponses];
 
 export type CreateReadinessRunData = {
     body?: never;

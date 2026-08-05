@@ -6,8 +6,14 @@ import { RunStatus } from '@/components/run-status';
 import * as Alert from '@/components/ui/alert';
 import * as Button from '@/components/ui/button';
 import { useReadinessRun } from '@/hooks/use-readiness-run';
+import { LabEvidencePage } from '@/pages/lab-evidence-page';
 
 export function App() {
+  if (window.location.pathname === '/data-access') return <DataAccessPage />;
+  return <LabEvidencePage />;
+}
+
+function DataAccessPage() {
   const { run, isLoading, isStarting, error, begin } = useReadinessRun();
   const isActive = run?.status === 'QUEUED' || run?.status === 'RUNNING';
   const completedChecks = run?.steps?.filter((step) => step.status === 'SUCCEEDED').length ?? 0;

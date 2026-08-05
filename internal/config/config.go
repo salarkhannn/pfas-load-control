@@ -40,7 +40,7 @@ func Load() (Config, error) {
 		return Config{}, err
 	}
 
-	webOrigin := valueOrDefault("WEB_ORIGIN", "http://localhost:5173")
+	webOrigin := valueOrDefault("WEB_ORIGIN", "http://localhost:5174")
 	if err := validateHTTPURL("WEB_ORIGIN", webOrigin); err != nil {
 		return Config{}, err
 	}

@@ -31,6 +31,8 @@ type Result struct {
 	RequestHash  string
 	ResponseHash string
 	RequestID    string
+	ETag         string
+	CacheControl string
 	HTTPStatus   int
 	Duration     time.Duration
 	FetchedAt    time.Time
@@ -60,7 +62,7 @@ type Client struct {
 
 func NewClient(baseURL, token string, httpClient *http.Client) *Client {
 	if httpClient == nil {
-		httpClient = &http.Client{Timeout: 10 * time.Second}
+		httpClient = &http.Client{Timeout: 130 * time.Second}
 	}
 	return &Client{
 		baseURL: strings.TrimRight(baseURL, "/"),
@@ -106,6 +108,8 @@ func (c *Client) Call(ctx context.Context, tool Tool) (Result, error) {
 
 	result.HTTPStatus = response.StatusCode
 	result.RequestID = response.Header.Get("X-Request-ID")
+	result.ETag = response.Header.Get("ETag")
+	result.CacheControl = response.Header.Get("Cache-Control")
 	result.FetchedAt = c.now().UTC()
 	result.Duration = c.now().Sub(startedAt)
 

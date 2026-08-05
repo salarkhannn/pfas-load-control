@@ -1,0 +1,3 @@
+laboratory,sample_id,collection_date,matrix,method,basis,analyte,result,unit,qualifier,reporting_limit,detection_limit
+Great Lakes Lab,BATCH-42,2026-08-01,Biosolids,EPA 1633,dry,PFOS,19.99,ug/kg,,,0.5
+Great Lakes Lab,BATCH-42,2026-08-01,Biosolids,EPA 1633,dry,PFOA,ND,ug/kg,U,1.0,0.5

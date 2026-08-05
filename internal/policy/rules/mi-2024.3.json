@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "code": "MI-PFAS-BIOSOLIDS",
+  "version": "2024.3",
+  "jurisdiction": "MI",
+  "authorityType": "INTERIM_POLICY",
+  "effectiveFrom": "2024-01-01",
+  "sourceUrl": "https://www.michigan.gov/egle/about/organization/water-resources/biosolids/pfas-related/interim-strategy",
+  "sourceTitle": "Interim strategy requirements: land application of biosolids containing PFAS",
+  "retrievedAt": "2026-08-05T00:00:00Z",
+  "reviewedAt": "2026-08-05T00:00:00Z",
+  "reviewedBy": "implementation-source-review-2026-08-05",
+  "reviewStatus": "ACTIVE",
+  "explanation": "Michigan's 2024 interim strategy classifies biosolids using dry-weight PFOS and PFOA concentrations. This classification does not replace Part 24, permit, RMP, agronomic, or site-specific requirements.",
+  "elevatedThresholdUgKgDry": "20",
+  "prohibitedThresholdUgKgDry": "100",
+  "acceptedAnalyticalMethodTokens": ["1633", "D7979", "ISOTOPE DILUTION", "537 MODIFIED", "537M"],
+  "rules": [
+    {
+      "id": "MI-PFAS-PROHIBIT-100",
+      "tier": "PROHIBITED",
+      "operator": "ANY_GTE",
+      "thresholdUgKgDry": "100",
+      "prohibitedActions": ["LAND_APPLICATION"],
+      "explanation": "PFOS or PFOA at 100 µg/kg dry weight or higher is industrially impacted and cannot be land applied."
+    },
+    {
+      "id": "MI-PFAS-ELEVATED-20",
+      "tier": "ELEVATED",
+      "operator": "ANY_GTE",
+      "thresholdUgKgDry": "20",
+      "maximumApplicationRateDryTonsPerAcre": "1.5",
+      "explanation": "PFOS or PFOA at 20 µg/kg dry weight or higher, with both below 100 µg/kg, is elevated."
+    },
+    {
+      "id": "MI-PFAS-STANDARD-BELOW-20",
+      "tier": "STANDARD",
+      "operator": "ALL_LT",
+      "thresholdUgKgDry": "20",
+      "explanation": "PFOS and PFOA both below 20 µg/kg dry weight are below the additional PFAS action thresholds."
+    }
+  ],
+  "requirements": [
+    {
+      "id": "MI-PFAS-RESULT-SUBMISSION",
+      "tiers": ["STANDARD", "ELEVATED"],
+      "title": "Submit results to EGLE",
+      "detail": "Submit the PFAS sample results through MiEnviro at least two weeks before land application.",
+      "timing": "At least 14 days before land application"
+    },
+    {
+      "id": "MI-PFAS-WRD-NOTIFICATION",
+      "tiers": ["PROHIBITED"],
+      "title": "Notify the WRD Biosolids Program",
+      "detail": "Notify Water Resources Division Biosolids Program staff of the PFAS results by submitting them through MiEnviro.",
+      "timing": "Immediate"
+    },
+    {
+      "id": "MI-PFAS-LANDOWNER-COMMUNICATION",
+      "tiers": ["STANDARD", "ELEVATED"],
+      "title": "Share results with the landowner and farmer",
+      "detail": "Provide the PFOS and PFOA results and Michigan PFAS biosolids information before land application.",
+      "timing": "Before land application"
+    },
+    {
+      "id": "MI-PFAS-ELEVATED-RATE",
+      "tiers": ["ELEVATED"],
+      "title": "Limit the application rate",
+      "detail": "Use no more than 1.5 dry tons per acre unless EGLE approves an alternative risk-mitigation strategy submitted at least 14 days before land application.",
+      "timing": "Before land application"
+    },
+    {
+      "id": "MI-PFAS-SOURCE-EFFLUENT-30D",
+      "tiers": ["ELEVATED", "PROHIBITED"],
+      "title": "Sample the source effluent",
+      "detail": "Collect a PFAS sample from the biosolids source effluent.",
+      "timing": "Within 30 days"
+    },
+    {
+      "id": "MI-PFAS-SOURCE-REDUCTION",
+      "tiers": ["ELEVATED", "PROHIBITED"],
+      "title": "Start a source-reduction plan",
+      "detail": "Investigate potential PFOS and PFOA sources to the sanitary wastewater and resulting biosolids.",
+      "timing": "Required follow-up"
+    },
+    {
+      "id": "MI-PFAS-LAND-APPLICATION-PROHIBITED",
+      "tiers": ["PROHIBITED"],
+      "title": "Do not land apply this batch",
+      "detail": "The interim strategy deems this batch industrially impacted and prohibits land application.",
+      "timing": "Immediate"
+    },
+    {
+      "id": "MI-PFAS-ALTERNATIVE-MANAGEMENT",
+      "tiers": ["PROHIBITED"],
+      "title": "Arrange alternative management",
+      "detail": "Arrange alternative treatment or disposal of the solids.",
+      "timing": "Before moving the batch"
+    }
+  ]
+}

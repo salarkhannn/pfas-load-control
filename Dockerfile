@@ -6,8 +6,15 @@ RUN go mod download
 COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -tags netgo -ldflags='-s -w' -o /out/server ./cmd/server
 
-FROM gcr.io/distroless/static-debian12:nonroot@sha256:f5b485ea962d9bd1186b2f6b3a061191539b905b82ec395de78cbfae51f20e35
+FROM debian:bookworm-20260713-slim@sha256:7b140f374b289a7c2befc338f42ebe6441b7ea838a042bbd5acbfca6ec875818
 
-COPY --from=build /out/server /server
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates poppler-utils tesseract-ocr tesseract-ocr-eng \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --system --gid 65532 app \
+    && useradd --system --uid 65532 --gid app --home-dir /nonexistent --shell /usr/sbin/nologin app
+
+COPY --from=build --chown=app:app /out/server /server
+USER app
 EXPOSE 10000
 ENTRYPOINT ["/server"]

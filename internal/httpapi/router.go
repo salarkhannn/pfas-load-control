@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"net/url"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humachi"
@@ -16,12 +17,20 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/salarkhannn/pfas-load-control/internal/agent"
+	"github.com/salarkhannn/pfas-load-control/internal/evidence"
+	"github.com/salarkhannn/pfas-load-control/internal/field"
+	"github.com/salarkhannn/pfas-load-control/internal/lab"
+	"github.com/salarkhannn/pfas-load-control/internal/policy"
 )
 
 type API struct {
-	service *agent.Service
-	pool    *pgxpool.Pool
-	logger  *slog.Logger
+	service  *agent.Service
+	lab      *lab.Service
+	policy   *policy.Service
+	fields   *field.Service
+	evidence *evidence.Service
+	pool     *pgxpool.Pool
+	logger   *slog.Logger
 }
 
 type runOutput struct {
@@ -45,23 +54,23 @@ type healthOutput struct {
 	}
 }
 
-func NewRouter(service *agent.Service, pool *pgxpool.Pool, logger *slog.Logger, webOrigin string) http.Handler {
+func NewRouter(service *agent.Service, labService *lab.Service, policyService *policy.Service, fieldService *field.Service, evidenceService *evidence.Service, pool *pgxpool.Pool, logger *slog.Logger, webOrigin string) http.Handler {
 	router := chi.NewRouter()
 	router.Use(middleware.RequestID)
 	router.Use(middleware.Recoverer)
 	router.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{webOrigin},
-		AllowedMethods:   []string{http.MethodGet, http.MethodPost, http.MethodOptions},
-		AllowedHeaders:   []string{"Accept", "Content-Type"},
+		AllowedOrigins:   allowedWebOrigins(webOrigin),
+		AllowedMethods:   []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodOptions},
+		AllowedHeaders:   []string{"Accept", "Content-Type", "X-Workspace-Key"},
 		ExposedHeaders:   []string{"X-Request-ID"},
 		AllowCredentials: false,
 		MaxAge:           300,
 	}))
 
-	config := huma.DefaultConfig("PFAS Load Control API", "0.1.0")
+	config := huma.DefaultConfig("PFAS Load Control API", "0.4.0")
 	config.Info.Description = "A bounded, auditable control plane for PFAS decision workflows."
 	api := humachi.New(router, config)
-	handler := &API{service: service, pool: pool, logger: logger}
+	handler := &API{service: service, lab: labService, policy: policyService, fields: fieldService, evidence: evidenceService, pool: pool, logger: logger}
 
 	huma.Register(api, huma.Operation{
 		OperationID: "health-live",
@@ -100,7 +109,32 @@ func NewRouter(service *agent.Service, pool *pgxpool.Pool, logger *slog.Logger, 
 		Summary:     "Get a readiness run and its evidence trace",
 		Tags:        []string{"Readiness"},
 	}, handler.getRun)
+	handler.registerLabRoutes(api)
+	handler.registerPolicyRoutes(api)
+	handler.registerFieldRoutes(api)
+	handler.registerEvidenceRoutes(api)
 	return router
+}
+
+func allowedWebOrigins(configured string) []string {
+	origins := []string{configured}
+	parsed, err := url.Parse(configured)
+	if err != nil {
+		return origins
+	}
+	port := parsed.Port()
+	switch parsed.Hostname() {
+	case "localhost":
+		parsed.Host = "127.0.0.1"
+	case "127.0.0.1":
+		parsed.Host = "localhost"
+	default:
+		return origins
+	}
+	if port != "" {
+		parsed.Host += ":" + port
+	}
+	return append(origins, parsed.String())
 }
 
 func (a *API) live(_ context.Context, _ *struct{}) (*healthOutput, error) {

@@ -53,7 +53,7 @@ const readyRun = {
 
 test('checks data access and keeps technical evidence available on demand', async ({ page }) => {
   await mockAPI(page);
-  await page.goto('/');
+  await page.goto('/data-access');
 
   await expect(page.getByRole('heading', { name: 'Not checked yet' })).toBeVisible();
   await page.getByRole('button', { name: 'Check access' }).click();
@@ -70,7 +70,7 @@ test('checks data access and keeps technical evidence available on demand', asyn
 test('keeps the evidence workflow inside a 320px viewport', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 800 });
   await mockAPI(page, readyRun);
-  await page.goto('/');
+  await page.goto('/data-access');
 
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(0);
