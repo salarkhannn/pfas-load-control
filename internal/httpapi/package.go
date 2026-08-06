@@ -69,6 +69,9 @@ func (a *API) createDecisionPackage(ctx context.Context, input *decisionPackageI
 	if err != nil {
 		return nil, a.decisionPackageError("create decision package", err)
 	}
+	if _, err := a.actions.Ensure(ctx, input.WorkspaceKey, result.ID); err != nil {
+		return nil, a.actionError("prepare package actions", err)
+	}
 	output := new(createDecisionPackageOutput)
 	output.Body.Package = result
 	output.Body.Created = created

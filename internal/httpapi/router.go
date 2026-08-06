@@ -16,6 +16,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 
+	"github.com/salarkhannn/pfas-load-control/internal/actioncenter"
 	"github.com/salarkhannn/pfas-load-control/internal/agent"
 	"github.com/salarkhannn/pfas-load-control/internal/decisionpackage"
 	"github.com/salarkhannn/pfas-load-control/internal/evidence"
@@ -35,6 +36,7 @@ type API struct {
 	placement *placement.Service
 	response  *responseplan.Service
 	packages  *decisionpackage.Service
+	actions   *actioncenter.Service
 	pool      *pgxpool.Pool
 	logger    *slog.Logger
 }
@@ -60,23 +62,23 @@ type healthOutput struct {
 	}
 }
 
-func NewRouter(service *agent.Service, labService *lab.Service, policyService *policy.Service, fieldService *field.Service, evidenceService *evidence.Service, placementService *placement.Service, responseService *responseplan.Service, packageService *decisionpackage.Service, pool *pgxpool.Pool, logger *slog.Logger, webOrigin string) http.Handler {
+func NewRouter(service *agent.Service, labService *lab.Service, policyService *policy.Service, fieldService *field.Service, evidenceService *evidence.Service, placementService *placement.Service, responseService *responseplan.Service, packageService *decisionpackage.Service, actionService *actioncenter.Service, pool *pgxpool.Pool, logger *slog.Logger, webOrigin string) http.Handler {
 	router := chi.NewRouter()
 	router.Use(middleware.RequestID)
 	router.Use(middleware.Recoverer)
 	router.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   allowedWebOrigins(webOrigin),
 		AllowedMethods:   []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodOptions},
-		AllowedHeaders:   []string{"Accept", "Content-Type", "X-Workspace-Key"},
+		AllowedHeaders:   []string{"Accept", "Content-Type", "X-Workspace-Key", "Idempotency-Key"},
 		ExposedHeaders:   []string{"X-Request-ID"},
 		AllowCredentials: false,
 		MaxAge:           300,
 	}))
 
-	config := huma.DefaultConfig("PFAS Load Control API", "0.7.0")
+	config := huma.DefaultConfig("PFAS Load Control API", "0.8.0")
 	config.Info.Description = "A bounded, auditable control plane for PFAS decision workflows."
 	api := humachi.New(router, config)
-	handler := &API{service: service, lab: labService, policy: policyService, fields: fieldService, evidence: evidenceService, placement: placementService, response: responseService, packages: packageService, pool: pool, logger: logger}
+	handler := &API{service: service, lab: labService, policy: policyService, fields: fieldService, evidence: evidenceService, placement: placementService, response: responseService, packages: packageService, actions: actionService, pool: pool, logger: logger}
 
 	huma.Register(api, huma.Operation{
 		OperationID: "health-live",
@@ -122,6 +124,7 @@ func NewRouter(service *agent.Service, labService *lab.Service, policyService *p
 	handler.registerPlacementRoutes(api)
 	handler.registerResponseRoutes(api)
 	handler.registerDecisionPackageRoutes(api)
+	handler.registerActionRoutes(api)
 	return router
 }
 

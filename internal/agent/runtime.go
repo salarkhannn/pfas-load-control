@@ -11,6 +11,7 @@ import (
 	"github.com/riverqueue/river"
 	"github.com/riverqueue/river/riverdriver/riverpgxv5"
 
+	"github.com/salarkhannn/pfas-load-control/internal/actioncenter"
 	"github.com/salarkhannn/pfas-load-control/internal/decisionpackage"
 	"github.com/salarkhannn/pfas-load-control/internal/evidence"
 	"github.com/salarkhannn/pfas-load-control/internal/field"
@@ -31,6 +32,7 @@ type Runtime struct {
 	Placement *placement.Service
 	Response  *responseplan.Service
 	Packages  *decisionpackage.Service
+	Actions   *actioncenter.Service
 }
 
 func NewRuntime(ctx context.Context, pool *pgxpool.Pool, mireyeClient *mireye.Client, logger *slog.Logger) (*Runtime, error) {
@@ -76,9 +78,10 @@ func NewRuntime(ctx context.Context, pool *pgxpool.Pool, mireyeClient *mireye.Cl
 	responseWorker.SetService(responseService)
 	placementService := placement.NewService(pool)
 	packageService := decisionpackage.NewService(pool, labService, policyService, evidenceService, placementService, responseService)
+	actionService := actioncenter.NewService(pool, packageService)
 	return &Runtime{
 		Jobs: jobs, Service: NewService(pool, jobs), Lab: labService,
 		Policy: policyService, Fields: field.NewService(pool, mireyeClient), Evidence: evidenceService,
-		Placement: placementService, Response: responseService, Packages: packageService,
+		Placement: placementService, Response: responseService, Packages: packageService, Actions: actionService,
 	}, nil
 }

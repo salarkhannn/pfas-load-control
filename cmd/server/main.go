@@ -58,7 +58,7 @@ func main() {
 
 	server := &http.Server{
 		Addr:              cfg.HTTPAddress,
-		Handler:           httpapi.NewRouter(runtime.Service, runtime.Lab, runtime.Policy, runtime.Fields, runtime.Evidence, runtime.Placement, runtime.Response, runtime.Packages, pool, logger, cfg.WebOrigin),
+		Handler:           httpapi.NewRouter(runtime.Service, runtime.Lab, runtime.Policy, runtime.Fields, runtime.Evidence, runtime.Placement, runtime.Response, runtime.Packages, runtime.Actions, pool, logger, cfg.WebOrigin),
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       15 * time.Second,
 		WriteTimeout:      15 * time.Second,
