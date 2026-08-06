@@ -11,6 +11,7 @@ import type { ReactNode } from 'react';
 
 import type { Decision, DecisionPackage, EvidenceEntry, ProposedAction } from '@/client/types.gen';
 import * as Button from '@/components/ui/button';
+import { ActionCenterWorkspace } from '@/components/action-center-workspace';
 import { useDecisionPackage } from '@/hooks/use-decision-package';
 
 export function DecisionPackageWorkspace({ decision }: { decision: Decision }) {
@@ -38,7 +39,10 @@ export function DecisionPackageWorkspace({ decision }: { decision: Decision }) {
       {state.isLoading ? (
         <div className="package-loading"><span className="state-spinner" /><span>Loading the latest package…</span></div>
       ) : state.value ? (
-        <PackageDocument value={state.value} busy={state.busy} onDownload={state.download} />
+        <>
+          <PackageDocument value={state.value} busy={state.busy} onDownload={state.download} />
+          <ActionCenterWorkspace packageId={state.value.id} />
+        </>
       ) : (
         <div className="package-empty">
           <div><RiFileTextLine aria-hidden="true" /><div><h3>Ready to assemble when the current workflow is complete</h3><p>The package is immutable, source-linked, and clearly separates evidence from proposed actions. It does not approve or execute anything.</p></div></div>

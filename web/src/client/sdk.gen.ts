@@ -2,7 +2,7 @@
 
 import { type Client, type ClientMeta, formDataBodySerializer, type Options as Options2, type RequestResult, type TDataShape } from './client';
 import { client } from './client.gen';
-import type { ClassifyLabReportData, ClassifyLabReportErrors, ClassifyLabReportResponses, ConfirmFieldBoundaryData, ConfirmFieldBoundaryErrors, ConfirmFieldBoundaryResponses, ConfirmFieldParcelData, ConfirmFieldParcelErrors, ConfirmFieldParcelResponses, ConfirmLabReportData, ConfirmLabReportErrors, ConfirmLabReportResponses, ConfirmResponseFacilityLocationData, ConfirmResponseFacilityLocationErrors, ConfirmResponseFacilityLocationResponses, CorrectLabReportData, CorrectLabReportErrors, CorrectLabReportResponses, CreateCandidateFieldData, CreateCandidateFieldErrors, CreateCandidateFieldResponses, CreateDecisionPackageData, CreateDecisionPackageErrors, CreateDecisionPackageResponses, CreatePfasResponseData, CreatePfasResponseErrors, CreatePfasResponseResponses, CreatePlacementEvaluationData, CreatePlacementEvaluationErrors, CreatePlacementEvaluationResponses, CreateReadinessRunData, CreateReadinessRunErrors, CreateReadinessRunResponses, ExportDecisionPackageData, ExportDecisionPackageErrors, ExportDecisionPackageResponses, GetActiveMichiganRulePackData, GetActiveMichiganRulePackErrors, GetActiveMichiganRulePackResponses, GetCandidateFieldData, GetCandidateFieldErrors, GetCandidateFieldResponses, GetDecisionPackageData, GetDecisionPackageErrors, GetDecisionPackageResponses, GetFieldContextData, GetFieldContextErrors, GetFieldContextResponses, GetLabIntakeContextData, GetLabIntakeContextErrors, GetLabIntakeContextResponses, GetLabReportContentData, GetLabReportContentErrors, GetLabReportContentResponses, GetLabReportData, GetLabReportErrors, GetLabReportResponses, GetLatestDecisionPackageData, GetLatestDecisionPackageErrors, GetLatestDecisionPackageResponses, GetLatestPfasResponseData, GetLatestPfasResponseErrors, GetLatestPfasResponseResponses, GetLatestPhysicalEvaluationData, GetLatestPhysicalEvaluationErrors, GetLatestPhysicalEvaluationResponses, GetLatestPlacementEvaluationData, GetLatestPlacementEvaluationErrors, GetLatestPlacementEvaluationResponses, GetLatestReadinessRunData, GetLatestReadinessRunErrors, GetLatestReadinessRunResponses, GetLatestResponseFacilityLocationData, GetLatestResponseFacilityLocationErrors, GetLatestResponseFacilityLocationResponses, GetPfasResponseData, GetPfasResponseErrors, GetPfasResponseResponses, GetPhysicalEvaluationData, GetPhysicalEvaluationErrors, GetPhysicalEvaluationResponses, GetPolicyClassificationData, GetPolicyClassificationErrors, GetPolicyClassificationResponses, GetReadinessRunData, GetReadinessRunErrors, GetReadinessRunResponses, HealthLiveData, HealthLiveErrors, HealthLiveResponses, HealthReadyData, HealthReadyErrors, HealthReadyResponses, ImportCandidateFieldsData, ImportCandidateFieldsErrors, ImportCandidateFieldsResponses, ResolveCandidateFieldData, ResolveCandidateFieldErrors, ResolveCandidateFieldResponses, ResolveResponseFacilityLocationData, ResolveResponseFacilityLocationErrors, ResolveResponseFacilityLocationResponses, SelectFieldLocationData, SelectFieldLocationErrors, SelectFieldLocationResponses, SetFieldGeometryData, SetFieldGeometryErrors, SetFieldGeometryResponses, StartPhysicalEvaluationData, StartPhysicalEvaluationErrors, StartPhysicalEvaluationResponses, UpdateFieldDetailsData, UpdateFieldDetailsErrors, UpdateFieldDetailsResponses, UploadLabReportData, UploadLabReportErrors, UploadLabReportResponses } from './types.gen';
+import type { ApproveActionData, ApproveActionErrors, ApproveActionResponses, ClassifyLabReportData, ClassifyLabReportErrors, ClassifyLabReportResponses, ConfirmFieldBoundaryData, ConfirmFieldBoundaryErrors, ConfirmFieldBoundaryResponses, ConfirmFieldParcelData, ConfirmFieldParcelErrors, ConfirmFieldParcelResponses, ConfirmLabReportData, ConfirmLabReportErrors, ConfirmLabReportResponses, ConfirmResponseFacilityLocationData, ConfirmResponseFacilityLocationErrors, ConfirmResponseFacilityLocationResponses, CorrectLabReportData, CorrectLabReportErrors, CorrectLabReportResponses, CreateCandidateFieldData, CreateCandidateFieldErrors, CreateCandidateFieldResponses, CreateDecisionPackageData, CreateDecisionPackageErrors, CreateDecisionPackageResponses, CreatePfasResponseData, CreatePfasResponseErrors, CreatePfasResponseResponses, CreatePlacementEvaluationData, CreatePlacementEvaluationErrors, CreatePlacementEvaluationResponses, CreateReadinessRunData, CreateReadinessRunErrors, CreateReadinessRunResponses, DownloadActionHandoffData, DownloadActionHandoffErrors, DownloadActionHandoffResponses, ExecuteActionData, ExecuteActionErrors, ExecuteActionResponses, ExportDecisionPackageData, ExportDecisionPackageErrors, ExportDecisionPackageResponses, GetActionCenterData, GetActionCenterErrors, GetActionCenterResponses, GetActiveMichiganRulePackData, GetActiveMichiganRulePackErrors, GetActiveMichiganRulePackResponses, GetCandidateFieldData, GetCandidateFieldErrors, GetCandidateFieldResponses, GetDecisionPackageData, GetDecisionPackageErrors, GetDecisionPackageResponses, GetFieldContextData, GetFieldContextErrors, GetFieldContextResponses, GetLabIntakeContextData, GetLabIntakeContextErrors, GetLabIntakeContextResponses, GetLabReportContentData, GetLabReportContentErrors, GetLabReportContentResponses, GetLabReportData, GetLabReportErrors, GetLabReportResponses, GetLatestDecisionPackageData, GetLatestDecisionPackageErrors, GetLatestDecisionPackageResponses, GetLatestPfasResponseData, GetLatestPfasResponseErrors, GetLatestPfasResponseResponses, GetLatestPhysicalEvaluationData, GetLatestPhysicalEvaluationErrors, GetLatestPhysicalEvaluationResponses, GetLatestPlacementEvaluationData, GetLatestPlacementEvaluationErrors, GetLatestPlacementEvaluationResponses, GetLatestReadinessRunData, GetLatestReadinessRunErrors, GetLatestReadinessRunResponses, GetLatestResponseFacilityLocationData, GetLatestResponseFacilityLocationErrors, GetLatestResponseFacilityLocationResponses, GetPfasResponseData, GetPfasResponseErrors, GetPfasResponseResponses, GetPhysicalEvaluationData, GetPhysicalEvaluationErrors, GetPhysicalEvaluationResponses, GetPolicyClassificationData, GetPolicyClassificationErrors, GetPolicyClassificationResponses, GetReadinessRunData, GetReadinessRunErrors, GetReadinessRunResponses, HealthLiveData, HealthLiveErrors, HealthLiveResponses, HealthReadyData, HealthReadyErrors, HealthReadyResponses, ImportCandidateFieldsData, ImportCandidateFieldsErrors, ImportCandidateFieldsResponses, PrepareActionCenterData, PrepareActionCenterErrors, PrepareActionCenterResponses, RejectActionData, RejectActionErrors, RejectActionResponses, ResolveCandidateFieldData, ResolveCandidateFieldErrors, ResolveCandidateFieldResponses, ResolveResponseFacilityLocationData, ResolveResponseFacilityLocationErrors, ResolveResponseFacilityLocationResponses, SelectFieldLocationData, SelectFieldLocationErrors, SelectFieldLocationResponses, SetFieldGeometryData, SetFieldGeometryErrors, SetFieldGeometryResponses, StartPhysicalEvaluationData, StartPhysicalEvaluationErrors, StartPhysicalEvaluationResponses, UpdateActionPayloadData, UpdateActionPayloadErrors, UpdateActionPayloadResponses, UpdateFieldDetailsData, UpdateFieldDetailsErrors, UpdateFieldDetailsResponses, UploadLabReportData, UploadLabReportErrors, UploadLabReportResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -17,6 +17,49 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
      */
     meta?: keyof ClientMeta extends never ? Record<string, unknown> : ClientMeta;
 };
+
+/**
+ * Approve the exact current action payload
+ */
+export const approveAction = <ThrowOnError extends boolean = false>(options: Options<ApproveActionData, ThrowOnError>): RequestResult<ApproveActionResponses, ApproveActionErrors, ThrowOnError> => (options.client ?? client).post<ApproveActionResponses, ApproveActionErrors, ThrowOnError>({
+    url: '/api/v1/actions/{id}/approve',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Release an approved internal plan or prepare an approved operator handoff
+ *
+ * Execution is idempotent. Operator handoffs never contact an external system or person.
+ */
+export const executeAction = <ThrowOnError extends boolean = false>(options: Options<ExecuteActionData, ThrowOnError>): RequestResult<ExecuteActionResponses, ExecuteActionErrors, ThrowOnError> => (options.client ?? client).post<ExecuteActionResponses, ExecuteActionErrors, ThrowOnError>({ url: '/api/v1/actions/{id}/execute', ...options });
+
+/**
+ * Edit an action payload and invalidate any earlier approval
+ */
+export const updateActionPayload = <ThrowOnError extends boolean = false>(options: Options<UpdateActionPayloadData, ThrowOnError>): RequestResult<UpdateActionPayloadResponses, UpdateActionPayloadErrors, ThrowOnError> => (options.client ?? client).put<UpdateActionPayloadResponses, UpdateActionPayloadErrors, ThrowOnError>({
+    url: '/api/v1/actions/{id}/payload',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Reject the exact current action payload
+ */
+export const rejectAction = <ThrowOnError extends boolean = false>(options: Options<RejectActionData, ThrowOnError>): RequestResult<RejectActionResponses, RejectActionErrors, ThrowOnError> => (options.client ?? client).post<RejectActionResponses, RejectActionErrors, ThrowOnError>({
+    url: '/api/v1/actions/{id}/reject',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * Get one candidate field
@@ -90,9 +133,24 @@ export const resolveCandidateField = <ThrowOnError extends boolean = false>(opti
 export const getDecisionPackage = <ThrowOnError extends boolean = false>(options: Options<GetDecisionPackageData, ThrowOnError>): RequestResult<GetDecisionPackageResponses, GetDecisionPackageErrors, ThrowOnError> => (options.client ?? client).get<GetDecisionPackageResponses, GetDecisionPackageErrors, ThrowOnError>({ url: '/api/v1/decision-packages/{id}', ...options });
 
 /**
+ * Review exact action payloads, decisions, and receipts
+ */
+export const getActionCenter = <ThrowOnError extends boolean = false>(options: Options<GetActionCenterData, ThrowOnError>): RequestResult<GetActionCenterResponses, GetActionCenterErrors, ThrowOnError> => (options.client ?? client).get<GetActionCenterResponses, GetActionCenterErrors, ThrowOnError>({ url: '/api/v1/decision-packages/{id}/action-center', ...options });
+
+/**
+ * Prepare controlled actions from an immutable decision package
+ */
+export const prepareActionCenter = <ThrowOnError extends boolean = false>(options: Options<PrepareActionCenterData, ThrowOnError>): RequestResult<PrepareActionCenterResponses, PrepareActionCenterErrors, ThrowOnError> => (options.client ?? client).post<PrepareActionCenterResponses, PrepareActionCenterErrors, ThrowOnError>({ url: '/api/v1/decision-packages/{id}/action-center', ...options });
+
+/**
  * Download an immutable HTML, PDF, or JSON package artifact
  */
 export const exportDecisionPackage = <ThrowOnError extends boolean = false>(options: Options<ExportDecisionPackageData, ThrowOnError>): RequestResult<ExportDecisionPackageResponses, ExportDecisionPackageErrors, ThrowOnError> => (options.client ?? client).get<ExportDecisionPackageResponses, ExportDecisionPackageErrors, ThrowOnError>({ url: '/api/v1/decision-packages/{id}/exports/{format}', ...options });
+
+/**
+ * Download the exact approved operator handoff
+ */
+export const downloadActionHandoff = <ThrowOnError extends boolean = false>(options: Options<DownloadActionHandoffData, ThrowOnError>): RequestResult<DownloadActionHandoffResponses, DownloadActionHandoffErrors, ThrowOnError> => (options.client ?? client).get<DownloadActionHandoffResponses, DownloadActionHandoffErrors, ThrowOnError>({ url: '/api/v1/execution-attempts/{id}/handoff', ...options });
 
 /**
  * Add a candidate field

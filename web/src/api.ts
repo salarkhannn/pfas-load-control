@@ -1,6 +1,7 @@
 import { client } from '@/client/client.gen';
 import {
   classifyLabReport,
+  approveAction,
   confirmFieldBoundary,
   confirmFieldParcel,
   confirmLabReport,
@@ -10,6 +11,7 @@ import {
   createDecisionPackage,
   createPlacementEvaluation,
   createReadinessRun,
+  executeAction,
   createPfasResponse,
   getFieldContext,
   getLatestDecisionPackage,
@@ -20,17 +22,21 @@ import {
   getLatestPlacementEvaluation,
   getLatestPfasResponse,
   getLatestResponseFacilityLocation,
+  getActionCenter,
   getPhysicalEvaluation,
   getPolicyClassification,
   getPfasResponse,
   getReadinessRun,
   importCandidateFields,
+  prepareActionCenter,
+  rejectAction,
   resolveCandidateField,
   resolveResponseFacilityLocation,
   selectFieldLocation,
   setFieldGeometry,
   startPhysicalEvaluation,
   updateFieldDetails,
+  updateActionPayload,
   uploadLabReport,
 } from '@/client/sdk.gen';
 import type {
@@ -51,6 +57,10 @@ import type {
   Run,
   FacilityLocation,
   ResponseRun,
+  Center,
+  ControlledAction,
+  DecisionInputWritable,
+  UpdatePayloadInputWritable,
 } from '@/client/types.gen';
 
 const baseUrl = (import.meta.env.VITE_API_URL ?? 'http://localhost:8080').replace(/\/$/, '');
@@ -393,6 +403,87 @@ export async function downloadDecisionPackage(
   if (!response.ok) throw new Error('The package export could not be downloaded.');
   const disposition = response.headers.get('Content-Disposition') ?? '';
   const filename = disposition.match(/filename="?([^";]+)"?/i)?.[1] ?? `pfas-decision-package.${format}`;
+  const url = URL.createObjectURL(await response.blob());
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = filename;
+  document.body.append(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
+}
+
+export async function loadActionCenter(
+  workspaceKey: string,
+  packageId: string,
+  signal?: AbortSignal,
+): Promise<Center | null> {
+  const result = await getActionCenter({ headers: workspaceHeaders(workspaceKey), path: { id: packageId }, signal });
+  if (result.data) return result.data;
+  throwIfAborted(signal);
+  if (result.response?.status === 404) return null;
+  throw apiError(result.error, 'The approval workspace could not be loaded.');
+}
+
+export async function createActionCenter(workspaceKey: string, packageId: string): Promise<Center> {
+  const result = await prepareActionCenter({ headers: workspaceHeaders(workspaceKey), path: { id: packageId } });
+  if (result.data) return result.data;
+  throw apiError(result.error, 'The approval workspace could not be prepared.');
+}
+
+export async function saveActionPayload(
+  workspaceKey: string,
+  actionId: string,
+  body: UpdatePayloadInputWritable,
+): Promise<ControlledAction> {
+  const result = await updateActionPayload({ headers: workspaceHeaders(workspaceKey), path: { id: actionId }, body });
+  if (result.data) return result.data;
+  throw apiError(result.error, 'The action payload could not be saved.');
+}
+
+export async function approveExactAction(
+  workspaceKey: string,
+  actionId: string,
+  body: DecisionInputWritable,
+): Promise<ControlledAction> {
+  const result = await approveAction({ headers: workspaceHeaders(workspaceKey), path: { id: actionId }, body });
+  if (result.data) return result.data;
+  throw apiError(result.error, 'The action could not be approved.');
+}
+
+export async function rejectExactAction(
+  workspaceKey: string,
+  actionId: string,
+  body: DecisionInputWritable,
+): Promise<ControlledAction> {
+  const result = await rejectAction({ headers: workspaceHeaders(workspaceKey), path: { id: actionId }, body });
+  if (result.data) return result.data;
+  throw apiError(result.error, 'The action could not be rejected.');
+}
+
+export async function executeApprovedAction(
+  workspaceKey: string,
+  actionId: string,
+  idempotencyKey: string,
+): Promise<ControlledAction> {
+  const result = await executeAction({
+    headers: { ...workspaceHeaders(workspaceKey), 'Idempotency-Key': idempotencyKey },
+    path: { id: actionId },
+  });
+  if (result.data) return result.data;
+  throw apiError(result.error, 'The approved action could not be completed.');
+}
+
+export async function downloadActionHandoffFile(
+  workspaceKey: string,
+  executionId: string,
+): Promise<void> {
+  const response = await fetch(`${baseUrl}/api/v1/execution-attempts/${executionId}/handoff`, {
+    headers: workspaceHeaders(workspaceKey),
+  });
+  if (!response.ok) throw new Error('The operator handoff could not be downloaded.');
+  const disposition = response.headers.get('Content-Disposition') ?? '';
+  const filename = disposition.match(/filename="?([^";]+)"?/i)?.[1] ?? 'pfas-action-handoff.json';
   const url = URL.createObjectURL(await response.blob());
   const anchor = document.createElement('a');
   anchor.href = url;
