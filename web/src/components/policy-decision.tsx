@@ -2,6 +2,8 @@ import { RiArrowLeftLine, RiCheckLine, RiExternalLinkLine } from '@remixicon/rea
 
 import type { Decision } from '@/client/types.gen';
 import { FieldWorkspace } from '@/components/field-workspace';
+import { ResponseWorkspace } from '@/components/response-workspace';
+import { DecisionPackageWorkspace } from '@/components/decision-package-workspace';
 import * as Button from '@/components/ui/button';
 
 export function PolicyDecisionView({ decision, onNewReport, onReviewEvidence }: {
@@ -85,7 +87,9 @@ export function PolicyDecisionView({ decision, onNewReport, onReviewEvidence }: 
         </div>
       </details>
 
-      {canScreenFields ? <FieldWorkspace facilityName={decision.facilityName} /> : null}
+      {decision.tier === 'ELEVATED' || decision.tier === 'PROHIBITED' ? <ResponseWorkspace key={`response-${decision.id}`} decision={decision} /> : null}
+      {canScreenFields ? <FieldWorkspace key={decision.id} decision={decision} /> : null}
+      <DecisionPackageWorkspace key={`package-${decision.id}`} decision={decision} />
     </section>
   );
 }

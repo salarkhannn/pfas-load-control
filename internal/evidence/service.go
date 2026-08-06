@@ -9,7 +9,6 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -376,13 +375,4 @@ func stringValue(value *string) string {
 		return ""
 	}
 	return *value
-}
-
-func sortedKeys[V any](values map[string]V) []string {
-	keys := make([]string, 0, len(values))
-	for key := range values {
-		keys = append(keys, key)
-	}
-	sort.Strings(keys)
-	return keys
 }

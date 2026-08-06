@@ -1,21 +1,32 @@
 import { client } from '@/client/client.gen';
 import {
   classifyLabReport,
+  confirmFieldBoundary,
   confirmFieldParcel,
   confirmLabReport,
+  confirmResponseFacilityLocation,
   correctLabReport,
   createCandidateField,
+  createDecisionPackage,
+  createPlacementEvaluation,
   createReadinessRun,
+  createPfasResponse,
   getFieldContext,
+  getLatestDecisionPackage,
   getLabIntakeContext,
   getLabReport,
   getLatestReadinessRun,
   getLatestPhysicalEvaluation,
+  getLatestPlacementEvaluation,
+  getLatestPfasResponse,
+  getLatestResponseFacilityLocation,
   getPhysicalEvaluation,
   getPolicyClassification,
+  getPfasResponse,
   getReadinessRun,
   importCandidateFields,
   resolveCandidateField,
+  resolveResponseFacilityLocation,
   selectFieldLocation,
   setFieldGeometry,
   startPhysicalEvaluation,
@@ -27,14 +38,19 @@ import type {
   CorrectionWritable,
   CreateInputWritable,
   Decision,
+  DecisionPackage,
   DetailsInputWritable,
   ErrorModel,
   Evaluation,
   Field,
   FieldContext,
   Import,
+  PlacementPlan,
+  PlanInputWritable,
   Report,
   Run,
+  FacilityLocation,
+  ResponseRun,
 } from '@/client/types.gen';
 
 const baseUrl = (import.meta.env.VITE_API_URL ?? 'http://localhost:8080').replace(/\/$/, '');
@@ -180,6 +196,12 @@ export async function saveFieldGeometry(workspaceKey: string, id: string, geojso
   throw apiError(result.error, 'The field boundary could not be saved.');
 }
 
+export async function confirmUploadedBoundary(workspaceKey: string, id: string): Promise<Field> {
+  const result = await confirmFieldBoundary({ headers: workspaceHeaders(workspaceKey), path: { id } });
+  if (result.data) return result.data;
+  throw apiError(result.error, 'The field boundary could not be confirmed.');
+}
+
 export async function saveFieldDetails(workspaceKey: string, id: string, body: DetailsInputWritable): Promise<Field> {
   const result = await updateFieldDetails({ headers: workspaceHeaders(workspaceKey), path: { id }, body });
   if (result.data) return result.data;
@@ -232,6 +254,153 @@ export async function startFieldPhysicalEvaluation(workspaceKey: string, fieldId
   });
   if (result.data) return result.data.evaluation;
   throw apiError(result.error, 'The physical conditions could not be checked.');
+}
+
+export async function loadLatestPlacementPlan(
+  workspaceKey: string,
+  decisionId: string,
+  signal?: AbortSignal,
+): Promise<PlacementPlan | null> {
+  const result = await getLatestPlacementEvaluation({
+    headers: workspaceHeaders(workspaceKey), path: { id: decisionId }, signal,
+  });
+  if (result.data) return result.data;
+  throwIfAborted(signal);
+  if (result.response?.status === 404) return null;
+  throw apiError(result.error, 'The draft placement plan could not be loaded.');
+}
+
+export async function createPlacementPlan(
+  workspaceKey: string,
+  decisionId: string,
+  body: PlanInputWritable,
+): Promise<PlacementPlan> {
+  const result = await createPlacementEvaluation({
+    headers: workspaceHeaders(workspaceKey), path: { id: decisionId }, body,
+  });
+  if (result.data) return result.data.evaluation;
+  throw apiError(result.error, 'The fields could not be compared.');
+}
+
+export async function loadLatestResponseLocation(
+  workspaceKey: string,
+  decisionId: string,
+  signal?: AbortSignal,
+): Promise<FacilityLocation | null> {
+  const result = await getLatestResponseFacilityLocation({
+    headers: workspaceHeaders(workspaceKey), path: { id: decisionId }, signal,
+  });
+  if (result.data) return result.data;
+  throwIfAborted(signal);
+  if (result.response?.status === 404) return null;
+  throw apiError(result.error, 'The treatment plant location could not be loaded.');
+}
+
+export async function resolveTreatmentPlantLocation(
+  workspaceKey: string,
+  decisionId: string,
+  body: { kind: 'address' | 'coord'; input: string },
+): Promise<FacilityLocation> {
+  const result = await resolveResponseFacilityLocation({
+    headers: workspaceHeaders(workspaceKey), path: { id: decisionId }, body,
+  });
+  if (result.data) return result.data;
+  throw apiError(result.error, 'The treatment plant location could not be found.');
+}
+
+export async function confirmTreatmentPlantLocation(
+  workspaceKey: string,
+  locationId: string,
+): Promise<FacilityLocation> {
+  const result = await confirmResponseFacilityLocation({
+    headers: workspaceHeaders(workspaceKey), path: { id: locationId },
+  });
+  if (result.data) return result.data;
+  throw apiError(result.error, 'The treatment plant location could not be confirmed.');
+}
+
+export async function loadLatestPfasResponse(
+  workspaceKey: string,
+  decisionId: string,
+  signal?: AbortSignal,
+): Promise<ResponseRun | null> {
+  const result = await getLatestPfasResponse({
+    headers: workspaceHeaders(workspaceKey), path: { id: decisionId }, signal,
+  });
+  if (result.data) return result.data;
+  throwIfAborted(signal);
+  if (result.response?.status === 404) return null;
+  throw apiError(result.error, 'The required response could not be loaded.');
+}
+
+export async function loadPfasResponse(
+  workspaceKey: string,
+  runId: string,
+  signal?: AbortSignal,
+): Promise<ResponseRun> {
+  const result = await getPfasResponse({
+    headers: workspaceHeaders(workspaceKey), path: { id: runId }, signal,
+  });
+  if (result.data) return result.data;
+  throwIfAborted(signal);
+  throw apiError(result.error, 'The required response could not be refreshed.');
+}
+
+export async function startPfasResponse(
+  workspaceKey: string,
+  decisionId: string,
+  facilityLocationId: string,
+): Promise<ResponseRun> {
+  const result = await createPfasResponse({
+    headers: workspaceHeaders(workspaceKey),
+    path: { id: decisionId },
+    body: { facilityLocationId },
+  });
+  if (result.data) return result.data.run;
+  throw apiError(result.error, 'The required response could not be prepared.');
+}
+
+export async function loadLatestDecisionPackage(
+  workspaceKey: string,
+  decisionId: string,
+  signal?: AbortSignal,
+): Promise<DecisionPackage | null> {
+  const result = await getLatestDecisionPackage({
+    headers: workspaceHeaders(workspaceKey), path: { id: decisionId }, signal,
+  });
+  if (result.data) return result.data;
+  throwIfAborted(signal);
+  if (result.response?.status === 404) return null;
+  throw apiError(result.error, 'The decision package could not be loaded.');
+}
+
+export async function generateDecisionPackage(workspaceKey: string, decisionId: string): Promise<DecisionPackage> {
+  const result = await createDecisionPackage({
+    headers: workspaceHeaders(workspaceKey), path: { id: decisionId },
+  });
+  if (result.data) return result.data.package;
+  throw apiError(result.error, 'The decision package could not be generated.');
+}
+
+export async function downloadDecisionPackage(
+  workspaceKey: string,
+  packageId: string,
+  format: 'html' | 'pdf' | 'json',
+): Promise<void> {
+  const response = await fetch(`${baseUrl}/api/v1/decision-packages/${packageId}/exports/${format}`, {
+    headers: workspaceHeaders(workspaceKey),
+  });
+  if (!response.ok) throw new Error('The package export could not be downloaded.');
+  const disposition = response.headers.get('Content-Disposition') ?? '';
+  const filename = disposition.match(/filename="?([^";]+)"?/i)?.[1] ?? `pfas-decision-package.${format}`;
+  const url = URL.createObjectURL(await response.blob());
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = filename;
+  document.body.append(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
 }
 
 function workspaceHeaders(workspaceKey: string): { 'X-Workspace-Key': string } {

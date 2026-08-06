@@ -204,8 +204,9 @@ func (s *Service) Get(ctx context.Context, workspaceKey, reportID string) (Decis
 	}
 	maximumRate, prohibitedActions := ruleEffects(pack, record.MatchedRuleID)
 	return Decision{
-		ID: record.ID.String(), ReportID: record.ReportID.String(), ReportVersion: int(record.ReportVersion),
+		ID: record.ID.String(), ReportID: record.ReportID.String(), BatchID: record.BatchID.String(), ReportVersion: int(record.ReportVersion),
 		FacilityName: record.FacilityName, BatchIdentifier: record.BatchIdentifier, Jurisdiction: record.Jurisdiction,
+		WetMassKg: record.WetMassKg, PercentSolids: record.PercentSolids,
 		Tier: Tier(record.Tier), Explanation: record.Explanation, MatchedRuleID: record.MatchedRuleID,
 		BlockingReason: record.BlockingReason, Analytes: analytes, Requirements: requirements, RulePack: pack,
 		MaximumApplicationRateDryTonsPerAcre: maximumRate, ProhibitedActions: prohibitedActions,

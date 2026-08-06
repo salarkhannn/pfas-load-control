@@ -57,10 +57,11 @@ const boundedField = {
   status: 'NEEDS_DETAILS',
   geometry: {
     version: 1,
-    source: 'MIREYE_PARCEL_CONFIRMED',
+    source: 'MIREYE_PARCEL',
     geojson: resolvedField.location.parcel.geometry,
     areaAcres: '42.5',
     hash: 'b'.repeat(64),
+    confirmed: true,
     confirmedAt: '2026-08-05T08:02:00Z',
   },
   gaps: resolvedField.gaps.filter((item) => item.code !== 'GEOMETRY_UNCONFIRMED'),
@@ -75,6 +76,36 @@ const readyField = {
     agronomicRateDryTonsPerAcre: '2', priorLoadingDryTons: '0', cropOrUse: 'Corn',
   },
   gaps: [],
+  updatedAt: '2026-08-05T08:03:00Z',
+};
+
+const uploadedField = {
+  ...baseField,
+  name: '06S05E18-DW01',
+  locatorKind: 'GEOJSON',
+  locatorInput: 'Uploaded field boundary',
+  status: 'NEEDS_GEOMETRY',
+  geometry: {
+    version: 1,
+    source: 'UPLOADED_GEOJSON',
+    geojson: resolvedField.location.parcel.geometry,
+    areaAcres: '47.741295983',
+    hash: 'c'.repeat(64),
+    confirmed: false,
+  },
+  gaps: baseField.gaps.filter((item) => item.code !== 'LOCATION_UNRESOLVED'),
+  updatedAt: '2026-08-05T08:02:00Z',
+};
+
+const confirmedUploadedField = {
+  ...uploadedField,
+  status: 'NEEDS_DETAILS',
+  geometry: {
+    ...uploadedField.geometry,
+    confirmed: true,
+    confirmedAt: '2026-08-05T08:03:00Z',
+  },
+  gaps: uploadedField.gaps.filter((item) => item.code !== 'GEOMETRY_UNCONFIRMED'),
   updatedAt: '2026-08-05T08:03:00Z',
 };
 
@@ -105,6 +136,34 @@ test('adds, resolves, confirms, and completes a candidate field', async ({ page 
 
   await expect(page.getByText('Ready for screening')).toBeVisible();
   await expect(page.locator('.field-record__header').getByText('Ready', { exact: true })).toBeVisible();
+});
+
+test('keeps an uploaded boundary estimated until the operator confirms it', async ({ page }) => {
+  await openBatchWorkspace(page);
+  await mockUploadedBoundaryAPI(page);
+  await page.goto('/');
+
+  await page.getByLabel('Field name').fill('06S05E18-DW01');
+  await page.getByLabel('Boundary file', { exact: true }).check();
+  await page.getByLabel(/Choose a boundary file/).setInputFiles({
+    name: 'estimated-boundary.geojson',
+    mimeType: 'application/geo+json',
+    buffer: Buffer.from(JSON.stringify(resolvedField.location.parcel.geometry)),
+  });
+  await page.getByRole('button', { name: 'Add field' }).click();
+
+  await expect(page.getByText('47.74 acres uploaded')).toBeVisible();
+  await expect(page.getByText('Confirm the application field')).toBeVisible();
+  await expect(page.locator('.field-record__header').getByText('Boundary needed', { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Check physical conditions' })).toHaveCount(0);
+
+  await page.getByRole('button', { name: 'Confirm actual boundary' }).click();
+  await expect(page.getByText('Boundary confirmed', { exact: true })).toBeVisible();
+  await expect(page.getByText('Uploaded outline confirmed by the operator')).toBeVisible();
+
+  await page.setViewportSize({ width: 320, height: 900 });
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
 });
 
 test('checks a ready field and keeps every conclusion linked to its evidence', async ({ page }) => {
@@ -143,6 +202,37 @@ test('keeps the field ledger usable at 320px', async ({ page }) => {
   expect(overflow).toBeLessThanOrEqual(0);
 });
 
+test('compares eligible fields and preserves an exact draft allocation', async ({ page }) => {
+  await openBatchWorkspace(page);
+  await mockFieldsAPI(page, [readyField]);
+  await mockPlacementAPI(page);
+  await page.goto('/');
+
+  await page.getByRole('button', { name: 'Build draft plan' }).click();
+  await expect(page.getByRole('heading', { name: 'The batch fits' })).toBeVisible();
+  await expect(page.getByText('North 40', { exact: true }).last()).toBeVisible();
+  await expect(page.getByLabel('Proposed allocation').getByText('11.023 dry tons', { exact: true })).toBeVisible();
+  await page.locator('.placement-field-row summary').click();
+  await expect(page.getByText('Required field and evidence gates are complete.')).toBeVisible();
+  await expect(page.getByRole('link', { name: /EPA draft guidance/ }).first()).toHaveAttribute('href', /epa\.gov/);
+
+  await page.setViewportSize({ width: 320, height: 900 });
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+});
+
+test('explains when field review, rather than capacity, prevents allocation', async ({ page }) => {
+  await openBatchWorkspace(page);
+  await mockFieldsAPI(page, [readyField]);
+  await mockPlacementAPI(page, 'REVIEW_REQUIRED');
+  await page.goto('/');
+
+  await page.getByRole('button', { name: 'Build draft plan' }).click();
+  await expect(page.getByRole('heading', { name: 'Field evidence needs review' })).toBeVisible();
+  await expect(page.getByText('No field is currently eligible to receive this batch.')).toBeVisible();
+  await expect(page.getByRole('heading', { name: /capacity is needed/i })).toHaveCount(0);
+});
+
 async function mockFieldsAPI(page: Page, initial: typeof baseField[] = []) {
   let fields = [...initial];
   await page.route('http://localhost:8080/api/v1/field-context', (route) => route.fulfill(json({ facilities: [facility], fields })));
@@ -162,6 +252,19 @@ async function mockFieldsAPI(page: Page, initial: typeof baseField[] = []) {
   await page.route(`http://localhost:8080/api/v1/candidate-fields/${baseField.id}/details`, (route) => {
     fields = [readyField];
     return route.fulfill(json(readyField));
+  });
+}
+
+async function mockUploadedBoundaryAPI(page: Page) {
+  let fields: typeof uploadedField[] = [];
+  await page.route('http://localhost:8080/api/v1/field-context', (route) => route.fulfill(json({ facilities: [facility], fields })));
+  await page.route(`http://localhost:8080/api/v1/facilities/${facility.id}/candidate-fields`, (route) => {
+    fields = [uploadedField];
+    return route.fulfill(json(uploadedField, 201));
+  });
+  await page.route(`http://localhost:8080/api/v1/candidate-fields/${baseField.id}/boundary-confirmation`, (route) => {
+    fields = [confirmedUploadedField];
+    return route.fulfill(json(confirmedUploadedField));
   });
 }
 
@@ -215,6 +318,45 @@ async function mockPhysicalEvidenceAPI(page: Page) {
   await page.route(`http://localhost:8080/api/v1/physical-evaluations/${evaluationId}`, (route) => route.fulfill(json(complete)));
 }
 
+async function mockPlacementAPI(page: Page, status: 'READY' | 'REVIEW_REQUIRED' = 'READY') {
+  const reviewRequired = status === 'REVIEW_REQUIRED';
+  const categories = [
+    vulnerability('WATER_RECEPTORS', 'Water receptors', reviewRequired ? 'HIGH' : 'LOW'),
+    vulnerability('SUBSURFACE_MOBILITY', 'Subsurface mobility', 'LOW'),
+    vulnerability('SURFACE_TRANSPORT', 'Surface transport', reviewRequired ? 'HIGH' : 'LOW'),
+    vulnerability('HUMAN_FOOD_EXPOSURE', 'Human and food exposure', 'MODERATE'),
+    vulnerability('DATA_UNCERTAINTY', 'Evidence uncertainty', reviewRequired ? 'HIGH' : 'LOW'),
+  ];
+  const plan = {
+    id: '49c45c39-cbde-4c7b-96c5-a7b27fa74a6b', decisionId: 'f224ca7c-3b2f-4f9e-b54b-f39aa12af183',
+    status, tier: 'STANDARD', configVersion: 'mi-pfas-field-comparison-2026.08.1',
+    configChecksum: 'd'.repeat(64), inputHash: 'e'.repeat(64), wetMassKg: '10000', percentSolids: '100',
+    batchDryTons: '11.023113', allocatedDryTons: reviewRequired ? '0' : '11.023113', unallocatedDryTons: reviewRequired ? '11.023113' : '0',
+    fields: [{
+      fieldId: readyField.id, fieldName: readyField.name, disposition: reviewRequired ? 'REVIEW_REQUIRED' : 'ELIGIBLE', rank: reviewRequired ? undefined : 1,
+      explanation: reviewRequired ? 'Critical physical evidence is incomplete or needs human review.' : 'Required field and evidence gates are complete.',
+      counterfactual: reviewRequired ? undefined : 'This field is preferred under the current confirmed evidence.',
+      highConcernCount: reviewRequired ? 3 : 0, moderateConcernCount: 1, dataGapCount: reviewRequired ? 1 : 0,
+      allowedRateDryTonsPerAcre: reviewRequired ? undefined : '2', availableCapacityDryTons: reviewRequired ? undefined : '85',
+      reasons: [reviewRequired ? 'Critical physical evidence is incomplete or needs human review.' : 'Required field and evidence gates are complete.'], categories,
+    }],
+    allocations: reviewRequired ? [] : [{ position: 1, fieldId: readyField.id, fieldName: readyField.name, dryTons: '11.023113', acres: '5.511557', rateDryTonsPerAcre: '2' }],
+    gaps: reviewRequired ? [{ code: 'FIELD_REVIEW_REQUIRED', detail: 'No field is currently eligible to receive this batch.', resolution: 'Resolve the listed field evidence, or add another approved field, then compare again.' }] : [],
+    createdAt: '2026-08-06T07:00:00Z',
+  };
+  await page.route('http://localhost:8080/api/v1/policy-decisions/*/placement/latest', (route) => route.fulfill(json({ detail: 'Placement plan not found.' }, 404)));
+  await page.route('http://localhost:8080/api/v1/policy-decisions/*/placement', (route) => route.fulfill(json({ evaluation: plan, created: true }, 201)));
+}
+
+function vulnerability(key: string, label: string, band: string) {
+  return {
+    key, label, band, explanation: `${label} evidence is suitable for comparison.`, components: [],
+    authorityType: 'DRAFT_GUIDANCE', sourceTitle: 'EPA draft guidance for reducing PFOA and PFOS risk in biosolids',
+    sourceUrl: 'https://www.epa.gov/system/files/documents/2026-06/draft-guidance-reducing-risk-pfoa-pfos-biosolids.pdf',
+    configVersion: 'mi-pfas-field-comparison-2026.08.1',
+  };
+}
+
 function fact(
   name: string,
   label: string,
@@ -246,7 +388,8 @@ async function openBatchWorkspace(page: Page) {
     pages: [], gaps: [], createdAt: '2026-08-05T07:00:00Z', updatedAt: '2026-08-05T07:01:00Z',
   };
   const decision = {
-    id: 'decision-id', reportId, reportVersion: 1, facilityName: facility.name, batchIdentifier: 'BATCH-42', jurisdiction: 'MI', tier: 'STANDARD',
+    id: 'f224ca7c-3b2f-4f9e-b54b-f39aa12af183', reportId, batchId: 'batch-id', reportVersion: 1, facilityName: facility.name, batchIdentifier: 'BATCH-42', jurisdiction: 'MI', tier: 'STANDARD',
+    wetMassKg: '10000', percentSolids: '100',
     explanation: 'PFOS and PFOA are both below 20 µg/kg dry weight.', matchedRuleId: 'MI-PFAS-STANDARD-BELOW-20', prohibitedActions: [],
     analytes: [
       { canonicalAnalyte: 'PFOS', resultText: '2.68', isNonDetect: false, normalizedValueUgKgDry: '2.68', sourcePage: 1 },
@@ -265,6 +408,7 @@ async function openBatchWorkspace(page: Page) {
   await page.route('http://localhost:8080/api/v1/lab-context', (route) => route.fulfill(json({ facilities: [facility], batches: [report.batch] })));
   await page.route(`http://localhost:8080/api/v1/lab-reports/${reportId}`, (route) => route.fulfill(json(report)));
   await page.route(`http://localhost:8080/api/v1/lab-reports/${reportId}/classification`, (route) => route.fulfill(json(decision)));
+  await page.route(`http://localhost:8080/api/v1/policy-decisions/${decision.id}/placement/latest`, (route) => route.fulfill(json({ detail: 'Placement plan not found.' }, 404)));
 }
 
 function gap(code: string, detail: string) {

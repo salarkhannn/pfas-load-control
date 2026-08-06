@@ -144,7 +144,9 @@ func (q *Queries) GetBatchPolicyDecisionByVersion(ctx context.Context, arg GetBa
 
 const getBatchPolicyDecisionForWorkspace = `-- name: GetBatchPolicyDecisionForWorkspace :one
 SELECT d.id, d.workspace_id, d.report_id, d.report_version_id, d.rule_pack_id, d.jurisdiction, d.tier, d.matched_rule_id, d.explanation, d.blocking_reason, d.input_hash, d.analyte_evidence, d.created_at, f.name AS facility_name, b.identifier AS batch_identifier,
-       v.version AS report_version
+       v.version AS report_version, b.id AS batch_id,
+       CAST(COALESCE(b.wet_mass_kg::text, '') AS text) AS wet_mass_kg,
+       CAST(COALESCE(b.percent_solids::text, '') AS text) AS percent_solids
 FROM pfas.batch_policy_decisions d
 JOIN pfas.lab_reports r ON r.id = d.report_id AND r.workspace_id = d.workspace_id
 JOIN pfas.facilities f ON f.id = r.facility_id AND f.workspace_id = r.workspace_id
@@ -181,6 +183,9 @@ type GetBatchPolicyDecisionForWorkspaceRow struct {
 	FacilityName    string             `json:"facility_name"`
 	BatchIdentifier string             `json:"batch_identifier"`
 	ReportVersion   int32              `json:"report_version"`
+	BatchID         uuid.UUID          `json:"batch_id"`
+	WetMassKg       string             `json:"wet_mass_kg"`
+	PercentSolids   string             `json:"percent_solids"`
 }
 
 func (q *Queries) GetBatchPolicyDecisionForWorkspace(ctx context.Context, arg GetBatchPolicyDecisionForWorkspaceParams) (GetBatchPolicyDecisionForWorkspaceRow, error) {
@@ -203,6 +208,9 @@ func (q *Queries) GetBatchPolicyDecisionForWorkspace(ctx context.Context, arg Ge
 		&i.FacilityName,
 		&i.BatchIdentifier,
 		&i.ReportVersion,
+		&i.BatchID,
+		&i.WetMassKg,
+		&i.PercentSolids,
 	)
 	return i, err
 }

@@ -55,6 +55,11 @@ RETURNING *;
 SELECT * FROM pfas.lab_reports
 WHERE workspace_id = $1 AND sha256 = $2;
 
+-- name: RetryFailedLabReport :execrows
+UPDATE pfas.lab_reports
+SET status = 'UPLOADED', failure_code = NULL, updated_at = now()
+WHERE id = $1 AND workspace_id = $2 AND status = 'FAILED';
+
 -- name: GetLabReportForWorkspace :one
 SELECT r.id, r.status, r.original_filename, r.media_type, r.size_bytes, r.sha256,
        r.current_version, r.failure_code, r.created_at, r.updated_at, r.confirmed_at,

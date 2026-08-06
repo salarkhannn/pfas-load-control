@@ -2,7 +2,7 @@
 
 import { type Client, type ClientMeta, formDataBodySerializer, type Options as Options2, type RequestResult, type TDataShape } from './client';
 import { client } from './client.gen';
-import type { ClassifyLabReportData, ClassifyLabReportErrors, ClassifyLabReportResponses, ConfirmFieldParcelData, ConfirmFieldParcelErrors, ConfirmFieldParcelResponses, ConfirmLabReportData, ConfirmLabReportErrors, ConfirmLabReportResponses, CorrectLabReportData, CorrectLabReportErrors, CorrectLabReportResponses, CreateCandidateFieldData, CreateCandidateFieldErrors, CreateCandidateFieldResponses, CreateReadinessRunData, CreateReadinessRunErrors, CreateReadinessRunResponses, GetActiveMichiganRulePackData, GetActiveMichiganRulePackErrors, GetActiveMichiganRulePackResponses, GetCandidateFieldData, GetCandidateFieldErrors, GetCandidateFieldResponses, GetFieldContextData, GetFieldContextErrors, GetFieldContextResponses, GetLabIntakeContextData, GetLabIntakeContextErrors, GetLabIntakeContextResponses, GetLabReportContentData, GetLabReportContentErrors, GetLabReportContentResponses, GetLabReportData, GetLabReportErrors, GetLabReportResponses, GetLatestPhysicalEvaluationData, GetLatestPhysicalEvaluationErrors, GetLatestPhysicalEvaluationResponses, GetLatestReadinessRunData, GetLatestReadinessRunErrors, GetLatestReadinessRunResponses, GetPhysicalEvaluationData, GetPhysicalEvaluationErrors, GetPhysicalEvaluationResponses, GetPolicyClassificationData, GetPolicyClassificationErrors, GetPolicyClassificationResponses, GetReadinessRunData, GetReadinessRunErrors, GetReadinessRunResponses, HealthLiveData, HealthLiveErrors, HealthLiveResponses, HealthReadyData, HealthReadyErrors, HealthReadyResponses, ImportCandidateFieldsData, ImportCandidateFieldsErrors, ImportCandidateFieldsResponses, ResolveCandidateFieldData, ResolveCandidateFieldErrors, ResolveCandidateFieldResponses, SelectFieldLocationData, SelectFieldLocationErrors, SelectFieldLocationResponses, SetFieldGeometryData, SetFieldGeometryErrors, SetFieldGeometryResponses, StartPhysicalEvaluationData, StartPhysicalEvaluationErrors, StartPhysicalEvaluationResponses, UpdateFieldDetailsData, UpdateFieldDetailsErrors, UpdateFieldDetailsResponses, UploadLabReportData, UploadLabReportErrors, UploadLabReportResponses } from './types.gen';
+import type { ClassifyLabReportData, ClassifyLabReportErrors, ClassifyLabReportResponses, ConfirmFieldBoundaryData, ConfirmFieldBoundaryErrors, ConfirmFieldBoundaryResponses, ConfirmFieldParcelData, ConfirmFieldParcelErrors, ConfirmFieldParcelResponses, ConfirmLabReportData, ConfirmLabReportErrors, ConfirmLabReportResponses, ConfirmResponseFacilityLocationData, ConfirmResponseFacilityLocationErrors, ConfirmResponseFacilityLocationResponses, CorrectLabReportData, CorrectLabReportErrors, CorrectLabReportResponses, CreateCandidateFieldData, CreateCandidateFieldErrors, CreateCandidateFieldResponses, CreateDecisionPackageData, CreateDecisionPackageErrors, CreateDecisionPackageResponses, CreatePfasResponseData, CreatePfasResponseErrors, CreatePfasResponseResponses, CreatePlacementEvaluationData, CreatePlacementEvaluationErrors, CreatePlacementEvaluationResponses, CreateReadinessRunData, CreateReadinessRunErrors, CreateReadinessRunResponses, ExportDecisionPackageData, ExportDecisionPackageErrors, ExportDecisionPackageResponses, GetActiveMichiganRulePackData, GetActiveMichiganRulePackErrors, GetActiveMichiganRulePackResponses, GetCandidateFieldData, GetCandidateFieldErrors, GetCandidateFieldResponses, GetDecisionPackageData, GetDecisionPackageErrors, GetDecisionPackageResponses, GetFieldContextData, GetFieldContextErrors, GetFieldContextResponses, GetLabIntakeContextData, GetLabIntakeContextErrors, GetLabIntakeContextResponses, GetLabReportContentData, GetLabReportContentErrors, GetLabReportContentResponses, GetLabReportData, GetLabReportErrors, GetLabReportResponses, GetLatestDecisionPackageData, GetLatestDecisionPackageErrors, GetLatestDecisionPackageResponses, GetLatestPfasResponseData, GetLatestPfasResponseErrors, GetLatestPfasResponseResponses, GetLatestPhysicalEvaluationData, GetLatestPhysicalEvaluationErrors, GetLatestPhysicalEvaluationResponses, GetLatestPlacementEvaluationData, GetLatestPlacementEvaluationErrors, GetLatestPlacementEvaluationResponses, GetLatestReadinessRunData, GetLatestReadinessRunErrors, GetLatestReadinessRunResponses, GetLatestResponseFacilityLocationData, GetLatestResponseFacilityLocationErrors, GetLatestResponseFacilityLocationResponses, GetPfasResponseData, GetPfasResponseErrors, GetPfasResponseResponses, GetPhysicalEvaluationData, GetPhysicalEvaluationErrors, GetPhysicalEvaluationResponses, GetPolicyClassificationData, GetPolicyClassificationErrors, GetPolicyClassificationResponses, GetReadinessRunData, GetReadinessRunErrors, GetReadinessRunResponses, HealthLiveData, HealthLiveErrors, HealthLiveResponses, HealthReadyData, HealthReadyErrors, HealthReadyResponses, ImportCandidateFieldsData, ImportCandidateFieldsErrors, ImportCandidateFieldsResponses, ResolveCandidateFieldData, ResolveCandidateFieldErrors, ResolveCandidateFieldResponses, ResolveResponseFacilityLocationData, ResolveResponseFacilityLocationErrors, ResolveResponseFacilityLocationResponses, SelectFieldLocationData, SelectFieldLocationErrors, SelectFieldLocationResponses, SetFieldGeometryData, SetFieldGeometryErrors, SetFieldGeometryResponses, StartPhysicalEvaluationData, StartPhysicalEvaluationErrors, StartPhysicalEvaluationResponses, UpdateFieldDetailsData, UpdateFieldDetailsErrors, UpdateFieldDetailsResponses, UploadLabReportData, UploadLabReportErrors, UploadLabReportResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -24,6 +24,11 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
 export const getCandidateField = <ThrowOnError extends boolean = false>(options: Options<GetCandidateFieldData, ThrowOnError>): RequestResult<GetCandidateFieldResponses, GetCandidateFieldErrors, ThrowOnError> => (options.client ?? client).get<GetCandidateFieldResponses, GetCandidateFieldErrors, ThrowOnError>({ url: '/api/v1/candidate-fields/{id}', ...options });
 
 /**
+ * Confirm an uploaded boundary as the actual application field
+ */
+export const confirmFieldBoundary = <ThrowOnError extends boolean = false>(options: Options<ConfirmFieldBoundaryData, ThrowOnError>): RequestResult<ConfirmFieldBoundaryResponses, ConfirmFieldBoundaryErrors, ThrowOnError> => (options.client ?? client).post<ConfirmFieldBoundaryResponses, ConfirmFieldBoundaryErrors, ThrowOnError>({ url: '/api/v1/candidate-fields/{id}/boundary-confirmation', ...options });
+
+/**
  * Update field operating details
  */
 export const updateFieldDetails = <ThrowOnError extends boolean = false>(options: Options<UpdateFieldDetailsData, ThrowOnError>): RequestResult<UpdateFieldDetailsResponses, UpdateFieldDetailsErrors, ThrowOnError> => (options.client ?? client).put<UpdateFieldDetailsResponses, UpdateFieldDetailsErrors, ThrowOnError>({
@@ -36,7 +41,7 @@ export const updateFieldDetails = <ThrowOnError extends boolean = false>(options
 });
 
 /**
- * Set the actual field boundary
+ * Upload a field boundary for review
  */
 export const setFieldGeometry = <ThrowOnError extends boolean = false>(options: Options<SetFieldGeometryData, ThrowOnError>): RequestResult<SetFieldGeometryResponses, SetFieldGeometryErrors, ThrowOnError> => (options.client ?? client).put<SetFieldGeometryResponses, SetFieldGeometryErrors, ThrowOnError>({
     url: '/api/v1/candidate-fields/{id}/geometry',
@@ -80,6 +85,16 @@ export const getLatestPhysicalEvaluation = <ThrowOnError extends boolean = false
 export const resolveCandidateField = <ThrowOnError extends boolean = false>(options: Options<ResolveCandidateFieldData, ThrowOnError>): RequestResult<ResolveCandidateFieldResponses, ResolveCandidateFieldErrors, ThrowOnError> => (options.client ?? client).post<ResolveCandidateFieldResponses, ResolveCandidateFieldErrors, ThrowOnError>({ url: '/api/v1/candidate-fields/{id}/resolution', ...options });
 
 /**
+ * Get one immutable decision package
+ */
+export const getDecisionPackage = <ThrowOnError extends boolean = false>(options: Options<GetDecisionPackageData, ThrowOnError>): RequestResult<GetDecisionPackageResponses, GetDecisionPackageErrors, ThrowOnError> => (options.client ?? client).get<GetDecisionPackageResponses, GetDecisionPackageErrors, ThrowOnError>({ url: '/api/v1/decision-packages/{id}', ...options });
+
+/**
+ * Download an immutable HTML, PDF, or JSON package artifact
+ */
+export const exportDecisionPackage = <ThrowOnError extends boolean = false>(options: Options<ExportDecisionPackageData, ThrowOnError>): RequestResult<ExportDecisionPackageResponses, ExportDecisionPackageErrors, ThrowOnError> => (options.client ?? client).get<ExportDecisionPackageResponses, ExportDecisionPackageErrors, ThrowOnError>({ url: '/api/v1/decision-packages/{id}/exports/{format}', ...options });
+
+/**
  * Add a candidate field
  */
 export const createCandidateField = <ThrowOnError extends boolean = false>(options: Options<CreateCandidateFieldData, ThrowOnError>): RequestResult<CreateCandidateFieldResponses, CreateCandidateFieldErrors, ThrowOnError> => (options.client ?? client).post<CreateCandidateFieldResponses, CreateCandidateFieldErrors, ThrowOnError>({
@@ -103,6 +118,11 @@ export const importCandidateFields = <ThrowOnError extends boolean = false>(opti
         ...options.headers
     }
 });
+
+/**
+ * Confirm the treatment plant location
+ */
+export const confirmResponseFacilityLocation = <ThrowOnError extends boolean = false>(options: Options<ConfirmResponseFacilityLocationData, ThrowOnError>): RequestResult<ConfirmResponseFacilityLocationResponses, ConfirmResponseFacilityLocationErrors, ThrowOnError> => (options.client ?? client).post<ConfirmResponseFacilityLocationResponses, ConfirmResponseFacilityLocationErrors, ThrowOnError>({ url: '/api/v1/facility-locations/{id}/confirmation', ...options });
 
 /**
  * Get facilities and candidate fields
@@ -170,6 +190,67 @@ export const correctLabReport = <ThrowOnError extends boolean = false>(options: 
 export const getPhysicalEvaluation = <ThrowOnError extends boolean = false>(options: Options<GetPhysicalEvaluationData, ThrowOnError>): RequestResult<GetPhysicalEvaluationResponses, GetPhysicalEvaluationErrors, ThrowOnError> => (options.client ?? client).get<GetPhysicalEvaluationResponses, GetPhysicalEvaluationErrors, ThrowOnError>({ url: '/api/v1/physical-evaluations/{id}', ...options });
 
 /**
+ * Freeze the current decision, evidence, and proposed actions
+ */
+export const createDecisionPackage = <ThrowOnError extends boolean = false>(options: Options<CreateDecisionPackageData, ThrowOnError>): RequestResult<CreateDecisionPackageResponses, CreateDecisionPackageErrors, ThrowOnError> => (options.client ?? client).post<CreateDecisionPackageResponses, CreateDecisionPackageErrors, ThrowOnError>({ url: '/api/v1/policy-decisions/{id}/decision-packages', ...options });
+
+/**
+ * Get the latest decision package
+ */
+export const getLatestDecisionPackage = <ThrowOnError extends boolean = false>(options: Options<GetLatestDecisionPackageData, ThrowOnError>): RequestResult<GetLatestDecisionPackageResponses, GetLatestDecisionPackageErrors, ThrowOnError> => (options.client ?? client).get<GetLatestDecisionPackageResponses, GetLatestDecisionPackageErrors, ThrowOnError>({ url: '/api/v1/policy-decisions/{id}/decision-packages/latest', ...options });
+
+/**
+ * Resolve the treatment plant location
+ */
+export const resolveResponseFacilityLocation = <ThrowOnError extends boolean = false>(options: Options<ResolveResponseFacilityLocationData, ThrowOnError>): RequestResult<ResolveResponseFacilityLocationResponses, ResolveResponseFacilityLocationErrors, ThrowOnError> => (options.client ?? client).post<ResolveResponseFacilityLocationResponses, ResolveResponseFacilityLocationErrors, ThrowOnError>({
+    url: '/api/v1/policy-decisions/{id}/facility-location',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Get the latest treatment plant location lookup
+ */
+export const getLatestResponseFacilityLocation = <ThrowOnError extends boolean = false>(options: Options<GetLatestResponseFacilityLocationData, ThrowOnError>): RequestResult<GetLatestResponseFacilityLocationResponses, GetLatestResponseFacilityLocationErrors, ThrowOnError> => (options.client ?? client).get<GetLatestResponseFacilityLocationResponses, GetLatestResponseFacilityLocationErrors, ThrowOnError>({ url: '/api/v1/policy-decisions/{id}/facility-location/latest', ...options });
+
+/**
+ * Compare fields and build a draft placement plan
+ */
+export const createPlacementEvaluation = <ThrowOnError extends boolean = false>(options: Options<CreatePlacementEvaluationData, ThrowOnError>): RequestResult<CreatePlacementEvaluationResponses, CreatePlacementEvaluationErrors, ThrowOnError> => (options.client ?? client).post<CreatePlacementEvaluationResponses, CreatePlacementEvaluationErrors, ThrowOnError>({
+    url: '/api/v1/policy-decisions/{id}/placement',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Get the latest draft placement plan
+ */
+export const getLatestPlacementEvaluation = <ThrowOnError extends boolean = false>(options: Options<GetLatestPlacementEvaluationData, ThrowOnError>): RequestResult<GetLatestPlacementEvaluationResponses, GetLatestPlacementEvaluationErrors, ThrowOnError> => (options.client ?? client).get<GetLatestPlacementEvaluationResponses, GetLatestPlacementEvaluationErrors, ThrowOnError>({ url: '/api/v1/policy-decisions/{id}/placement/latest', ...options });
+
+/**
+ * Build the elevated or prohibited PFAS response
+ */
+export const createPfasResponse = <ThrowOnError extends boolean = false>(options: Options<CreatePfasResponseData, ThrowOnError>): RequestResult<CreatePfasResponseResponses, CreatePfasResponseErrors, ThrowOnError> => (options.client ?? client).post<CreatePfasResponseResponses, CreatePfasResponseErrors, ThrowOnError>({
+    url: '/api/v1/policy-decisions/{id}/response',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Get the latest elevated or prohibited PFAS response
+ */
+export const getLatestPfasResponse = <ThrowOnError extends boolean = false>(options: Options<GetLatestPfasResponseData, ThrowOnError>): RequestResult<GetLatestPfasResponseResponses, GetLatestPfasResponseErrors, ThrowOnError> => (options.client ?? client).get<GetLatestPfasResponseResponses, GetLatestPfasResponseErrors, ThrowOnError>({ url: '/api/v1/policy-decisions/{id}/response/latest', ...options });
+
+/**
  * Get the active reviewed Michigan PFAS rule pack
  */
 export const getActiveMichiganRulePack = <ThrowOnError extends boolean = false>(options?: Options<GetActiveMichiganRulePackData, ThrowOnError>): RequestResult<GetActiveMichiganRulePackResponses, GetActiveMichiganRulePackErrors, ThrowOnError> => (options?.client ?? client).get<GetActiveMichiganRulePackResponses, GetActiveMichiganRulePackErrors, ThrowOnError>({ url: '/api/v1/policy/rule-packs/mi/active', ...options });
@@ -190,6 +271,11 @@ export const getLatestReadinessRun = <ThrowOnError extends boolean = false>(opti
  * Get a readiness run and its evidence trace
  */
 export const getReadinessRun = <ThrowOnError extends boolean = false>(options: Options<GetReadinessRunData, ThrowOnError>): RequestResult<GetReadinessRunResponses, GetReadinessRunErrors, ThrowOnError> => (options.client ?? client).get<GetReadinessRunResponses, GetReadinessRunErrors, ThrowOnError>({ url: '/api/v1/readiness-runs/{id}', ...options });
+
+/**
+ * Get an elevated or prohibited PFAS response
+ */
+export const getPfasResponse = <ThrowOnError extends boolean = false>(options: Options<GetPfasResponseData, ThrowOnError>): RequestResult<GetPfasResponseResponses, GetPfasResponseErrors, ThrowOnError> => (options.client ?? client).get<GetPfasResponseResponses, GetPfasResponseErrors, ThrowOnError>({ url: '/api/v1/response-runs/{id}', ...options });
 
 /**
  * Check process liveness

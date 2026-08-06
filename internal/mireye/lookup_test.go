@@ -37,6 +37,9 @@ func TestLookupResolvedSanitizesParcel(t *testing.T) {
 	if result.Response.Parcel.MatchType != "exact_intersect" || result.RequestID != "lookup-1" {
 		t.Fatalf("missing parcel provenance %#v", result)
 	}
+	if result.Response.Candidates == nil {
+		t.Fatal("resolved lookup candidates must be an empty array, not nil")
+	}
 	if string(result.Evidence) == "" || contains(string(result.Evidence), "Private Person") {
 		t.Fatalf("evidence was not sanitized: %s", result.Evidence)
 	}

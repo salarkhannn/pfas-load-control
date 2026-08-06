@@ -7,9 +7,10 @@ import {
   RiMapPin2Line,
 } from '@remixicon/react';
 
-import type { CreateInputWritable, DetailsInputWritable, Field } from '@/client/types.gen';
+import type { CreateInputWritable, Decision, DetailsInputWritable, Field } from '@/client/types.gen';
 import { ParcelMap } from '@/components/parcel-map';
 import { PhysicalEvidence } from '@/components/physical-evidence';
+import { PlacementWorkspace } from '@/components/placement-workspace';
 import * as Alert from '@/components/ui/alert';
 import * as Button from '@/components/ui/button';
 import { useFieldWorkspace } from '@/hooks/use-field-workspace';
@@ -17,12 +18,13 @@ import { usePhysicalEvidence } from '@/hooks/use-physical-evidence';
 
 const EMPTY_SAMPLE_POINTS: Array<{ index: number; label: string; latitude: number; longitude: number }> = [];
 
-export function FieldWorkspace({ facilityName }: { facilityName?: string }) {
+export function FieldWorkspace({ decision }: { decision: Decision }) {
+  const facilityName = decision.facilityName;
   const state = useFieldWorkspace(facilityName);
   const [adding, setAdding] = useState(false);
   const fields = state.context?.fields ?? [];
 
-  return (
+  return <>
     <section className="field-workspace-panel" aria-labelledby="fields-title">
       <div className="field-page-header">
         <div>
@@ -64,6 +66,7 @@ export function FieldWorkspace({ facilityName }: { facilityName?: string }) {
               onResolve={() => state.resolve(state.selected!.id)}
               onChoose={(index) => state.choose(state.selected!.id, index)}
               onConfirmParcel={() => state.confirmParcel(state.selected!.id)}
+              onConfirmGeometry={() => state.confirmGeometry(state.selected!.id)}
               onSetGeometry={(geojson) => state.setGeometry(state.selected!.id, geojson)}
               onSaveDetails={(details) => state.updateDetails(state.selected!.id, details)}
             />
@@ -71,7 +74,8 @@ export function FieldWorkspace({ facilityName }: { facilityName?: string }) {
         </div>
       )}
     </section>
-  );
+    <PlacementWorkspace decision={decision} />
+  </>;
 }
 
 function FieldInventory({ fields, selectedId, onSelect, onAdd }: {
@@ -99,12 +103,13 @@ function FieldInventory({ fields, selectedId, onSelect, onAdd }: {
   );
 }
 
-function FieldRecord({ field, busy, onResolve, onChoose, onConfirmParcel, onSetGeometry, onSaveDetails }: {
+function FieldRecord({ field, busy, onResolve, onChoose, onConfirmParcel, onConfirmGeometry, onSetGeometry, onSaveDetails }: {
   field: Field;
   busy: string | null;
   onResolve: () => Promise<unknown>;
   onChoose: (index: number) => Promise<unknown>;
   onConfirmParcel: () => Promise<unknown>;
+  onConfirmGeometry: () => Promise<unknown>;
   onSetGeometry: (geojson: string) => Promise<unknown>;
   onSaveDetails: (details: DetailsInputWritable) => Promise<unknown>;
 }) {
@@ -122,7 +127,7 @@ function FieldRecord({ field, busy, onResolve, onChoose, onConfirmParcel, onSetG
       </header>
 
       <div className="field-review-grid">
-        <LocationSection field={field} samples={physicalEvidence.evaluation?.samples ?? EMPTY_SAMPLE_POINTS} busy={busy} onResolve={onResolve} onChoose={onChoose} onConfirmParcel={onConfirmParcel} onSetGeometry={onSetGeometry} />
+        <LocationSection field={field} samples={physicalEvidence.evaluation?.samples ?? EMPTY_SAMPLE_POINTS} busy={busy} onResolve={onResolve} onChoose={onChoose} onConfirmParcel={onConfirmParcel} onConfirmGeometry={onConfirmGeometry} onSetGeometry={onSetGeometry} />
         <FieldDetailsForm field={field} busy={busy === 'details'} onSave={onSaveDetails} />
       </div>
       {field.status === 'READY' ? (
@@ -138,13 +143,14 @@ function FieldRecord({ field, busy, onResolve, onChoose, onConfirmParcel, onSetG
   );
 }
 
-function LocationSection({ field, samples, busy, onResolve, onChoose, onConfirmParcel, onSetGeometry }: {
+function LocationSection({ field, samples, busy, onResolve, onChoose, onConfirmParcel, onConfirmGeometry, onSetGeometry }: {
   field: Field;
   samples: Array<{ index: number; label: string; latitude: number; longitude: number }>;
   busy: string | null;
   onResolve: () => Promise<unknown>;
   onChoose: (index: number) => Promise<unknown>;
   onConfirmParcel: () => Promise<unknown>;
+  onConfirmGeometry: () => Promise<unknown>;
   onSetGeometry: (geojson: string) => Promise<unknown>;
 }) {
   const location = field.location;
@@ -154,7 +160,7 @@ function LocationSection({ field, samples, busy, onResolve, onChoose, onConfirmP
   return (
     <section className="field-section boundary-section" aria-labelledby="location-title">
       <div className="field-section-heading">
-        <div><h4 id="location-title">Boundary</h4><p>{field.geometry ? `${formatAcres(field.geometry.areaAcres)} acres confirmed` : field.locatorInput}</p></div>
+        <div><h4 id="location-title">Boundary</h4><p>{field.geometry ? `${formatAcres(field.geometry.areaAcres)} acres ${field.geometry.confirmed ? 'confirmed' : 'uploaded'}` : field.locatorInput}</p></div>
         {field.geometry ? <span>Version {field.geometry.version}</span> : null}
       </div>
 
@@ -168,10 +174,18 @@ function LocationSection({ field, samples, busy, onResolve, onChoose, onConfirmP
         />
       ) : null}
 
-      {field.geometry ? (
+      {field.geometry?.confirmed ? (
         <div className="boundary-confirmed">
           <span><RiCheckLine aria-hidden="true" /></span>
-          <div><strong>Boundary confirmed</strong><p>{field.geometry.source === 'MIREYE_PARCEL_CONFIRMED' ? 'Mireye parcel confirmed by the operator' : 'Boundary supplied by the operator'}</p></div>
+          <div><strong>Boundary confirmed</strong><p>{field.geometry.source === 'MIREYE_PARCEL' ? 'Mireye parcel confirmed by the operator' : 'Uploaded outline confirmed by the operator'}</p></div>
+        </div>
+      ) : field.geometry ? (
+        <div className="boundary-pending">
+          <span><RiErrorWarningLine aria-hidden="true" /></span>
+          <div><strong>Confirm the application field</strong><p>Compare this outline with the approved site record. Confirm only if the boundaries match.</p></div>
+          <Button.Root variant="primary" mode="filled" size="small" disabled={busy === 'boundary-confirmation'} onClick={() => void onConfirmGeometry()}>
+            {busy === 'boundary-confirmation' ? 'Confirming…' : 'Confirm actual boundary'}
+          </Button.Root>
         </div>
       ) : location?.disposition === 'clarify' ? (
         <div className="location-choices">
@@ -212,6 +226,12 @@ function LocationSection({ field, samples, busy, onResolve, onChoose, onConfirmP
           <BoundaryUpload busy={busy === 'geometry'} onUpload={onSetGeometry} />
         </div>
       )}
+      {field.geometry ? (
+        <details className="alternate-boundary">
+          <summary>Use a different boundary</summary>
+          <BoundaryUpload busy={busy === 'geometry'} onUpload={onSetGeometry} />
+        </details>
+      ) : null}
     </section>
   );
 }

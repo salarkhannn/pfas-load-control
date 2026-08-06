@@ -3,7 +3,6 @@ package evidence
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -25,7 +24,7 @@ func (s *Service) persistBatch(ctx context.Context, evaluationID uuid.UUID, batc
 	}
 	for localIndex, item := range batch.Results {
 		if localIndex >= len(sampleIndices) {
-			return fmt.Errorf("Mireye batch result exceeded the stored sample mapping")
+			return fmt.Errorf("mireye batch result exceeded the stored sample mapping")
 		}
 		sampleIndex := int32(sampleIndices[localIndex])
 		for _, fieldName := range fields {
@@ -111,12 +110,4 @@ func (s *Service) retryFailedFields(ctx context.Context, evaluationID uuid.UUID,
 		remainingCredits -= retryCost
 	}
 	return nil
-}
-
-func jsonValue(value any) []byte {
-	encoded, err := json.Marshal(value)
-	if err != nil {
-		return nil
-	}
-	return encoded
 }

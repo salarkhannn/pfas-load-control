@@ -64,12 +64,3 @@ func physicalFieldNames() []string {
 	}
 	return result
 }
-
-func specByName(name string) (fieldSpec, bool) {
-	for _, spec := range physicalFieldSpecs {
-		if spec.Name == name {
-			return spec, true
-		}
-	}
-	return fieldSpec{}, false
-}

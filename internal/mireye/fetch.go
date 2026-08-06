@@ -156,24 +156,24 @@ func (c *Client) FetchBatch(ctx context.Context, input FetchBatchRequest) (Fetch
 
 func validateBatchRequest(input FetchBatchRequest) error {
 	if len(input.Locations) == 0 || len(input.Locations) > 25 {
-		return errors.New("Mireye batch requests require 1 to 25 locations")
+		return errors.New("mireye batch requests require 1 to 25 locations")
 	}
 	if len(input.Fields) == 0 || len(input.Fields) > 50 {
-		return errors.New("Mireye batch requests require 1 to 50 fields")
+		return errors.New("mireye batch requests require 1 to 50 fields")
 	}
 	seen := make(map[string]struct{}, len(input.Fields))
 	for _, field := range input.Fields {
 		if strings.TrimSpace(field) == "" {
-			return errors.New("Mireye field names cannot be empty")
+			return errors.New("mireye field names cannot be empty")
 		}
 		if _, exists := seen[field]; exists {
-			return fmt.Errorf("Mireye field %q was requested more than once", field)
+			return fmt.Errorf("mireye field %q was requested more than once", field)
 		}
 		seen[field] = struct{}{}
 	}
 	for _, location := range input.Locations {
 		if location.Latitude < 18 || location.Latitude > 72 || location.Longitude < -180 || location.Longitude > -65 {
-			return errors.New("Mireye coordinates must fall inside the documented US envelope")
+			return errors.New("mireye coordinates must fall inside the documented US envelope")
 		}
 	}
 	return nil

@@ -216,6 +216,10 @@ func (wire lookupWireResponse) validated() (LookupResponse, error) {
 		return LookupResponse{}, errors.New("mireye no-match response omitted its reason")
 	}
 
+	candidates := wire.Candidates
+	if candidates == nil {
+		candidates = []LookupCandidate{}
+	}
 	result := LookupResponse{
 		Disposition:       wire.Disposition,
 		Latitude:          wire.Latitude,
@@ -227,7 +231,7 @@ func (wire lookupWireResponse) validated() (LookupResponse, error) {
 		Confidence:        wire.Confidence,
 		MatchMethod:       strings.TrimSpace(wire.MatchMethod),
 		ParcelUnavailable: wire.ParcelUnavailable,
-		Candidates:        wire.Candidates,
+		Candidates:        candidates,
 		Reason:            strings.TrimSpace(wire.Reason),
 		Hint:              strings.TrimSpace(wire.Hint),
 	}

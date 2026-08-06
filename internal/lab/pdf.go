@@ -85,6 +85,11 @@ func (e *SystemPDFExtractor) Extract(ctx context.Context, content []byte) ([]Pag
 	for len(pages) < pageCount {
 		pages = append(pages, Page{Number: len(pages) + 1, ExtractionMethod: "PDF_TEXT"})
 	}
+	layout, err := runBounded(ctx, e.pdfText, "-layout", "-enc", "UTF-8", inputPath, "-")
+	if err != nil {
+		return nil, toolError("PDF_TEXT_EXTRACTION_FAILED", "Text could not be extracted from the PDF.", err)
+	}
+	applyLayoutText(pages, layout)
 
 	for index := range pages {
 		if usefulText(pages[index].Text) >= 20 {
@@ -98,6 +103,16 @@ func (e *SystemPDFExtractor) Extract(ctx context.Context, content []byte) ([]Pag
 		pages[index].ExtractionMethod = "OCR"
 	}
 	return pages, nil
+}
+
+func applyLayoutText(pages []Page, data []byte) {
+	textPages := strings.Split(strings.ReplaceAll(string(data), "\r\n", "\n"), "\f")
+	for index := range pages {
+		if index >= len(textPages) {
+			return
+		}
+		pages[index].Text = strings.Trim(textPages[index], "\r\n")
+	}
 }
 
 func (e *SystemPDFExtractor) ocrPage(ctx context.Context, inputPath, directory string, page int) (string, error) {
@@ -210,6 +225,7 @@ func parseTesseractTSV(data []byte) (string, error) {
 	reader := csv.NewReader(bytes.NewReader(data))
 	reader.Comma = '\t'
 	reader.FieldsPerRecord = -1
+	reader.LazyQuotes = true
 	rows, err := reader.ReadAll()
 	if err != nil {
 		return "", err

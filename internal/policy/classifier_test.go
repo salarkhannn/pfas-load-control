@@ -92,6 +92,18 @@ func TestUnsupportedAnalyticalMethodBlocksClassification(t *testing.T) {
 	}
 }
 
+func TestMichiganReportIsotopicDilutionMethodIsAccepted(t *testing.T) {
+	t.Parallel()
+	pack := mustPack(t)
+	matrix := "BIOSOLIDS"
+	method := "ASTM D7968-17M — ASTM Method D7968 - 17 Modified (Isotopic Dilution)"
+	basis := "DRY"
+	result := Evaluate(pack, ClassificationInput{Jurisdiction: "MI", Matrix: &matrix, Method: &method, Basis: &basis, Analytes: []AnalyteEvidence{detected("PFOS", "5.5"), detected("PFOA", "3")}})
+	if result.Tier != TierStandard {
+		t.Fatalf("Evaluate() tier = %s, want %s; blocked by %v", result.Tier, TierStandard, result.BlockingReason)
+	}
+}
+
 func TestDraftGuidanceCannotBecomeActiveRulePack(t *testing.T) {
 	t.Parallel()
 	pack := mustPack(t)

@@ -3,6 +3,7 @@
 .git
 .github
 docs
+sample-data
 web
 bin
 **/*_test.go

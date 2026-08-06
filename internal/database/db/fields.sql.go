@@ -12,6 +12,50 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const confirmCurrentUploadedGeometry = `-- name: ConfirmCurrentUploadedGeometry :execrows
+UPDATE pfas.field_geometry_versions AS geometry
+SET confirmed_at = COALESCE(geometry.confirmed_at, now())
+FROM pfas.candidate_fields AS field
+WHERE field.id = $1
+  AND field.workspace_id = $2
+  AND geometry.id = field.current_geometry_id
+  AND geometry.field_id = field.id
+  AND geometry.source = 'UPLOADED_GEOJSON'
+`
+
+type ConfirmCurrentUploadedGeometryParams struct {
+	FieldID     uuid.UUID `json:"field_id"`
+	WorkspaceID uuid.UUID `json:"workspace_id"`
+}
+
+func (q *Queries) ConfirmCurrentUploadedGeometry(ctx context.Context, arg ConfirmCurrentUploadedGeometryParams) (int64, error) {
+	result, err := q.db.Exec(ctx, confirmCurrentUploadedGeometry, arg.FieldID, arg.WorkspaceID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
+}
+
+const confirmFieldGeometryVersion = `-- name: ConfirmFieldGeometryVersion :execrows
+UPDATE pfas.field_geometry_versions
+SET confirmed_at = COALESCE(confirmed_at, now())
+WHERE id = $1 AND field_id = $2 AND workspace_id = $3
+`
+
+type ConfirmFieldGeometryVersionParams struct {
+	ID          uuid.UUID `json:"id"`
+	FieldID     uuid.UUID `json:"field_id"`
+	WorkspaceID uuid.UUID `json:"workspace_id"`
+}
+
+func (q *Queries) ConfirmFieldGeometryVersion(ctx context.Context, arg ConfirmFieldGeometryVersionParams) (int64, error) {
+	result, err := q.db.Exec(ctx, confirmFieldGeometryVersion, arg.ID, arg.FieldID, arg.WorkspaceID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
+}
+
 const createCandidateField = `-- name: CreateCandidateField :one
 INSERT INTO pfas.candidate_fields (
     id, workspace_id, facility_id, name, normalized_name,
@@ -72,7 +116,7 @@ func (q *Queries) CreateCandidateField(ctx context.Context, arg CreateCandidateF
 const createFieldGeometryVersion = `-- name: CreateFieldGeometryVersion :one
 INSERT INTO pfas.field_geometry_versions (
     id, field_id, workspace_id, version, source, source_lookup_id,
-    geometry, geometry_hash, area_acres
+    geometry, geometry_hash, area_acres, confirmed_at
 )
 VALUES (
     $1, $2, $3, $4, $5, $6,
@@ -80,7 +124,8 @@ VALUES (
     $8,
     extensions.ST_Area(
         extensions.ST_Multi(extensions.ST_SetSRID(extensions.ST_GeomFromGeoJSON($7), 4326))::extensions.geography
-    ) / 4046.8564224
+    ) / 4046.8564224,
+    $9
 )
 RETURNING id, field_id, workspace_id, version, source, source_lookup_id,
           extensions.ST_AsGeoJSON(geometry)::text AS geometry_geojson,
@@ -89,14 +134,15 @@ RETURNING id, field_id, workspace_id, version, source, source_lookup_id,
 `
 
 type CreateFieldGeometryVersionParams struct {
-	ID                uuid.UUID     `json:"id"`
-	FieldID           uuid.UUID     `json:"field_id"`
-	WorkspaceID       uuid.UUID     `json:"workspace_id"`
-	Version           int32         `json:"version"`
-	Source            string        `json:"source"`
-	SourceLookupID    uuid.NullUUID `json:"source_lookup_id"`
-	StGeomfromgeojson interface{}   `json:"st_geomfromgeojson"`
-	GeometryHash      string        `json:"geometry_hash"`
+	ID                uuid.UUID          `json:"id"`
+	FieldID           uuid.UUID          `json:"field_id"`
+	WorkspaceID       uuid.UUID          `json:"workspace_id"`
+	Version           int32              `json:"version"`
+	Source            string             `json:"source"`
+	SourceLookupID    uuid.NullUUID      `json:"source_lookup_id"`
+	StGeomfromgeojson interface{}        `json:"st_geomfromgeojson"`
+	GeometryHash      string             `json:"geometry_hash"`
+	ConfirmedAt       pgtype.Timestamptz `json:"confirmed_at"`
 }
 
 type CreateFieldGeometryVersionRow struct {
@@ -123,6 +169,7 @@ func (q *Queries) CreateFieldGeometryVersion(ctx context.Context, arg CreateFiel
 		arg.SourceLookupID,
 		arg.StGeomfromgeojson,
 		arg.GeometryHash,
+		arg.ConfirmedAt,
 	)
 	var i CreateFieldGeometryVersionRow
 	err := row.Scan(
@@ -494,6 +541,24 @@ func (q *Queries) GetCandidateFieldRow(ctx context.Context, arg GetCandidateFiel
 		&i.GeometryConfirmedAt,
 	)
 	return i, err
+}
+
+const getCurrentFieldGeometryConfirmation = `-- name: GetCurrentFieldGeometryConfirmation :one
+SELECT confirmed_at
+FROM pfas.field_geometry_versions
+WHERE id = $1 AND field_id = $2
+`
+
+type GetCurrentFieldGeometryConfirmationParams struct {
+	ID      uuid.UUID `json:"id"`
+	FieldID uuid.UUID `json:"field_id"`
+}
+
+func (q *Queries) GetCurrentFieldGeometryConfirmation(ctx context.Context, arg GetCurrentFieldGeometryConfirmationParams) (pgtype.Timestamptz, error) {
+	row := q.db.QueryRow(ctx, getCurrentFieldGeometryConfirmation, arg.ID, arg.FieldID)
+	var confirmed_at pgtype.Timestamptz
+	err := row.Scan(&confirmed_at)
+	return confirmed_at, err
 }
 
 const getFacilityForWorkspace = `-- name: GetFacilityForWorkspace :one

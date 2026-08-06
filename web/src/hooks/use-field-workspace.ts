@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   addCandidateField,
   chooseFieldLocation,
+  confirmUploadedBoundary,
   confirmParcelBoundary,
   importFieldCSV,
   loadFieldContext,
@@ -133,6 +134,7 @@ export function useFieldWorkspace(facilityName?: string) {
     resolve: (id: string) => act('resolve', () => resolveFieldLocation(workspaceKey, id)),
     choose: (id: string, index: number) => act('choose', () => chooseFieldLocation(workspaceKey, id, index)),
     confirmParcel: (id: string) => act('parcel', () => confirmParcelBoundary(workspaceKey, id)),
+    confirmGeometry: (id: string) => act('boundary-confirmation', () => confirmUploadedBoundary(workspaceKey, id)),
     setGeometry: (id: string, geojson: string) => act('geometry', () => saveFieldGeometry(workspaceKey, id, geojson)),
     updateDetails: (id: string, details: DetailsInputWritable) => act('details', () => saveFieldDetails(workspaceKey, id, details)),
   };

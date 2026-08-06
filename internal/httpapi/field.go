@@ -102,8 +102,12 @@ func (a *API) registerFieldRoutes(api huma.API) {
 	}, a.confirmFieldParcel)
 	huma.Register(api, huma.Operation{
 		OperationID: "set-field-geometry", Method: http.MethodPut, Path: "/api/v1/candidate-fields/{id}/geometry",
-		Summary: "Set the actual field boundary", Tags: []string{"Candidate fields"},
+		Summary: "Upload a field boundary for review", Tags: []string{"Candidate fields"},
 	}, a.setFieldGeometry)
+	huma.Register(api, huma.Operation{
+		OperationID: "confirm-field-boundary", Method: http.MethodPost, Path: "/api/v1/candidate-fields/{id}/boundary-confirmation",
+		Summary: "Confirm an uploaded boundary as the actual application field", Tags: []string{"Candidate fields"},
+	}, a.confirmFieldBoundary)
 	huma.Register(api, huma.Operation{
 		OperationID: "update-field-details", Method: http.MethodPut, Path: "/api/v1/candidate-fields/{id}/details",
 		Summary: "Update field operating details", Tags: []string{"Candidate fields"},
@@ -186,6 +190,14 @@ func (a *API) setFieldGeometry(ctx context.Context, input *fieldGeometryInput) (
 	result, err := a.fields.SetGeometry(ctx, input.WorkspaceKey, input.ID, input.Body.GeoJSON)
 	if err != nil {
 		return nil, a.fieldError("set field geometry", err)
+	}
+	return &candidateFieldOutput{Body: result}, nil
+}
+
+func (a *API) confirmFieldBoundary(ctx context.Context, input *candidateFieldInput) (*candidateFieldOutput, error) {
+	result, err := a.fields.ConfirmGeometry(ctx, input.WorkspaceKey, input.ID)
+	if err != nil {
+		return nil, a.fieldError("confirm uploaded field boundary", err)
 	}
 	return &candidateFieldOutput{Body: result}, nil
 }

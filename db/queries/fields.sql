@@ -166,7 +166,7 @@ FROM candidate;
 -- name: CreateFieldGeometryVersion :one
 INSERT INTO pfas.field_geometry_versions (
     id, field_id, workspace_id, version, source, source_lookup_id,
-    geometry, geometry_hash, area_acres
+    geometry, geometry_hash, area_acres, confirmed_at
 )
 VALUES (
     $1, $2, $3, $4, $5, $6,
@@ -174,7 +174,8 @@ VALUES (
     $8,
     extensions.ST_Area(
         extensions.ST_Multi(extensions.ST_SetSRID(extensions.ST_GeomFromGeoJSON($7), 4326))::extensions.geography
-    ) / 4046.8564224
+    ) / 4046.8564224,
+    sqlc.narg(confirmed_at)
 )
 RETURNING id, field_id, workspace_id, version, source, source_lookup_id,
           extensions.ST_AsGeoJSON(geometry)::text AS geometry_geojson,
@@ -185,6 +186,26 @@ RETURNING id, field_id, workspace_id, version, source, source_lookup_id,
 UPDATE pfas.candidate_fields
 SET current_geometry_id = $2, updated_at = now()
 WHERE id = $1 AND workspace_id = $3;
+
+-- name: GetCurrentFieldGeometryConfirmation :one
+SELECT confirmed_at
+FROM pfas.field_geometry_versions
+WHERE id = $1 AND field_id = $2;
+
+-- name: ConfirmCurrentUploadedGeometry :execrows
+UPDATE pfas.field_geometry_versions AS geometry
+SET confirmed_at = COALESCE(geometry.confirmed_at, now())
+FROM pfas.candidate_fields AS field
+WHERE field.id = sqlc.arg(field_id)
+  AND field.workspace_id = sqlc.arg(workspace_id)
+  AND geometry.id = field.current_geometry_id
+  AND geometry.field_id = field.id
+  AND geometry.source = 'UPLOADED_GEOJSON';
+
+-- name: ConfirmFieldGeometryVersion :execrows
+UPDATE pfas.field_geometry_versions
+SET confirmed_at = COALESCE(confirmed_at, now())
+WHERE id = $1 AND field_id = $2 AND workspace_id = $3;
 
 -- name: UpdateCandidateFieldDetails :execrows
 UPDATE pfas.candidate_fields

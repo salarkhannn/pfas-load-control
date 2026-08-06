@@ -853,6 +853,25 @@ func (q *Queries) MarkLabReportProcessing(ctx context.Context, id uuid.UUID) (in
 	return result.RowsAffected(), nil
 }
 
+const retryFailedLabReport = `-- name: RetryFailedLabReport :execrows
+UPDATE pfas.lab_reports
+SET status = 'UPLOADED', failure_code = NULL, updated_at = now()
+WHERE id = $1 AND workspace_id = $2 AND status = 'FAILED'
+`
+
+type RetryFailedLabReportParams struct {
+	ID          uuid.UUID `json:"id"`
+	WorkspaceID uuid.UUID `json:"workspace_id"`
+}
+
+func (q *Queries) RetryFailedLabReport(ctx context.Context, arg RetryFailedLabReportParams) (int64, error) {
+	result, err := q.db.Exec(ctx, retryFailedLabReport, arg.ID, arg.WorkspaceID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
+}
+
 const supersedeCurrentLabReportVersion = `-- name: SupersedeCurrentLabReportVersion :exec
 UPDATE pfas.lab_report_versions
 SET status = 'SUPERSEDED'

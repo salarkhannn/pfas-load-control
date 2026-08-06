@@ -1,10 +1,30 @@
 .env
 .env.*
 !.env.example
+
+# Local planning and outreach material
 docs/
+
+# Real-world source documents used for local validation and demos
+/sample-data/*.pdf
+
+# Go build and test output
 /bin/
+/coverage.out
+*.prof
+
+# Frontend dependencies and generated output
 /web/node_modules/
 /web/dist/
 /web/playwright-report/
 /web/test-results/
 *.tsbuildinfo
+
+# Editor and operating-system files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~

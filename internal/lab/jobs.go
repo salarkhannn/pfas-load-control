@@ -21,9 +21,6 @@ func (args IngestArgs) InsertOpts() river.InsertOpts {
 	return river.InsertOpts{
 		MaxAttempts: 2,
 		Queue:       Queue,
-		UniqueOpts: river.UniqueOpts{
-			ByArgs: true,
-		},
 	}
 }
 

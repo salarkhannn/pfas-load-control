@@ -124,7 +124,7 @@ func (s *Service) Create(ctx context.Context, workspaceKey, facilityID string, i
 		return Field{}, fmt.Errorf("save candidate field: %w", err)
 	}
 	if len(geometry) > 0 {
-		geometryID, err := s.saveGeometry(ctx, queries, record, geometry, geometryHash, "OPERATOR_GEOJSON", uuid.NullUUID{})
+		geometryID, err := s.saveGeometry(ctx, queries, record, geometry, geometryHash, "UPLOADED_GEOJSON", uuid.NullUUID{}, false)
 		if err != nil {
 			return Field{}, err
 		}
@@ -197,7 +197,7 @@ func (s *Service) ConfirmParcel(ctx context.Context, workspaceKey, fieldID strin
 	if err != nil {
 		return Field{}, fmt.Errorf("%w: Mireye parcel boundary is invalid: %v", ErrConflict, err)
 	}
-	if err := s.attachGeometry(ctx, workspaceRecord.ID, fieldUUID, geometry, geometryHash, "MIREYE_PARCEL_CONFIRMED", uuid.NullUUID{UUID: lookup.ID, Valid: true}); err != nil {
+	if err := s.attachGeometry(ctx, workspaceRecord.ID, fieldUUID, geometry, geometryHash, "MIREYE_PARCEL", uuid.NullUUID{UUID: lookup.ID, Valid: true}, true); err != nil {
 		return Field{}, err
 	}
 	return s.Get(ctx, workspaceKey, fieldID)
@@ -212,8 +212,57 @@ func (s *Service) SetGeometry(ctx context.Context, workspaceKey, fieldID, geoJSO
 	if err != nil {
 		return Field{}, fmt.Errorf("%w: %v", ErrInvalid, err)
 	}
-	if err := s.attachGeometry(ctx, workspaceRecord.ID, fieldUUID, geometry, geometryHash, "OPERATOR_GEOJSON", uuid.NullUUID{}); err != nil {
+	if err := s.attachGeometry(ctx, workspaceRecord.ID, fieldUUID, geometry, geometryHash, "UPLOADED_GEOJSON", uuid.NullUUID{}, false); err != nil {
 		return Field{}, err
+	}
+	return s.Get(ctx, workspaceKey, fieldID)
+}
+
+func (s *Service) ConfirmGeometry(ctx context.Context, workspaceKey, fieldID string) (Field, error) {
+	workspaceRecord, fieldUUID, _, err := s.loadBase(ctx, workspaceKey, fieldID)
+	if err != nil {
+		return Field{}, err
+	}
+	tx, err := s.pool.BeginTx(ctx, pgx.TxOptions{})
+	if err != nil {
+		return Field{}, fmt.Errorf("begin field boundary confirmation: %w", err)
+	}
+	defer tx.Rollback(ctx)
+	txQueries := db.New(tx)
+	record, err := txQueries.GetCandidateFieldForUpdate(ctx, db.GetCandidateFieldForUpdateParams{
+		ID: fieldUUID, WorkspaceID: workspaceRecord.ID,
+	})
+	if errors.Is(err, pgx.ErrNoRows) {
+		return Field{}, ErrNotFound
+	}
+	if err != nil {
+		return Field{}, fmt.Errorf("lock candidate field: %w", err)
+	}
+	if !record.CurrentGeometryID.Valid {
+		return Field{}, fmt.Errorf("%w: upload a boundary before confirming it", ErrConflict)
+	}
+	confirmedAt, err := txQueries.GetCurrentFieldGeometryConfirmation(ctx, db.GetCurrentFieldGeometryConfirmationParams{
+		ID: record.CurrentGeometryID.UUID, FieldID: fieldUUID,
+	})
+	if err != nil {
+		return Field{}, fmt.Errorf("load current field boundary: %w", err)
+	}
+	if !confirmedAt.Valid {
+		updated, err := txQueries.ConfirmCurrentUploadedGeometry(ctx, db.ConfirmCurrentUploadedGeometryParams{
+			FieldID: fieldUUID, WorkspaceID: workspaceRecord.ID,
+		})
+		if err != nil {
+			return Field{}, fmt.Errorf("confirm uploaded field boundary: %w", err)
+		}
+		if updated != 1 {
+			return Field{}, fmt.Errorf("%w: only an uploaded boundary awaiting confirmation can be confirmed", ErrConflict)
+		}
+	}
+	if err := syncFieldState(ctx, txQueries, record); err != nil {
+		return Field{}, err
+	}
+	if err := tx.Commit(ctx); err != nil {
+		return Field{}, fmt.Errorf("commit field boundary confirmation: %w", err)
 	}
 	return s.Get(ctx, workspaceKey, fieldID)
 }
@@ -390,7 +439,7 @@ func (s *Service) resolveInput(ctx context.Context, workspaceKey string, workspa
 	return s.Get(ctx, workspaceKey, fieldID.String())
 }
 
-func (s *Service) attachGeometry(ctx context.Context, workspaceID, fieldID uuid.UUID, geometry json.RawMessage, geometryHash, source string, sourceLookupID uuid.NullUUID) error {
+func (s *Service) attachGeometry(ctx context.Context, workspaceID, fieldID uuid.UUID, geometry json.RawMessage, geometryHash, source string, sourceLookupID uuid.NullUUID, confirmed bool) error {
 	tx, err := s.pool.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
 		return fmt.Errorf("begin field boundary update: %w", err)
@@ -404,7 +453,7 @@ func (s *Service) attachGeometry(ctx context.Context, workspaceID, fieldID uuid.
 	if err != nil {
 		return fmt.Errorf("lock candidate field: %w", err)
 	}
-	geometryID, err := s.saveGeometry(ctx, queries, record, geometry, geometryHash, source, sourceLookupID)
+	geometryID, err := s.saveGeometry(ctx, queries, record, geometry, geometryHash, source, sourceLookupID, confirmed)
 	if err != nil {
 		return err
 	}
@@ -418,10 +467,19 @@ func (s *Service) attachGeometry(ctx context.Context, workspaceID, fieldID uuid.
 	return nil
 }
 
-func (s *Service) saveGeometry(ctx context.Context, queries *db.Queries, record db.PfasCandidateField, geometry json.RawMessage, geometryHash, source string, sourceLookupID uuid.NullUUID) (uuid.UUID, error) {
+func (s *Service) saveGeometry(ctx context.Context, queries *db.Queries, record db.PfasCandidateField, geometry json.RawMessage, geometryHash, source string, sourceLookupID uuid.NullUUID, confirmed bool) (uuid.UUID, error) {
 	if existing, err := queries.GetFieldGeometryByHash(ctx, db.GetFieldGeometryByHashParams{FieldID: record.ID, GeometryHash: geometryHash}); err == nil {
 		if err := queries.SetCandidateFieldGeometry(ctx, db.SetCandidateFieldGeometryParams{ID: record.ID, CurrentGeometryID: uuid.NullUUID{UUID: existing.ID, Valid: true}, WorkspaceID: record.WorkspaceID}); err != nil {
 			return uuid.Nil, fmt.Errorf("restore field boundary version: %w", err)
+		}
+		if confirmed && !existing.ConfirmedAt.Valid {
+			updated, err := queries.ConfirmFieldGeometryVersion(ctx, db.ConfirmFieldGeometryVersionParams{ID: existing.ID, FieldID: record.ID, WorkspaceID: record.WorkspaceID})
+			if err != nil {
+				return uuid.Nil, fmt.Errorf("confirm existing field boundary: %w", err)
+			}
+			if updated != 1 {
+				return uuid.Nil, fmt.Errorf("confirm existing field boundary: geometry version not found")
+			}
 		}
 		return existing.ID, nil
 	} else if !errors.Is(err, pgx.ErrNoRows) {
@@ -439,10 +497,14 @@ func (s *Service) saveGeometry(ctx context.Context, queries *db.Queries, record 
 		return uuid.Nil, fmt.Errorf("number field boundary version: %w", err)
 	}
 	geometryID := uuid.New()
+	confirmedAt := pgtype.Timestamptz{}
+	if confirmed {
+		confirmedAt = pgtype.Timestamptz{Time: time.Now().UTC(), Valid: true}
+	}
 	if _, err := queries.CreateFieldGeometryVersion(ctx, db.CreateFieldGeometryVersionParams{
 		ID: geometryID, FieldID: record.ID, WorkspaceID: record.WorkspaceID,
 		Version: version, Source: source, SourceLookupID: sourceLookupID,
-		StGeomfromgeojson: string(geometry), GeometryHash: geometryHash,
+		StGeomfromgeojson: string(geometry), GeometryHash: geometryHash, ConfirmedAt: confirmedAt,
 	}); err != nil {
 		return uuid.Nil, fmt.Errorf("save field boundary version: %w", err)
 	}
@@ -459,6 +521,16 @@ func syncFieldState(ctx context.Context, queries *db.Queries, record db.PfasCand
 		return fmt.Errorf("load current location state: %w", lookupErr)
 	}
 	hasGeometry := record.CurrentGeometryID.Valid
+	hasConfirmedGeometry := false
+	if hasGeometry {
+		confirmedAt, err := queries.GetCurrentFieldGeometryConfirmation(ctx, db.GetCurrentFieldGeometryConfirmationParams{
+			ID: record.CurrentGeometryID.UUID, FieldID: record.ID,
+		})
+		if err != nil {
+			return fmt.Errorf("load field boundary confirmation: %w", err)
+		}
+		hasConfirmedGeometry = confirmedAt.Valid
+	}
 	open := map[string]bool{}
 	if !hasGeometry {
 		switch {
@@ -469,6 +541,8 @@ func syncFieldState(ctx context.Context, queries *db.Queries, record db.PfasCand
 		case lookup.Disposition == "resolved" && !isMichigan(lookup.State):
 			open["OUTSIDE_MICHIGAN"] = true
 		}
+	}
+	if !hasConfirmedGeometry {
 		open["GEOMETRY_UNCONFIRMED"] = true
 	}
 	if record.RmpApproved == nil || !*record.RmpApproved {
@@ -604,10 +678,15 @@ func fieldFromRow(row db.ListCandidateFieldRowsRow, gaps []FieldGap) (Field, err
 		result.Location = location
 	}
 	if row.GeometryVersion != nil {
+		var confirmedAt *time.Time
+		if row.GeometryConfirmedAt.Valid {
+			value := row.GeometryConfirmedAt.Time
+			confirmedAt = &value
+		}
 		result.Geometry = &Geometry{
 			Version: int(*row.GeometryVersion), Source: dereference(row.GeometrySource),
 			GeoJSON: json.RawMessage(row.GeometryGeojson), AreaAcres: row.GeometryAreaAcres,
-			Hash: dereference(row.GeometryHash), ConfirmedAt: row.GeometryConfirmedAt.Time,
+			Hash: dereference(row.GeometryHash), Confirmed: row.GeometryConfirmedAt.Valid, ConfirmedAt: confirmedAt,
 		}
 	}
 	return result, nil

@@ -33,6 +33,28 @@ type PfasAgentStep struct {
 	UpdatedAt    pgtype.Timestamptz `json:"updated_at"`
 }
 
+type PfasAlternativeManagementCandidate struct {
+	RunID                  uuid.UUID `json:"run_id"`
+	Position               int32     `json:"position"`
+	WdsID                  string    `json:"wds_id"`
+	FacilityName           string    `json:"facility_name"`
+	FacilityType           string    `json:"facility_type"`
+	Address                string    `json:"address"`
+	City                   string    `json:"city"`
+	County                 string    `json:"county"`
+	Latitude               float64   `json:"latitude"`
+	Longitude              float64   `json:"longitude"`
+	DisposalAreaStatus     string    `json:"disposal_area_status"`
+	StraightlineDistanceKm float64   `json:"straightline_distance_km"`
+	RouteStatus            string    `json:"route_status"`
+	DrivingDistanceKm      *float64  `json:"driving_distance_km"`
+	DurationMinutes        *float64  `json:"duration_minutes"`
+	RouteNote              *string   `json:"route_note"`
+	AcceptanceStatus       string    `json:"acceptance_status"`
+	Executable             bool      `json:"executable"`
+	SourceUrl              string    `json:"source_url"`
+}
+
 type PfasAnalyteResult struct {
 	ID                              uuid.UUID          `json:"id"`
 	ReportID                        uuid.UUID          `json:"report_id"`
@@ -134,6 +156,27 @@ type PfasDataGap struct {
 	ResolvedAt pgtype.Timestamptz `json:"resolved_at"`
 }
 
+type PfasDecisionPackage struct {
+	ID                    uuid.UUID          `json:"id"`
+	WorkspaceID           uuid.UUID          `json:"workspace_id"`
+	DecisionID            uuid.UUID          `json:"decision_id"`
+	PlacementEvaluationID uuid.NullUUID      `json:"placement_evaluation_id"`
+	ResponseRunID         uuid.NullUUID      `json:"response_run_id"`
+	SchemaVersion         string             `json:"schema_version"`
+	Status                string             `json:"status"`
+	InputHash             string             `json:"input_hash"`
+	Snapshot              []byte             `json:"snapshot"`
+	EvidenceLedger        []byte             `json:"evidence_ledger"`
+	ProposedActions       []byte             `json:"proposed_actions"`
+	JsonArtifact          []byte             `json:"json_artifact"`
+	HtmlArtifact          string             `json:"html_artifact"`
+	PdfArtifact           []byte             `json:"pdf_artifact"`
+	JsonSha256            string             `json:"json_sha256"`
+	HtmlSha256            string             `json:"html_sha256"`
+	PdfSha256             string             `json:"pdf_sha256"`
+	CreatedAt             pgtype.Timestamptz `json:"created_at"`
+}
+
 type PfasFacility struct {
 	ID             uuid.UUID          `json:"id"`
 	WorkspaceID    uuid.UUID          `json:"workspace_id"`
@@ -142,6 +185,33 @@ type PfasFacility struct {
 	Jurisdiction   string             `json:"jurisdiction"`
 	CreatedAt      pgtype.Timestamptz `json:"created_at"`
 	UpdatedAt      pgtype.Timestamptz `json:"updated_at"`
+}
+
+type PfasFacilityLocationLookup struct {
+	ID              uuid.UUID          `json:"id"`
+	WorkspaceID     uuid.UUID          `json:"workspace_id"`
+	FacilityID      uuid.UUID          `json:"facility_id"`
+	Input           string             `json:"input"`
+	InputKind       string             `json:"input_kind"`
+	RequestHash     string             `json:"request_hash"`
+	ResponseHash    string             `json:"response_hash"`
+	RequestID       *string            `json:"request_id"`
+	SourceUrl       string             `json:"source_url"`
+	Disposition     string             `json:"disposition"`
+	Latitude        *float64           `json:"latitude"`
+	Longitude       *float64           `json:"longitude"`
+	ResolvedAddress *string            `json:"resolved_address"`
+	State           *string            `json:"state"`
+	County          *string            `json:"county"`
+	Confidence      *float64           `json:"confidence"`
+	MatchMethod     *string            `json:"match_method"`
+	Candidates      []byte             `json:"candidates"`
+	Reason          *string            `json:"reason"`
+	Hint            *string            `json:"hint"`
+	Evidence        []byte             `json:"evidence"`
+	FetchedAt       pgtype.Timestamptz `json:"fetched_at"`
+	ConfirmedAt     pgtype.Timestamptz `json:"confirmed_at"`
+	CreatedAt       pgtype.Timestamptz `json:"created_at"`
 }
 
 type PfasFieldDataGap struct {
@@ -200,6 +270,21 @@ type PfasFieldLocationLookup struct {
 	Evidence             []byte             `json:"evidence"`
 	FetchedAt            pgtype.Timestamptz `json:"fetched_at"`
 	CreatedAt            pgtype.Timestamptz `json:"created_at"`
+}
+
+type PfasInvestigationLead struct {
+	RunID         uuid.UUID `json:"run_id"`
+	Position      int32     `json:"position"`
+	RegistryID    string    `json:"registry_id"`
+	FacilityName  string    `json:"facility_name"`
+	City          *string   `json:"city"`
+	State         *string   `json:"state"`
+	NaicsCodes    []byte    `json:"naics_codes"`
+	EvidenceTier  int32     `json:"evidence_tier"`
+	EvidenceLabel string    `json:"evidence_label"`
+	Rationale     string    `json:"rationale"`
+	Caveat        string    `json:"caveat"`
+	SourceUrl     string    `json:"source_url"`
 }
 
 type PfasLabConfirmation struct {
@@ -355,6 +440,73 @@ type PfasPhysicalSamplePoint struct {
 	Point        interface{} `json:"point"`
 }
 
+type PfasPlacementAllocation struct {
+	EvaluationID    uuid.UUID      `json:"evaluation_id"`
+	Position        int32          `json:"position"`
+	FieldID         uuid.UUID      `json:"field_id"`
+	FieldName       string         `json:"field_name"`
+	DryTons         pgtype.Numeric `json:"dry_tons"`
+	Acres           pgtype.Numeric `json:"acres"`
+	RateDryTonsAcre pgtype.Numeric `json:"rate_dry_tons_acre"`
+}
+
+type PfasPlacementDataGap struct {
+	EvaluationID uuid.UUID `json:"evaluation_id"`
+	Code         string    `json:"code"`
+	Detail       string    `json:"detail"`
+	Resolution   string    `json:"resolution"`
+}
+
+type PfasPlacementEvaluation struct {
+	ID                 uuid.UUID          `json:"id"`
+	WorkspaceID        uuid.UUID          `json:"workspace_id"`
+	DecisionID         uuid.UUID          `json:"decision_id"`
+	BatchID            uuid.UUID          `json:"batch_id"`
+	Status             string             `json:"status"`
+	Tier               string             `json:"tier"`
+	ConfigVersion      string             `json:"config_version"`
+	ConfigChecksum     string             `json:"config_checksum"`
+	InputHash          string             `json:"input_hash"`
+	WetMassKg          pgtype.Numeric     `json:"wet_mass_kg"`
+	PercentSolids      pgtype.Numeric     `json:"percent_solids"`
+	BatchDryTons       pgtype.Numeric     `json:"batch_dry_tons"`
+	AllocatedDryTons   pgtype.Numeric     `json:"allocated_dry_tons"`
+	UnallocatedDryTons pgtype.Numeric     `json:"unallocated_dry_tons"`
+	CreatedAt          pgtype.Timestamptz `json:"created_at"`
+}
+
+type PfasPlacementFieldResult struct {
+	EvaluationID             uuid.UUID      `json:"evaluation_id"`
+	FieldID                  uuid.UUID      `json:"field_id"`
+	PhysicalEvaluationID     uuid.NullUUID  `json:"physical_evaluation_id"`
+	FieldName                string         `json:"field_name"`
+	Disposition              string         `json:"disposition"`
+	Rank                     *int32         `json:"rank"`
+	Explanation              string         `json:"explanation"`
+	Counterfactual           *string        `json:"counterfactual"`
+	HighConcernCount         int32          `json:"high_concern_count"`
+	ModerateConcernCount     int32          `json:"moderate_concern_count"`
+	DataGapCount             int32          `json:"data_gap_count"`
+	AllowedRateDryTonsAcre   pgtype.Numeric `json:"allowed_rate_dry_tons_acre"`
+	AvailableCapacityDryTons pgtype.Numeric `json:"available_capacity_dry_tons"`
+	RoadAccessDistanceM      *float64       `json:"road_access_distance_m"`
+	Reasons                  []byte         `json:"reasons"`
+}
+
+type PfasPlacementVulnerabilityCategory struct {
+	EvaluationID  uuid.UUID `json:"evaluation_id"`
+	FieldID       uuid.UUID `json:"field_id"`
+	CategoryKey   string    `json:"category_key"`
+	Label         string    `json:"label"`
+	Band          string    `json:"band"`
+	Explanation   string    `json:"explanation"`
+	Components    []byte    `json:"components"`
+	AuthorityType string    `json:"authority_type"`
+	SourceTitle   string    `json:"source_title"`
+	SourceUrl     *string   `json:"source_url"`
+	ConfigVersion string    `json:"config_version"`
+}
+
 type PfasPolicyRulePack struct {
 	ID            uuid.UUID          `json:"id"`
 	Code          string             `json:"code"`
@@ -373,6 +525,61 @@ type PfasPolicyRulePack struct {
 	Explanation   string             `json:"explanation"`
 	Definition    []byte             `json:"definition"`
 	CreatedAt     pgtype.Timestamptz `json:"created_at"`
+}
+
+type PfasResponseDataGap struct {
+	RunID      uuid.UUID `json:"run_id"`
+	Code       string    `json:"code"`
+	Detail     string    `json:"detail"`
+	Resolution string    `json:"resolution"`
+	Critical   bool      `json:"critical"`
+}
+
+type PfasResponseEvidence struct {
+	ID            uuid.UUID          `json:"id"`
+	RunID         uuid.UUID          `json:"run_id"`
+	Provider      string             `json:"provider"`
+	Kind          string             `json:"kind"`
+	Status        string             `json:"status"`
+	Title         string             `json:"title"`
+	Summary       string             `json:"summary"`
+	Data          []byte             `json:"data"`
+	SourceUrl     string             `json:"source_url"`
+	SourceVintage *string            `json:"source_vintage"`
+	RequestHash   *string            `json:"request_hash"`
+	ResponseHash  *string            `json:"response_hash"`
+	RequestID     *string            `json:"request_id"`
+	FetchedAt     pgtype.Timestamptz `json:"fetched_at"`
+	Caveat        string             `json:"caveat"`
+}
+
+type PfasResponseRun struct {
+	ID                 uuid.UUID          `json:"id"`
+	WorkspaceID        uuid.UUID          `json:"workspace_id"`
+	DecisionID         uuid.UUID          `json:"decision_id"`
+	FacilityLocationID uuid.UUID          `json:"facility_location_id"`
+	Tier               string             `json:"tier"`
+	Status             string             `json:"status"`
+	InputHash          string             `json:"input_hash"`
+	PolicySourceUrl    string             `json:"policy_source_url"`
+	PolicyVersion      string             `json:"policy_version"`
+	StartedAt          pgtype.Timestamptz `json:"started_at"`
+	CompletedAt        pgtype.Timestamptz `json:"completed_at"`
+	FailureCode        *string            `json:"failure_code"`
+	FailureDetail      *string            `json:"failure_detail"`
+	CreatedAt          pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt          pgtype.Timestamptz `json:"updated_at"`
+}
+
+type PfasResponseTask struct {
+	RunID    uuid.UUID `json:"run_id"`
+	Position int32     `json:"position"`
+	Code     string    `json:"code"`
+	Category string    `json:"category"`
+	Title    string    `json:"title"`
+	Detail   string    `json:"detail"`
+	Timing   string    `json:"timing"`
+	State    string    `json:"state"`
 }
 
 type PfasSupplementalEvidence struct {

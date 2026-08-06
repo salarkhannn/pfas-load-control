@@ -62,7 +62,9 @@ WHERE report_version_id = $1 AND rule_pack_id = $2;
 
 -- name: GetBatchPolicyDecisionForWorkspace :one
 SELECT d.*, f.name AS facility_name, b.identifier AS batch_identifier,
-       v.version AS report_version
+       v.version AS report_version, b.id AS batch_id,
+       CAST(COALESCE(b.wet_mass_kg::text, '') AS text) AS wet_mass_kg,
+       CAST(COALESCE(b.percent_solids::text, '') AS text) AS percent_solids
 FROM pfas.batch_policy_decisions d
 JOIN pfas.lab_reports r ON r.id = d.report_id AND r.workspace_id = d.workspace_id
 JOIN pfas.facilities f ON f.id = r.facility_id AND f.workspace_id = r.workspace_id

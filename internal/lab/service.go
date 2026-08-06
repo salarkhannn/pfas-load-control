@@ -130,6 +130,7 @@ func (s *Service) Create(ctx context.Context, workspaceKey string, intake Intake
 	reportHash := hex.EncodeToString(digest[:])
 	reportID := uuid.New()
 	created := true
+	retried := false
 	_, err = queries.CreateLabReport(ctx, db.CreateLabReportParams{
 		ID:               reportID,
 		WorkspaceID:      workspace.ID,
@@ -148,10 +149,20 @@ func (s *Service) Create(ctx context.Context, workspaceKey string, intake Intake
 			return Report{}, false, fmt.Errorf("load duplicate laboratory report: %w", loadErr)
 		}
 		reportID = existing.ID
+		if existing.Status == string(StatusFailed) {
+			rows, retryErr := queries.RetryFailedLabReport(ctx, db.RetryFailedLabReportParams{
+				ID:          existing.ID,
+				WorkspaceID: workspace.ID,
+			})
+			if retryErr != nil {
+				return Report{}, false, fmt.Errorf("retry failed laboratory report: %w", retryErr)
+			}
+			retried = rows == 1
+		}
 	} else if err != nil {
 		return Report{}, false, fmt.Errorf("save private laboratory report: %w", err)
 	}
-	if created {
+	if created || retried {
 		if _, err := s.jobs.InsertTx(ctx, tx, IngestArgs{ReportID: reportID.String()}, nil); err != nil {
 			return Report{}, false, fmt.Errorf("queue laboratory extraction: %w", err)
 		}

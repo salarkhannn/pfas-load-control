@@ -92,9 +92,12 @@ type Evaluation struct {
 type Decision struct {
 	ID                                   string            `json:"id"`
 	ReportID                             string            `json:"reportId"`
+	BatchID                              string            `json:"batchId"`
 	ReportVersion                        int               `json:"reportVersion"`
 	FacilityName                         string            `json:"facilityName"`
 	BatchIdentifier                      string            `json:"batchIdentifier"`
+	WetMassKg                            string            `json:"wetMassKg,omitempty"`
+	PercentSolids                        string            `json:"percentSolids,omitempty"`
 	Jurisdiction                         string            `json:"jurisdiction"`
 	Tier                                 Tier              `json:"tier"`
 	Explanation                          string            `json:"explanation"`

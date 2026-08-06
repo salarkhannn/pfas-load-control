@@ -8,10 +8,13 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
 )
+
+var naicsPattern = regexp.MustCompile(`^[0-9]{2,6}$`)
 
 const (
 	wellogicLayerURL = "https://gisagoegle.state.mi.us/arcgis/rest/services/EGLE/DwOpenData/MapServer/3"
@@ -125,7 +128,7 @@ func (c *SupplementalClient) FetchWellogic(ctx context.Context, envelope Envelop
 		return result, err
 	}
 	if payload.Error != nil {
-		return result, errors.New("Michigan Wellogic rejected the spatial query")
+		return result, errors.New("spatial query rejected by Michigan Wellogic")
 	}
 	for _, feature := range payload.Features {
 		if feature.Geometry.Latitude == 0 || feature.Geometry.Longitude == 0 {
@@ -211,11 +214,11 @@ func (c *SupplementalClient) fetchECHOPage(ctx context.Context, endpoint string,
 		return echoPage{}, err
 	}
 	if !strings.EqualFold(payload.Results.Message, "Success") || payload.Results.QueryID == "" {
-		return echoPage{}, errors.New("EPA ECHO did not return a usable facility query")
+		return echoPage{}, errors.New("facility query returned no usable result from EPA ECHO")
 	}
 	rows, err := flexibleInt(payload.Results.QueryRows)
 	if err != nil {
-		return echoPage{}, errors.New("EPA ECHO returned an invalid result count")
+		return echoPage{}, errors.New("facility query returned an invalid result count from EPA ECHO")
 	}
 	return echoPage{QueryID: payload.Results.QueryID, QueryRows: rows, Facilities: payload.Results.Facilities}, nil
 }
@@ -267,7 +270,7 @@ func splitCodes(value string) []string {
 	result := make([]string, 0, len(parts))
 	for _, part := range parts {
 		part = strings.TrimSpace(part)
-		if part != "" {
+		if naicsPattern.MatchString(part) {
 			result = append(result, part)
 		}
 	}

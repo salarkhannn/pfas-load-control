@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"regexp"
+	"sort"
 	"strings"
 	"time"
 )
@@ -193,28 +194,112 @@ var (
 	pfosPattern      = regexp.MustCompile(`\bpfos\b`)
 	pfoaPattern      = regexp.MustCompile(`\bpfoa\b`)
 	metadataPatterns = map[string]*regexp.Regexp{
-		"laboratory":       regexp.MustCompile(`(?i)^\s*(?:laboratory|lab)\s*[:\-]\s*(.+?)\s*$`),
-		"sampleIdentifier": regexp.MustCompile(`(?i)^\s*(?:sample\s*(?:identifier|id)|sample)\s*[:\-]\s*(.+?)\s*$`),
-		"collectionDate":   regexp.MustCompile(`(?i)^\s*(?:collection|sample)\s*date\s*[:\-]\s*(.+?)\s*$`),
-		"matrix":           regexp.MustCompile(`(?i)^\s*(?:sample\s*)?matrix\s*[:\-]\s*(.+?)\s*$`),
+		"laboratory":       regexp.MustCompile(`(?i)\blaboratory\s*:\s*(.+?)(?:\s+dnr\s+id\s*:|$)`),
+		"sampleIdentifier": regexp.MustCompile(`(?i)\bsample\s*(?:identifier|id)\s*:\s*([[:alnum:]_.-]+)`),
+		"collectionDate":   regexp.MustCompile(`(?i)\b(?:collected\s+date(?:/time)?|collection(?:\s+(?:date|start))?|sample\s+date)\s*:\s*(\d{1,4}[/-]\d{1,2}[/-]\d{1,4})`),
+		"matrix":           regexp.MustCompile(`(?i)\b(?:sample\s*)?(?:matrix|source)\s*:\s*(.+?)(?:\s+sample\s+depth\s*:|$)`),
 		"method":           regexp.MustCompile(`(?i)^\s*(?:analytical\s*)?method\s*[:\-]\s*(.+?)\s*$`),
 		"basis":            regexp.MustCompile(`(?i)^\s*(?:weight\s*)?basis\s*[:\-]\s*(.+?)\s*$`),
 	}
+	reportProducedByPattern = regexp.MustCompile(`(?im)^.*\breport produced by\s*$\n.*?\s{2,}([^\n]+?)\s*$`)
+	methodSummaryPattern    = regexp.MustCompile(`(?i)^\s*(ASTM\s+D[[:alnum:].-]+)\s+(ASTM\s+Method\s+.+?Isotopic\s+Dilution\)?)\s*$`)
+	dateSuffixPattern       = regexp.MustCompile(`\s+\d{1,2}/\d{1,2}/\d{4}.*$`)
+	leadingLabCodePattern   = regexp.MustCompile(`^\d{4,6}\s+`)
 )
 
 func parsePDFPages(pages []Page) Draft {
 	draft := Draft{Analytes: make([]Analyte, 0, 2)}
+	selectedSample := ""
+	selectedSampleActive := true
+	var tableColumns *pdfResultColumns
 	for _, page := range pages {
+		applyPDFPageMetadata(&draft, page.Text)
 		offset := 0
+		var pending *pdfAnalyteLine
+		skipAnalyteReferenceSection := false
 		for _, line := range strings.Split(page.Text, "\n") {
 			trimmed := strings.TrimSpace(line)
 			if trimmed == "" {
 				offset += len(line) + 1
 				continue
 			}
+			if sample := sampleIdentifierFromPDFLine(trimmed); sample != "" {
+				if selectedSample == "" {
+					selectedSample = sample
+				}
+				selectedSampleActive = sample == selectedSample
+				pending = nil
+			}
+			if !selectedSampleActive {
+				offset += len(line) + 1
+				continue
+			}
 			applyPDFMetadata(&draft, trimmed)
+			if columns, ok := pdfResultColumnsFromHeader(line); ok {
+				tableColumns = &columns
+			}
+			if strings.EqualFold(trimmed, "Parameter Summary") {
+				skipAnalyteReferenceSection = true
+			}
+			if skipAnalyteReferenceSection {
+				offset += len(line) + 1
+				continue
+			}
+
+			if pending != nil {
+				pending.lines = append(pending.lines, trimmed)
+				if pending.unitSeen {
+					excerpt := strings.Join(pending.lines, " ")
+					analyte := analyteFromPDFLines(pending.canonical, pending.lines)
+					analyte.SourcePage = page.Number
+					analyte.SourceExcerpt = excerpt
+					analyte.SourceBounds = &SourceBounds{Start: pending.start, End: offset + len(line)}
+					draft.Analytes = append(draft.Analytes, analyte)
+					pending = nil
+					offset += len(line) + 1
+					continue
+				}
+				if unitFromText(trimmed) != nil {
+					pending.unitSeen = true
+					if detectionLimitPattern.MatchString(strings.Join(pending.lines, " ")) {
+						excerpt := strings.Join(pending.lines, " ")
+						analyte := analyteFromPDFLines(pending.canonical, pending.lines)
+						analyte.SourcePage = page.Number
+						analyte.SourceExcerpt = excerpt
+						analyte.SourceBounds = &SourceBounds{Start: pending.start, End: offset + len(line)}
+						draft.Analytes = append(draft.Analytes, analyte)
+						pending = nil
+					}
+					offset += len(line) + 1
+					continue
+				}
+				if len(pending.lines) < 6 {
+					offset += len(line) + 1
+					continue
+				}
+				pending = nil
+			}
+
 			if canonical := canonicalAnalyte(trimmed); canonical != "" {
+				if tableColumns != nil {
+					if analyte, ok := analyteFromPDFTableLine(canonical, line, *tableColumns); ok {
+						analyte.SourcePage = page.Number
+						analyte.SourceExcerpt = trimmed
+						analyte.SourceBounds = &SourceBounds{Start: offset, End: offset + len(line)}
+						draft.Analytes = append(draft.Analytes, analyte)
+						offset += len(line) + 1
+						continue
+					}
+				}
+				if unitFromText(trimmed) == nil {
+					pending = &pdfAnalyteLine{canonical: canonical, lines: []string{trimmed}, start: offset}
+					offset += len(line) + 1
+					continue
+				}
 				analyte := analyteFromPDFLine(canonical, trimmed)
+				if tableColumns != nil && tableColumns.detectionAfterUnit && analyte.DetectionLimit == nil {
+					analyte.DetectionLimit = firstDecimalAfterUnit(trimmed)
+				}
 				analyte.SourcePage = page.Number
 				analyte.SourceExcerpt = trimmed
 				analyte.SourceBounds = &SourceBounds{Start: offset, End: offset + len(line)}
@@ -226,7 +311,121 @@ func parsePDFPages(pages []Page) Draft {
 	return draft
 }
 
+func applyPDFPageMetadata(draft *Draft, text string) {
+	if draft.Laboratory != nil {
+		return
+	}
+	match := reportProducedByPattern.FindStringSubmatch(text)
+	if len(match) == 2 {
+		setIfNil(&draft.Laboratory, cleanString(match[1]))
+	}
+}
+
+type pdfAnalyteLine struct {
+	canonical string
+	lines     []string
+	start     int
+	unitSeen  bool
+}
+
+type pdfResultColumns struct {
+	result             int
+	unit               int
+	reportingLimit     int
+	detectionLimit     int
+	detectionAfterUnit bool
+	starts             []int
+}
+
+func pdfResultColumnsFromHeader(line string) (pdfResultColumns, bool) {
+	result := strings.Index(line, "Result")
+	unit := strings.Index(line, "Units")
+	if result < 0 || unit < 0 {
+		return pdfResultColumns{}, false
+	}
+	columns := pdfResultColumns{
+		result:         result,
+		unit:           unit,
+		reportingLimit: strings.Index(line, "RL"),
+		detectionLimit: strings.Index(line, "MDL"),
+	}
+	if columns.detectionLimit < 0 {
+		columns.detectionLimit = strings.Index(line, "LOD")
+	}
+	if columns.reportingLimit < 0 {
+		columns.reportingLimit = strings.Index(line, "Report Limit")
+	}
+	columns.detectionAfterUnit = columns.detectionLimit > columns.unit &&
+		(columns.reportingLimit < columns.unit || columns.reportingLimit > columns.detectionLimit)
+	for _, start := range []int{columns.result, columns.unit, columns.reportingLimit, columns.detectionLimit} {
+		if start >= 0 {
+			columns.starts = append(columns.starts, start)
+		}
+	}
+	for _, label := range []string{"LOQ", "Dilution", "CAS#", "Flags"} {
+		if start := strings.Index(line, label); start >= 0 {
+			columns.starts = append(columns.starts, start)
+		}
+	}
+	sort.Ints(columns.starts)
+	return columns, true
+}
+
+func analyteFromPDFTableLine(canonical, line string, columns pdfResultColumns) (Analyte, bool) {
+	result := pdfColumnValue(line, columns.result, columns.starts)
+	unit := pdfColumnValue(line, columns.unit, columns.starts)
+	if result == "" || canonicalUnitPointer(&unit) == nil {
+		return Analyte{}, false
+	}
+	reportingLimitText := pdfColumnValue(line, columns.reportingLimit, columns.starts)
+	detectionLimitText := pdfColumnValue(line, columns.detectionLimit, columns.starts)
+	reportingLimit := cleanPointer(&reportingLimitText)
+	detectionLimit := cleanPointer(&detectionLimitText)
+	return analyteFromResult(canonical, result, &unit, basisFromText(line), nil, reportingLimit, detectionLimit), true
+}
+
+func pdfColumnValue(line string, start int, starts []int) string {
+	if start < 0 || start >= len(line) {
+		return ""
+	}
+	end := len(line)
+	for _, candidate := range starts {
+		if candidate > start && candidate < end {
+			end = candidate
+		}
+	}
+	return cleanString(line[start:end])
+}
+
+func firstDecimalAfterUnit(line string) *string {
+	location := concentrationUnitPattern.FindStringIndex(line)
+	if len(location) != 2 {
+		return nil
+	}
+	match := numberToken.FindStringSubmatch(line[location[1]:])
+	if len(match) != 2 {
+		return nil
+	}
+	value := strings.ReplaceAll(strings.TrimSpace(match[1]), " ", "")
+	return cleanPointer(&value)
+}
+
+func sampleIdentifierFromPDFLine(line string) string {
+	match := metadataPatterns["sampleIdentifier"].FindStringSubmatch(line)
+	if len(match) != 2 {
+		return ""
+	}
+	return cleanString(match[1])
+}
+
 func applyPDFMetadata(draft *Draft, line string) {
+	if draft.Method == nil {
+		if match := methodSummaryPattern.FindStringSubmatch(line); len(match) == 3 {
+			method := cleanString(match[1]) + " — " + cleanString(match[2])
+			setIfNil(&draft.Method, method)
+			return
+		}
+	}
 	for field, pattern := range metadataPatterns {
 		match := pattern.FindStringSubmatch(line)
 		if len(match) != 2 {
@@ -242,7 +441,7 @@ func applyPDFMetadata(draft *Draft, line string) {
 		case "sampleIdentifier":
 			setIfNil(&draft.SampleIdentifier, value)
 		case "collectionDate":
-			setIfNil(&draft.CollectionDate, value)
+			setIfNil(&draft.CollectionDate, normalizedPDFDate(value))
 		case "matrix":
 			setIfNil(&draft.Matrix, value)
 		case "method":
@@ -252,21 +451,77 @@ func applyPDFMetadata(draft *Draft, line string) {
 		}
 		return
 	}
+	if draft.Method == nil && strings.Contains(strings.ToLower(line), "pfas in solids") {
+		value := strings.TrimSpace(dateSuffixPattern.ReplaceAllString(line, ""))
+		setIfNil(&draft.Method, value)
+	}
+	if draft.Basis == nil && strings.Contains(strings.ToLower(line), "dry weight") {
+		setIfNil(&draft.Basis, "dry weight")
+	}
+}
+
+func normalizedPDFDate(value string) string {
+	for _, layout := range []string{"2006-01-02", "1/2/2006", "01/02/2006"} {
+		parsed, err := time.Parse(layout, value)
+		if err == nil {
+			return parsed.Format("2006-01-02")
+		}
+	}
+	return value
 }
 
 var numberToken = regexp.MustCompile(`(?i)(?:^|\s)(ND|<\s*[0-9][0-9,.]*(?:\.[0-9]+)?(?:e[+\-]?\d+)?|[0-9][0-9,.]*(?:\.[0-9]+)?(?:e[+\-]?\d+)?)(?:\s|$)`)
 var reportingLimitPattern = regexp.MustCompile(`(?i)\b(?:RL|reporting\s+limit)\s*[:=]?\s*([0-9][0-9,.]*(?:\.[0-9]+)?(?:e[+\-]?\d+)?)\b`)
 var detectionLimitPattern = regexp.MustCompile(`(?i)\b(?:DL|MDL|detection\s+limit)\s*[:=]?\s*([0-9][0-9,.]*(?:\.[0-9]+)?(?:e[+\-]?\d+)?)\b`)
+var concentrationUnitPattern = regexp.MustCompile(`(?i)(?:µ|μ|u|mc|n|m)g\s*(?:/|per)\s*(?:kg|g|l)\b`)
 
 func analyteFromPDFLine(canonical, line string) Analyte {
-	result := ""
-	if match := numberToken.FindStringSubmatch(line); len(match) == 2 {
-		result = strings.ReplaceAll(strings.TrimSpace(match[1]), " ", "")
+	return analyteFromPDFLines(canonical, []string{line})
+}
+
+func analyteFromPDFLines(canonical string, lines []string) Analyte {
+	combined := strings.Join(lines, " ")
+	unit := unitFromText(combined)
+	unitLine := len(lines)
+	for index, line := range lines {
+		if unitFromText(line) != nil {
+			unitLine = index
+			break
+		}
 	}
-	unit := unitFromText(line)
-	basis := basisFromText(line)
-	qualifier := qualifierFromText(line)
-	return analyteFromResult(canonical, result, unit, basis, qualifier, captureDecimal(reportingLimitPattern, line), captureDecimal(detectionLimitPattern, line))
+
+	result := ""
+	resultLinesEnd := unitLine + 1
+	if resultLinesEnd > len(lines) {
+		resultLinesEnd = len(lines)
+	}
+	for _, line := range lines[:resultLinesEnd] {
+		candidate := leadingLabCodePattern.ReplaceAllString(strings.TrimSpace(line), "")
+		if match := numberToken.FindStringSubmatch(candidate); len(match) == 2 {
+			result = strings.ReplaceAll(strings.TrimSpace(match[1]), " ", "")
+			break
+		}
+	}
+
+	detectionLimit := captureDecimal(detectionLimitPattern, combined)
+	if detectionLimit == nil && unitLine < len(lines)-1 {
+		for _, line := range lines[unitLine+1:] {
+			if match := numberToken.FindStringSubmatch(strings.TrimSpace(line)); len(match) == 2 {
+				detectionLimit = cleanPointer(&match[1])
+				break
+			}
+		}
+	}
+
+	return analyteFromResult(
+		canonical,
+		result,
+		unit,
+		basisFromText(combined),
+		qualifierFromText(combined),
+		captureDecimal(reportingLimitPattern, combined),
+		detectionLimit,
+	)
 }
 
 func captureDecimal(pattern *regexp.Regexp, value string) *string {
@@ -444,10 +699,15 @@ func requirePointer(gaps *[]Gap, code, field string, value *string, detail, reso
 
 func canonicalAnalyte(value string) string {
 	normalized := strings.ToLower(value)
+	compact := regexp.MustCompile(`[^a-z0-9]+`).ReplaceAllString(normalized, "")
+	if strings.Contains(compact, "pfosln") || strings.Contains(compact, "pfosbr") ||
+		strings.Contains(compact, "perfluorooctanesulfonicacidln") || strings.Contains(compact, "perfluorooctanesulfonicacidbr") {
+		return ""
+	}
 	switch {
-	case strings.Contains(normalized, "1763-23-1"), strings.Contains(normalized, "perfluorooctanesulfon"), pfosPattern.MatchString(normalized):
+	case strings.Contains(normalized, "1763-23-1"), strings.Contains(compact, "perfluorooctanesulfonic"), strings.Contains(compact, "perfluoronoctanesulfonic"), pfosPattern.MatchString(normalized):
 		return "PFOS"
-	case strings.Contains(normalized, "335-67-1"), strings.Contains(normalized, "perfluorooctanoic"), pfoaPattern.MatchString(normalized):
+	case strings.Contains(normalized, "335-67-1"), strings.Contains(compact, "perfluorooctanoic"), strings.Contains(compact, "perfluoronoctanoic"), pfoaPattern.MatchString(normalized):
 		return "PFOA"
 	default:
 		return ""
@@ -477,8 +737,7 @@ func canonicalUnitPointer(value *string) *string {
 }
 
 func unitFromText(value string) *string {
-	pattern := regexp.MustCompile(`(?i)(?:µ|μ|u|mc|n|m)g\s*(?:/|per)\s*(?:kg|g|l)\b`)
-	match := pattern.FindString(value)
+	match := concentrationUnitPattern.FindString(value)
 	if match == "" {
 		return nil
 	}

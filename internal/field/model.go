@@ -80,7 +80,8 @@ type Geometry struct {
 	GeoJSON     json.RawMessage `json:"geojson"`
 	AreaAcres   string          `json:"areaAcres"`
 	Hash        string          `json:"hash"`
-	ConfirmedAt time.Time       `json:"confirmedAt"`
+	Confirmed   bool            `json:"confirmed"`
+	ConfirmedAt *time.Time      `json:"confirmedAt,omitempty"`
 }
 
 type FieldGap struct {
