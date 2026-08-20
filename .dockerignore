@@ -4,6 +4,10 @@
 .github
 docs
 sample-data
-web
+web/node_modules
+web/dist
+web/test-results
+web/debug-*.mjs
+web/e2e-walkthrough.mjs
 bin
 **/*_test.go

@@ -58,7 +58,7 @@ func main() {
 
 	server := &http.Server{
 		Addr:              cfg.HTTPAddress,
-		Handler:           httpapi.NewRouter(runtime.Service, runtime.Lab, runtime.Policy, runtime.Fields, runtime.Evidence, runtime.Placement, runtime.Response, runtime.Packages, runtime.Actions, runtime.Parties, runtime.Registry, runtime.Coordination, runtime.Applications, pool, logger, cfg.WebOrigin),
+		Handler:           httpapi.WithStaticApp(httpapi.NewRouter(runtime.Service, runtime.Lab, runtime.Policy, runtime.Fields, runtime.Evidence, runtime.Placement, runtime.Response, runtime.Packages, runtime.Actions, runtime.Parties, runtime.Registry, runtime.Coordination, runtime.Applications, pool, logger, cfg.WebOrigin), os.Getenv("WEB_STATIC_DIR")),
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       15 * time.Second,
 		WriteTimeout:      15 * time.Second,

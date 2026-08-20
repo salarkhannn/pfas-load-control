@@ -247,15 +247,13 @@ The latest full verification result is recorded in `docs/SUBMISSION_NOTES.md`.
 
 ## Deployment
 
-`render.yaml` defines a free Render Docker web service for Go and a free static site for
-React. The API can spin down after 15 minutes without inbound traffic, so open the public
-site shortly before judging to absorb the cold start. During initial Blueprint setup,
-provide:
+The production `Dockerfile` builds the React frontend and serves it from the same Go
+process as the API. It is designed for a Northflank Developer Sandbox combined service,
+so the public application and API share one stable origin. Configure:
 
 - `DATABASE_URL`: the Supabase session-pooler URI;
 - `MIREYE_API_TOKEN`: the server-only Mireye bearer token;
-- `WEB_ORIGIN`: the final static-site origin; and
-- `VITE_API_URL`: the final API origin.
+- `WEB_ORIGIN`: the final public service origin.
 
-The API honors Render's assigned `PORT`. It applies idempotent application and River
-migrations on startup, and all durable state remains in Supabase.
+The service honors the platform-assigned `PORT`, applies idempotent application and River
+migrations on startup, and keeps all durable state in Supabase.
