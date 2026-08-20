@@ -2,7 +2,7 @@ services:
   - type: web
     name: fieldproof-api
     runtime: docker
-    plan: starter
+    plan: free
     region: ohio
     dockerfilePath: ./Dockerfile
     dockerContext: .

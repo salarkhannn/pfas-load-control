@@ -247,8 +247,10 @@ The latest full verification result is recorded in `docs/SUBMISSION_NOTES.md`.
 
 ## Deployment
 
-`render.yaml` defines a non-sleeping Render Starter Docker web service for Go and a free
-static site for React. During initial Blueprint setup, provide:
+`render.yaml` defines a free Render Docker web service for Go and a free static site for
+React. The API can spin down after 15 minutes without inbound traffic, so open the public
+site shortly before judging to absorb the cold start. During initial Blueprint setup,
+provide:
 
 - `DATABASE_URL`: the Supabase session-pooler URI;
 - `MIREYE_API_TOKEN`: the server-only Mireye bearer token;
