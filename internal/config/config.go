@@ -12,7 +12,7 @@ import (
 
 const (
 	defaultMireyeBaseURL = "https://api.mireye.com"
-	defaultWebOrigin     = "https://fieldproof-agent.vercel.app"
+	defaultWebOrigin     = "https://fieldproof-inky.vercel.app"
 )
 
 type Config struct {
