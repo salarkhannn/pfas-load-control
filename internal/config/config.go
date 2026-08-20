@@ -10,7 +10,10 @@ import (
 	"strings"
 )
 
-const defaultMireyeBaseURL = "https://api.mireye.com"
+const (
+	defaultMireyeBaseURL = "https://api.mireye.com"
+	defaultWebOrigin     = "https://fieldproof-agent.vercel.app"
+)
 
 type Config struct {
 	DatabaseURL string
@@ -41,7 +44,7 @@ func Load() (Config, error) {
 		return Config{}, err
 	}
 
-	webOrigin := valueOrDefault("WEB_ORIGIN", "http://localhost:5174")
+	webOrigin := valueOrDefault("WEB_ORIGIN", defaultWebOrigin)
 	if err := validateHTTPURL("WEB_ORIGIN", webOrigin); err != nil {
 		return Config{}, err
 	}
