@@ -273,11 +273,22 @@ func hashInputs(snapshot Snapshot) (string, error) {
 		SchemaVersion string   `json:"schemaVersion"`
 		Snapshot      Snapshot `json:"snapshot"`
 	}{SchemaVersion: SchemaVersion, Snapshot: snapshot}
-	encoded, err := json.Marshal(value)
+	_, hash, err := FreezeRecord(value)
 	if err != nil {
 		return "", fmt.Errorf("encode package inputs: %w", err)
 	}
-	return digest(encoded), nil
+	return hash, nil
+}
+
+// FreezeRecord is the canonical serialization and hashing boundary used by
+// decision packages. Callers keep the returned bytes as the immutable package
+// record and use the digest to prove that the record has not changed.
+func FreezeRecord(value any) ([]byte, string, error) {
+	encoded, err := json.Marshal(value)
+	if err != nil {
+		return nil, "", err
+	}
+	return encoded, digest(encoded), nil
 }
 
 func digest(content []byte) string {

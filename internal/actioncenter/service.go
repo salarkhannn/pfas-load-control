@@ -522,7 +522,7 @@ func defaultPayload(pkg decisionpackage.DecisionPackage, proposal decisionpackag
 	case mode == ModeInternalRelease:
 		channel, recipient = "INTERNAL_RELEASE", "Facility operations"
 	case mode == ModeControl:
-		channel, recipient = "CONTROL", "PFAS Load Control"
+		channel, recipient = "CONTROL", "FieldProof"
 	case strings.Contains(proposal.Code, "RESULT-SUBMISSION") || proposal.Code == "NOTIFY_EGLE":
 		channel, recipient = "MIENVIRO", "Michigan EGLE"
 	case strings.Contains(proposal.Code, "LANDOWNER"):

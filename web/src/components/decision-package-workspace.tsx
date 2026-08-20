@@ -20,7 +20,7 @@ export function DecisionPackageWorkspace({ decision }: { decision: Decision }) {
   if (decision.tier === 'UNDETERMINED') return null;
 
   return (
-    <section className="package-workspace" aria-labelledby="package-title">
+    <section className="package-workspace" id="decision-package" aria-labelledby="package-title">
       <header className="package-heading">
         <div>
           <span>Decision package</span>

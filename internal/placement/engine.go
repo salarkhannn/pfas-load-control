@@ -2,18 +2,29 @@ package placement
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"math"
 	"math/big"
 	"sort"
+	"strconv"
 	"strings"
+	"time"
 )
 
 var errInvalidNumber = errors.New("invalid decimal value")
 
 func Evaluate(input Input) (PlacementPlan, error) {
+	return EvaluateWithEvidence(context.Background(), input, nil)
+}
+
+func EvaluateWithEvidence(ctx context.Context, input Input, evidenceStore SlopeEvidenceStore) (PlacementPlan, error) {
+	return EvaluateWithEvidenceAndPolicy(ctx, input, evidenceStore, CurrentResolutionPolicy())
+}
+
+func EvaluateWithEvidenceAndPolicy(ctx context.Context, input Input, evidenceStore SlopeEvidenceStore, resolutionPolicy ResolutionPolicy) (PlacementPlan, error) {
 	result := PlacementPlan{
 		Tier: input.Tier, ConfigVersion: ConfigVersion, ConfigChecksum: ConfigChecksum,
 		WetMassKg: input.WetMassKg, PercentSolids: input.PercentSolids,
@@ -51,7 +62,7 @@ func Evaluate(input Input) (PlacementPlan, error) {
 	}
 
 	for _, field := range input.Fields {
-		fieldResult, err := evaluateField(input.Tier, input.PolicyRate, field)
+		fieldResult, err := evaluateField(ctx, input.Tier, input.PolicyRate, field, evidenceStore, input.EvidenceAsOf, resolutionPolicy)
 		if err != nil {
 			return PlacementPlan{}, fmt.Errorf("evaluate field %s: %w", field.Name, err)
 		}
@@ -124,7 +135,7 @@ func hasDisposition(fields []PlacementField, disposition Disposition) bool {
 	return false
 }
 
-func evaluateField(tier, policyRate string, input FieldInput) (PlacementField, error) {
+func evaluateField(ctx context.Context, tier, policyRate string, input FieldInput, evidenceStore SlopeEvidenceStore, asOf time.Time, resolutionPolicy ResolutionPolicy) (PlacementField, error) {
 	result := PlacementField{
 		FieldID: input.ID, FieldName: input.Name, Disposition: DispositionEligible,
 		PhysicalEvaluationID: input.PhysicalEvaluationID, Reasons: []string{}, Categories: []VulnerabilityCategory{},
@@ -145,6 +156,21 @@ func evaluateField(tier, policyRate string, input FieldInput) (PlacementField, e
 		}
 	}
 	result.DataGapCount += input.PhysicalCriticalGaps + input.PhysicalOtherGaps
+	if asOf.IsZero() {
+		asOf = time.Now().UTC()
+	}
+	var verifiedResolution *ResolutionVerification
+	var resolutionErr error
+	if exceedsSurfaceSlopeLimit(facts) {
+		verification, err := VerifySlopeResolutionWithPolicy(ctx, input, evidenceStore, asOf, resolutionPolicy)
+		if err != nil {
+			resolutionErr = err
+		} else {
+			verifiedResolution = &verification
+			input.UsableAcres = verification.DerivedUsableAcres
+			result.SlopeResolution = verifiedResolution
+		}
+	}
 
 	switch {
 	case input.Status != "READY" || !input.RMPApproved:
@@ -159,6 +185,14 @@ func evaluateField(tier, policyRate string, input FieldInput) (PlacementField, e
 	case boolFact(facts["intersects_wetland"]) || boolFact(facts["intersects_nhd_area"]):
 		result.Disposition = DispositionReviewRequired
 		result.Reasons = append(result.Reasons, "The mapped application boundary overlaps a wetland or surface-water feature and must be reconciled before allocation.")
+	case exceedsSurfaceSlopeLimit(facts) && verifiedResolution == nil:
+		result.Disposition = DispositionReviewRequired
+		result.Reasons = append(result.Reasons, "The sampled maximum slope exceeds Michigan's default six-percent surface-application threshold. Supply a stored, verified resolution record before allocation; this engine currently supports a confirmed boundary polygon that excludes every high-slope sample.")
+	}
+	if exceedsSurfaceSlopeLimit(facts) && verifiedResolution != nil {
+		result.Reasons = append(result.Reasons, "The engine verified the immutable boundary artifact and confirmed that the captured high-slope sample lies outside boundary version "+strconv.Itoa(verifiedResolution.BoundaryVersion)+".")
+	} else if resolutionErr != nil && input.SlopeResolution != nil {
+		result.Reasons = append(result.Reasons, "The supplied slope-resolution reference failed closed: "+resolutionErr.Error()+".")
 	}
 
 	if input.UsableAcres == "" || input.AgronomicRate == "" || input.PriorLoadingDryTons == "" {
@@ -233,14 +267,15 @@ func rankFields(fields []PlacementField) {
 		}
 		return roadDistance(left.RoadAccessDistanceM) < roadDistance(right.RoadAccessDistanceM)
 	})
-	rank := 0
 	for index := range fields {
-		if fields[index].Disposition != DispositionEligible {
-			continue
-		}
-		rank++
-		fields[index].Rank = &rank
+		fieldRank := index + 1
+		fields[index].Rank = &fieldRank
 	}
+}
+
+func exceedsSurfaceSlopeLimit(facts map[string]FactInput) bool {
+	maximum, ok := rangeMaximum(facts["slope_degrees"])
+	return ok && SlopeExceedsSurfaceLimit(maximum)
 }
 
 func addCounterfactuals(fields []PlacementField) {
@@ -307,10 +342,9 @@ func subsurfaceCategory(facts map[string]FactInput) VulnerabilityCategory {
 
 func surfaceCategory(facts map[string]FactInput) VulnerabilityCategory {
 	components := components(facts, "slope_degrees", "soil_erodibility_k_factor", "within_floodplain_polygon", "intersects_wetland", "intersects_nhd_area")
-	maxSlope, slopeOK := rangeMaximum(facts["slope_degrees"])
-	defaultSurfaceLimitDegrees := math.Atan(0.06) * 180 / math.Pi
+	_, slopeOK := rangeMaximum(facts["slope_degrees"])
 	band, explanation := BandLow, "No direct mapped water overlap or default surface-slope concern was returned."
-	if boolFact(facts["within_floodplain_polygon"]) || boolFact(facts["intersects_wetland"]) || boolFact(facts["intersects_nhd_area"]) || (slopeOK && maxSlope > defaultSurfaceLimitDegrees) {
+	if boolFact(facts["within_floodplain_polygon"]) || boolFact(facts["intersects_wetland"]) || boolFact(facts["intersects_nhd_area"]) || (slopeOK && exceedsSurfaceSlopeLimit(facts)) {
 		band, explanation = BandHigh, "The boundary has a mapped water/flood overlap or a sampled slope above Michigan's default six-percent surface-application limit."
 	} else if !allFactsComplete(facts, "slope_degrees", "within_floodplain_polygon", "intersects_wetland", "intersects_nhd_area") {
 		band, explanation = BandUnknown, "Surface-transport evidence is incomplete."
@@ -348,7 +382,7 @@ func uncertaintyCategory(input FieldInput) VulnerabilityCategory {
 	case input.PhysicalOtherGaps > 0 || !input.SupplementalAvailable:
 		band, explanation = BandModerate, "Critical facts are complete, but one or more supporting sources are unavailable."
 	}
-	return category("DATA_UNCERTAINTY", "Evidence uncertainty", band, explanation, components, "PRODUCT_CONFIG", "PFAS Load Control evidence-completeness contract", "")
+	return category("DATA_UNCERTAINTY", "Evidence uncertainty", band, explanation, components, "PRODUCT_CONFIG", "FieldProof evidence-completeness contract", "")
 }
 
 func category(key, label string, band Band, explanation string, components []PlacementComponent, authority, title, sourceURL string) VulnerabilityCategory {

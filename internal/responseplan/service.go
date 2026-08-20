@@ -484,8 +484,6 @@ func excludeTreatmentPlant(facilities []evidence.ECHOFacility, treatmentPlantNam
 
 func canonicalFacilityName(value string) string {
 	value = strings.ToUpper(strings.TrimSpace(value))
-	value = strings.TrimPrefix(value, "DEMO — ")
-	value = strings.TrimPrefix(value, "DEMO - ")
 	value = strings.ReplaceAll(value, "WASTEWATER TREATMENT PLANT", "WWTP")
 	value = strings.ReplaceAll(value, "WATER RESOURCE RECOVERY FACILITY", "WRRF")
 	return strings.Join(strings.FieldsFunc(value, func(r rune) bool {

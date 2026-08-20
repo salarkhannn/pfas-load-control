@@ -43,6 +43,7 @@ type Page struct {
 	Number           int     `json:"number"`
 	Text             string  `json:"text"`
 	ExtractionMethod string  `json:"extractionMethod"`
+	ReadError        string  `json:"readError,omitempty"`
 	Width            *string `json:"width,omitempty"`
 	Height           *string `json:"height,omitempty"`
 }

@@ -92,7 +92,7 @@ func buildEvidenceLedger(snapshot Snapshot) []EvidenceEntry {
 	}
 	if snapshot.Placement != nil {
 		entries = append(entries, EvidenceEntry{
-			Kind: "PLACEMENT_PLAN", Provider: "PFAS Load Control", Title: "Deterministic draft placement plan",
+			Kind: "PLACEMENT_PLAN", Provider: "FieldProof", Title: "Deterministic draft placement plan",
 			Status: evidenceStatus(snapshot.Placement.Status == placement.StatusReady), RecordID: snapshot.Placement.ID,
 			SourceVersion: snapshot.Placement.ConfigVersion, SourceHash: snapshot.Placement.InputHash,
 			Detail:      fmt.Sprintf("%s dry tons allocated; %s dry tons remain.", snapshot.Placement.AllocatedDryTons, snapshot.Placement.UnallocatedDryTons),
@@ -115,7 +115,7 @@ func buildEvidenceLedger(snapshot Snapshot) []EvidenceEntry {
 	}
 	if snapshot.Response != nil {
 		entries = append(entries, EvidenceEntry{
-			Kind: "PFAS_RESPONSE", Provider: "PFAS Load Control", Title: "Required PFAS response dossier",
+			Kind: "PFAS_RESPONSE", Provider: "FieldProof", Title: "Required PFAS response dossier",
 			Status: evidenceStatus(snapshot.Response.Status == "READY"), RecordID: snapshot.Response.ID,
 			SourceURL: snapshot.Response.PolicySourceURL, SourceVersion: snapshot.Response.PolicyVersion,
 			Detail:      fmt.Sprintf("%d required actions, %d investigation leads, and %d alternative-management candidates were assembled.", len(snapshot.Response.Tasks), len(snapshot.Response.InvestigationLeads), len(snapshot.Response.Alternatives)),

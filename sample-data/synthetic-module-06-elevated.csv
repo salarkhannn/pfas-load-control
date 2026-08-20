@@ -1,3 +1,0 @@
-laboratory,sample_id,collection_date,matrix,method,basis,analyte,result,unit,qualifier,reporting_limit,detection_limit
-Synthetic Validation Laboratory,DEMO-ELEVATED-001,2026-08-06,Biosolids,EPA 1633,dry,PFOS,42.0,ug/kg,,0.5,0.2
-Synthetic Validation Laboratory,DEMO-ELEVATED-001,2026-08-06,Biosolids,EPA 1633,dry,PFOA,8.0,ug/kg,,0.5,0.2

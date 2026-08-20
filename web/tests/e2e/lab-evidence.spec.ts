@@ -87,13 +87,13 @@ test('uploads, reviews, and confirms source-linked lab evidence', async ({ page 
   await page.goto('/');
 
   await page.getByLabel('Facility').fill('Great Lakes WRRF');
-  await page.getByLabel('Batch').fill('BATCH-42');
+  await page.getByRole('combobox', { name: 'Batch', exact: true }).fill('BATCH-42');
   await page.locator('input[type="file"]').setInputFiles({
     name: 'batch-42.csv',
     mimeType: 'text/csv',
     buffer: Buffer.from('analyte,result,unit\nPFOS,19.99,ug/kg\nPFOA,ND,ug/kg'),
   });
-  await page.getByRole('button', { name: 'Extract report' }).click();
+  await page.getByRole('button', { name: 'Extract and review' }).click();
 
   await expect(page.getByRole('heading', { name: 'BATCH-42' })).toBeVisible();
   await expect(page.getByText('PFOS', { exact: true })).toBeVisible();
@@ -110,6 +110,12 @@ test('keeps lab intake usable at 320px', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 800 });
   await mockLabAPI(page);
   await page.goto('/');
+  await expect(page.getByRole('heading', { name: 'FieldProof' })).toBeVisible();
+  await expect(page.getByText('Land-application evidence and placement agent')).toBeVisible();
+  await expect(page.getByText(/Built for third-party land-application contractors/)).toBeVisible();
+  const judgeDemoLink = page.getByRole('link', { name: 'Open judge demo' });
+  await expect(judgeDemoLink).toBeVisible();
+  expect((await judgeDemoLink.boundingBox())?.y).toBeLessThan(800);
   await expect(page.getByRole('heading', { name: 'Add a PFAS lab report' })).toBeVisible();
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(0);

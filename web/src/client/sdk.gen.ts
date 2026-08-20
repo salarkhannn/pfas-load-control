@@ -2,7 +2,7 @@
 
 import { type Client, type ClientMeta, formDataBodySerializer, type Options as Options2, type RequestResult, type TDataShape } from './client';
 import { client } from './client.gen';
-import type { ApproveActionData, ApproveActionErrors, ApproveActionResponses, ClassifyLabReportData, ClassifyLabReportErrors, ClassifyLabReportResponses, ConfirmFieldBoundaryData, ConfirmFieldBoundaryErrors, ConfirmFieldBoundaryResponses, ConfirmFieldParcelData, ConfirmFieldParcelErrors, ConfirmFieldParcelResponses, ConfirmLabReportData, ConfirmLabReportErrors, ConfirmLabReportResponses, ConfirmResponseFacilityLocationData, ConfirmResponseFacilityLocationErrors, ConfirmResponseFacilityLocationResponses, CorrectLabReportData, CorrectLabReportErrors, CorrectLabReportResponses, CreateCandidateFieldData, CreateCandidateFieldErrors, CreateCandidateFieldResponses, CreateDecisionPackageData, CreateDecisionPackageErrors, CreateDecisionPackageResponses, CreatePfasResponseData, CreatePfasResponseErrors, CreatePfasResponseResponses, CreatePlacementEvaluationData, CreatePlacementEvaluationErrors, CreatePlacementEvaluationResponses, CreateReadinessRunData, CreateReadinessRunErrors, CreateReadinessRunResponses, DownloadActionHandoffData, DownloadActionHandoffErrors, DownloadActionHandoffResponses, ExecuteActionData, ExecuteActionErrors, ExecuteActionResponses, ExportDecisionPackageData, ExportDecisionPackageErrors, ExportDecisionPackageResponses, GetActionCenterData, GetActionCenterErrors, GetActionCenterResponses, GetActiveMichiganRulePackData, GetActiveMichiganRulePackErrors, GetActiveMichiganRulePackResponses, GetCandidateFieldData, GetCandidateFieldErrors, GetCandidateFieldResponses, GetDecisionPackageData, GetDecisionPackageErrors, GetDecisionPackageResponses, GetFieldContextData, GetFieldContextErrors, GetFieldContextResponses, GetLabIntakeContextData, GetLabIntakeContextErrors, GetLabIntakeContextResponses, GetLabReportContentData, GetLabReportContentErrors, GetLabReportContentResponses, GetLabReportData, GetLabReportErrors, GetLabReportResponses, GetLatestDecisionPackageData, GetLatestDecisionPackageErrors, GetLatestDecisionPackageResponses, GetLatestPfasResponseData, GetLatestPfasResponseErrors, GetLatestPfasResponseResponses, GetLatestPhysicalEvaluationData, GetLatestPhysicalEvaluationErrors, GetLatestPhysicalEvaluationResponses, GetLatestPlacementEvaluationData, GetLatestPlacementEvaluationErrors, GetLatestPlacementEvaluationResponses, GetLatestReadinessRunData, GetLatestReadinessRunErrors, GetLatestReadinessRunResponses, GetLatestResponseFacilityLocationData, GetLatestResponseFacilityLocationErrors, GetLatestResponseFacilityLocationResponses, GetPfasResponseData, GetPfasResponseErrors, GetPfasResponseResponses, GetPhysicalEvaluationData, GetPhysicalEvaluationErrors, GetPhysicalEvaluationResponses, GetPolicyClassificationData, GetPolicyClassificationErrors, GetPolicyClassificationResponses, GetReadinessRunData, GetReadinessRunErrors, GetReadinessRunResponses, HealthLiveData, HealthLiveErrors, HealthLiveResponses, HealthReadyData, HealthReadyErrors, HealthReadyResponses, ImportCandidateFieldsData, ImportCandidateFieldsErrors, ImportCandidateFieldsResponses, PrepareActionCenterData, PrepareActionCenterErrors, PrepareActionCenterResponses, RejectActionData, RejectActionErrors, RejectActionResponses, ResolveCandidateFieldData, ResolveCandidateFieldErrors, ResolveCandidateFieldResponses, ResolveResponseFacilityLocationData, ResolveResponseFacilityLocationErrors, ResolveResponseFacilityLocationResponses, SelectFieldLocationData, SelectFieldLocationErrors, SelectFieldLocationResponses, SetFieldGeometryData, SetFieldGeometryErrors, SetFieldGeometryResponses, StartPhysicalEvaluationData, StartPhysicalEvaluationErrors, StartPhysicalEvaluationResponses, UpdateActionPayloadData, UpdateActionPayloadErrors, UpdateActionPayloadResponses, UpdateFieldDetailsData, UpdateFieldDetailsErrors, UpdateFieldDetailsResponses, UploadLabReportData, UploadLabReportErrors, UploadLabReportResponses } from './types.gen';
+import type { ApproveActionData, ApproveActionErrors, ApproveActionResponses, AssignFieldPartyData, AssignFieldPartyErrors, AssignFieldPartyResponses, ClassifyLabReportData, ClassifyLabReportErrors, ClassifyLabReportResponses, ConfirmApplicationData, ConfirmApplicationErrors, ConfirmApplicationResponses, ConfirmCoordinationStepData, ConfirmCoordinationStepErrors, ConfirmCoordinationStepResponses, ConfirmFieldBoundaryData, ConfirmFieldBoundaryErrors, ConfirmFieldBoundaryResponses, ConfirmFieldParcelData, ConfirmFieldParcelErrors, ConfirmFieldParcelResponses, ConfirmLabReportData, ConfirmLabReportErrors, ConfirmLabReportResponses, ConfirmResponseFacilityLocationData, ConfirmResponseFacilityLocationErrors, ConfirmResponseFacilityLocationResponses, CorrectLabReportData, CorrectLabReportErrors, CorrectLabReportResponses, CreateApplicationRecordData, CreateApplicationRecordErrors, CreateApplicationRecordResponses, CreateCandidateFieldData, CreateCandidateFieldErrors, CreateCandidateFieldResponses, CreateConsentData, CreateConsentErrors, CreateConsentResponses, CreateCoordinationWorkflowData, CreateCoordinationWorkflowErrors, CreateCoordinationWorkflowResponses, CreateDecisionPackageData, CreateDecisionPackageErrors, CreateDecisionPackageResponses, CreatePartyData, CreatePartyErrors, CreatePartyResponses, CreatePfasResponseData, CreatePfasResponseErrors, CreatePfasResponseResponses, CreatePlacementEvaluationData, CreatePlacementEvaluationErrors, CreatePlacementEvaluationResponses, CreateReadinessRunData, CreateReadinessRunErrors, CreateReadinessRunResponses, CreateRegistryEntryData, CreateRegistryEntryErrors, CreateRegistryEntryResponses, DeletePartyData, DeletePartyErrors, DeletePartyResponses, DeleteRegistryEntryData, DeleteRegistryEntryErrors, DeleteRegistryEntryResponses, DownloadActionHandoffData, DownloadActionHandoffErrors, DownloadActionHandoffResponses, ExecuteActionData, ExecuteActionErrors, ExecuteActionResponses, ExportDecisionPackageData, ExportDecisionPackageErrors, ExportDecisionPackageResponses, FindNearbyRegistryData, FindNearbyRegistryErrors, FindNearbyRegistryResponses, GetActionCenterData, GetActionCenterErrors, GetActionCenterResponses, GetActiveMichiganRulePackData, GetActiveMichiganRulePackErrors, GetActiveMichiganRulePackResponses, GetApplicationRecordData, GetApplicationRecordErrors, GetApplicationRecordResponses, GetCandidateFieldData, GetCandidateFieldErrors, GetCandidateFieldResponses, GetCoordinationWorkflowData, GetCoordinationWorkflowErrors, GetCoordinationWorkflowResponses, GetDecisionPackageData, GetDecisionPackageErrors, GetDecisionPackageResponses, GetFieldContextData, GetFieldContextErrors, GetFieldContextResponses, GetLabIntakeContextData, GetLabIntakeContextErrors, GetLabIntakeContextResponses, GetLabReportContentData, GetLabReportContentErrors, GetLabReportContentResponses, GetLabReportData, GetLabReportErrors, GetLabReportResponses, GetLatestDecisionPackageData, GetLatestDecisionPackageErrors, GetLatestDecisionPackageResponses, GetLatestPfasResponseData, GetLatestPfasResponseErrors, GetLatestPfasResponseResponses, GetLatestPhysicalEvaluationData, GetLatestPhysicalEvaluationErrors, GetLatestPhysicalEvaluationResponses, GetLatestPlacementEvaluationData, GetLatestPlacementEvaluationErrors, GetLatestPlacementEvaluationResponses, GetLatestReadinessRunData, GetLatestReadinessRunErrors, GetLatestReadinessRunResponses, GetLatestResponseFacilityLocationData, GetLatestResponseFacilityLocationErrors, GetLatestResponseFacilityLocationResponses, GetLoadingLedgerData, GetLoadingLedgerErrors, GetLoadingLedgerResponses, GetPartyData, GetPartyErrors, GetPartyResponses, GetPfasResponseData, GetPfasResponseErrors, GetPfasResponseResponses, GetPhysicalEvaluationData, GetPhysicalEvaluationErrors, GetPhysicalEvaluationResponses, GetPolicyClassificationData, GetPolicyClassificationErrors, GetPolicyClassificationResponses, GetReadinessRunData, GetReadinessRunErrors, GetReadinessRunResponses, GetRegistryEntryData, GetRegistryEntryErrors, GetRegistryEntryResponses, HealthLiveData, HealthLiveErrors, HealthLiveResponses, HealthReadyData, HealthReadyErrors, HealthReadyResponses, ImportCandidateFieldsData, ImportCandidateFieldsErrors, ImportCandidateFieldsResponses, ListApplicationRecordsByContractorData, ListApplicationRecordsByContractorErrors, ListApplicationRecordsByContractorResponses, ListApplicationRecordsByFieldData, ListApplicationRecordsByFieldErrors, ListApplicationRecordsByFieldResponses, ListConsentsData, ListConsentsErrors, ListConsentsResponses, ListCoordinationDocumentsData, ListCoordinationDocumentsErrors, ListCoordinationDocumentsResponses, ListCoordinationNotificationsData, ListCoordinationNotificationsErrors, ListCoordinationNotificationsResponses, ListCoordinationWorkflowsData, ListCoordinationWorkflowsErrors, ListCoordinationWorkflowsResponses, ListFieldsByPartyData, ListFieldsByPartyErrors, ListFieldsByPartyResponses, ListPartiesByFieldData, ListPartiesByFieldErrors, ListPartiesByFieldResponses, ListPartiesData, ListPartiesErrors, ListPartiesResponses, ListRegistryEntriesData, ListRegistryEntriesErrors, ListRegistryEntriesResponses, MarkNotificationReadData, MarkNotificationReadErrors, MarkNotificationReadResponses, PrepareActionCenterData, PrepareActionCenterErrors, PrepareActionCenterResponses, RejectActionData, RejectActionErrors, RejectActionResponses, RejectCoordinationStepData, RejectCoordinationStepErrors, RejectCoordinationStepResponses, RemoveFieldPartyData, RemoveFieldPartyErrors, RemoveFieldPartyResponses, ResolveCandidateFieldData, ResolveCandidateFieldErrors, ResolveCandidateFieldResponses, ResolveResponseFacilityLocationData, ResolveResponseFacilityLocationErrors, ResolveResponseFacilityLocationResponses, RevokeConsentData, RevokeConsentErrors, RevokeConsentResponses, SearchRegistryData, SearchRegistryErrors, SearchRegistryResponses, SelectFieldLocationData, SelectFieldLocationErrors, SelectFieldLocationResponses, SetFieldGeometryData, SetFieldGeometryErrors, SetFieldGeometryResponses, StartPhysicalEvaluationData, StartPhysicalEvaluationErrors, StartPhysicalEvaluationResponses, UpdateActionPayloadData, UpdateActionPayloadErrors, UpdateActionPayloadResponses, UpdateFieldDetailsData, UpdateFieldDetailsErrors, UpdateFieldDetailsResponses, UpdatePartyData, UpdatePartyErrors, UpdatePartyResponses, UploadCoordinationDocumentData, UploadCoordinationDocumentErrors, UploadCoordinationDocumentResponses, UploadLabReportData, UploadLabReportErrors, UploadLabReportResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -54,6 +54,35 @@ export const updateActionPayload = <ThrowOnError extends boolean = false>(option
  */
 export const rejectAction = <ThrowOnError extends boolean = false>(options: Options<RejectActionData, ThrowOnError>): RequestResult<RejectActionResponses, RejectActionErrors, ThrowOnError> => (options.client ?? client).post<RejectActionResponses, RejectActionErrors, ThrowOnError>({
     url: '/api/v1/actions/{id}/reject',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Create an application record
+ */
+export const createApplicationRecord = <ThrowOnError extends boolean = false>(options: Options<CreateApplicationRecordData, ThrowOnError>): RequestResult<CreateApplicationRecordResponses, CreateApplicationRecordErrors, ThrowOnError> => (options.client ?? client).post<CreateApplicationRecordResponses, CreateApplicationRecordErrors, ThrowOnError>({
+    url: '/api/v1/applications',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Get an application record
+ */
+export const getApplicationRecord = <ThrowOnError extends boolean = false>(options: Options<GetApplicationRecordData, ThrowOnError>): RequestResult<GetApplicationRecordResponses, GetApplicationRecordErrors, ThrowOnError> => (options.client ?? client).get<GetApplicationRecordResponses, GetApplicationRecordErrors, ThrowOnError>({ url: '/api/v1/applications/{id}', ...options });
+
+/**
+ * Farmer confirms an application
+ */
+export const confirmApplication = <ThrowOnError extends boolean = false>(options: Options<ConfirmApplicationData, ThrowOnError>): RequestResult<ConfirmApplicationResponses, ConfirmApplicationErrors, ThrowOnError> => (options.client ?? client).post<ConfirmApplicationResponses, ConfirmApplicationErrors, ThrowOnError>({
+    url: '/api/v1/applications/{id}/confirm',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -128,6 +157,86 @@ export const getLatestPhysicalEvaluation = <ThrowOnError extends boolean = false
 export const resolveCandidateField = <ThrowOnError extends boolean = false>(options: Options<ResolveCandidateFieldData, ThrowOnError>): RequestResult<ResolveCandidateFieldResponses, ResolveCandidateFieldErrors, ThrowOnError> => (options.client ?? client).post<ResolveCandidateFieldResponses, ResolveCandidateFieldErrors, ThrowOnError>({ url: '/api/v1/candidate-fields/{id}/resolution', ...options });
 
 /**
+ * Create a consent grant
+ */
+export const createConsent = <ThrowOnError extends boolean = false>(options: Options<CreateConsentData, ThrowOnError>): RequestResult<CreateConsentResponses, CreateConsentErrors, ThrowOnError> => (options.client ?? client).post<CreateConsentResponses, CreateConsentErrors, ThrowOnError>({
+    url: '/api/v1/consents',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Revoke a consent
+ */
+export const revokeConsent = <ThrowOnError extends boolean = false>(options: Options<RevokeConsentData, ThrowOnError>): RequestResult<RevokeConsentResponses, RevokeConsentErrors, ThrowOnError> => (options.client ?? client).post<RevokeConsentResponses, RevokeConsentErrors, ThrowOnError>({ url: '/api/v1/consents/{id}/revoke', ...options });
+
+/**
+ * Confirm a coordination step
+ */
+export const confirmCoordinationStep = <ThrowOnError extends boolean = false>(options: Options<ConfirmCoordinationStepData, ThrowOnError>): RequestResult<ConfirmCoordinationStepResponses, ConfirmCoordinationStepErrors, ThrowOnError> => (options.client ?? client).post<ConfirmCoordinationStepResponses, ConfirmCoordinationStepErrors, ThrowOnError>({
+    url: '/api/v1/coordination/steps/{stepId}/confirm',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Reject a coordination step
+ */
+export const rejectCoordinationStep = <ThrowOnError extends boolean = false>(options: Options<RejectCoordinationStepData, ThrowOnError>): RequestResult<RejectCoordinationStepResponses, RejectCoordinationStepErrors, ThrowOnError> => (options.client ?? client).post<RejectCoordinationStepResponses, RejectCoordinationStepErrors, ThrowOnError>({
+    url: '/api/v1/coordination/steps/{stepId}/reject',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List coordination workflows
+ */
+export const listCoordinationWorkflows = <ThrowOnError extends boolean = false>(options?: Options<ListCoordinationWorkflowsData, ThrowOnError>): RequestResult<ListCoordinationWorkflowsResponses, ListCoordinationWorkflowsErrors, ThrowOnError> => (options?.client ?? client).get<ListCoordinationWorkflowsResponses, ListCoordinationWorkflowsErrors, ThrowOnError>({ url: '/api/v1/coordination/workflows', ...options });
+
+/**
+ * Create a coordination workflow
+ */
+export const createCoordinationWorkflow = <ThrowOnError extends boolean = false>(options: Options<CreateCoordinationWorkflowData, ThrowOnError>): RequestResult<CreateCoordinationWorkflowResponses, CreateCoordinationWorkflowErrors, ThrowOnError> => (options.client ?? client).post<CreateCoordinationWorkflowResponses, CreateCoordinationWorkflowErrors, ThrowOnError>({
+    url: '/api/v1/coordination/workflows',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Get a workflow and its steps
+ */
+export const getCoordinationWorkflow = <ThrowOnError extends boolean = false>(options: Options<GetCoordinationWorkflowData, ThrowOnError>): RequestResult<GetCoordinationWorkflowResponses, GetCoordinationWorkflowErrors, ThrowOnError> => (options.client ?? client).get<GetCoordinationWorkflowResponses, GetCoordinationWorkflowErrors, ThrowOnError>({ url: '/api/v1/coordination/workflows/{id}', ...options });
+
+/**
+ * List documents for a workflow
+ */
+export const listCoordinationDocuments = <ThrowOnError extends boolean = false>(options: Options<ListCoordinationDocumentsData, ThrowOnError>): RequestResult<ListCoordinationDocumentsResponses, ListCoordinationDocumentsErrors, ThrowOnError> => (options.client ?? client).get<ListCoordinationDocumentsResponses, ListCoordinationDocumentsErrors, ThrowOnError>({ url: '/api/v1/coordination/workflows/{workflowId}/documents', ...options });
+
+/**
+ * Upload a document to a workflow
+ */
+export const uploadCoordinationDocument = <ThrowOnError extends boolean = false>(options: Options<UploadCoordinationDocumentData, ThrowOnError>): RequestResult<UploadCoordinationDocumentResponses, UploadCoordinationDocumentErrors, ThrowOnError> => (options.client ?? client).post<UploadCoordinationDocumentResponses, UploadCoordinationDocumentErrors, ThrowOnError>({
+    url: '/api/v1/coordination/workflows/{workflowId}/documents',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
  * Get one immutable decision package
  */
 export const getDecisionPackage = <ThrowOnError extends boolean = false>(options: Options<GetDecisionPackageData, ThrowOnError>): RequestResult<GetDecisionPackageResponses, GetDecisionPackageErrors, ThrowOnError> => (options.client ?? client).get<GetDecisionPackageResponses, GetDecisionPackageErrors, ThrowOnError>({ url: '/api/v1/decision-packages/{id}', ...options });
@@ -188,6 +297,38 @@ export const confirmResponseFacilityLocation = <ThrowOnError extends boolean = f
 export const getFieldContext = <ThrowOnError extends boolean = false>(options?: Options<GetFieldContextData, ThrowOnError>): RequestResult<GetFieldContextResponses, GetFieldContextErrors, ThrowOnError> => (options?.client ?? client).get<GetFieldContextResponses, GetFieldContextErrors, ThrowOnError>({ url: '/api/v1/field-context', ...options });
 
 /**
+ * Assign a party to a field
+ */
+export const assignFieldParty = <ThrowOnError extends boolean = false>(options: Options<AssignFieldPartyData, ThrowOnError>): RequestResult<AssignFieldPartyResponses, AssignFieldPartyErrors, ThrowOnError> => (options.client ?? client).post<AssignFieldPartyResponses, AssignFieldPartyErrors, ThrowOnError>({
+    url: '/api/v1/field-parties',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List application records for a field
+ */
+export const listApplicationRecordsByField = <ThrowOnError extends boolean = false>(options: Options<ListApplicationRecordsByFieldData, ThrowOnError>): RequestResult<ListApplicationRecordsByFieldResponses, ListApplicationRecordsByFieldErrors, ThrowOnError> => (options.client ?? client).get<ListApplicationRecordsByFieldResponses, ListApplicationRecordsByFieldErrors, ThrowOnError>({ url: '/api/v1/fields/{fieldId}/applications', ...options });
+
+/**
+ * Get field loading ledger for a year
+ */
+export const getLoadingLedger = <ThrowOnError extends boolean = false>(options: Options<GetLoadingLedgerData, ThrowOnError>): RequestResult<GetLoadingLedgerResponses, GetLoadingLedgerErrors, ThrowOnError> => (options.client ?? client).get<GetLoadingLedgerResponses, GetLoadingLedgerErrors, ThrowOnError>({ url: '/api/v1/fields/{fieldId}/loading/{year}', ...options });
+
+/**
+ * List parties associated with a field
+ */
+export const listPartiesByField = <ThrowOnError extends boolean = false>(options: Options<ListPartiesByFieldData, ThrowOnError>): RequestResult<ListPartiesByFieldResponses, ListPartiesByFieldErrors, ThrowOnError> => (options.client ?? client).get<ListPartiesByFieldResponses, ListPartiesByFieldErrors, ThrowOnError>({ url: '/api/v1/fields/{fieldId}/parties', ...options });
+
+/**
+ * Remove a party from a field
+ */
+export const removeFieldParty = <ThrowOnError extends boolean = false>(options: Options<RemoveFieldPartyData, ThrowOnError>): RequestResult<RemoveFieldPartyResponses, RemoveFieldPartyErrors, ThrowOnError> => (options.client ?? client).delete<RemoveFieldPartyResponses, RemoveFieldPartyErrors, ThrowOnError>({ url: '/api/v1/fields/{fieldId}/parties/{partyId}', ...options });
+
+/**
  * Get facilities and batches available for laboratory intake
  */
 export const getLabIntakeContext = <ThrowOnError extends boolean = false>(options?: Options<GetLabIntakeContextData, ThrowOnError>): RequestResult<GetLabIntakeContextResponses, GetLabIntakeContextErrors, ThrowOnError> => (options?.client ?? client).get<GetLabIntakeContextResponses, GetLabIntakeContextErrors, ThrowOnError>({ url: '/api/v1/lab-context', ...options });
@@ -241,6 +382,70 @@ export const correctLabReport = <ThrowOnError extends boolean = false>(options: 
         ...options.headers
     }
 });
+
+/**
+ * Mark a notification as read
+ */
+export const markNotificationRead = <ThrowOnError extends boolean = false>(options: Options<MarkNotificationReadData, ThrowOnError>): RequestResult<MarkNotificationReadResponses, MarkNotificationReadErrors, ThrowOnError> => (options.client ?? client).post<MarkNotificationReadResponses, MarkNotificationReadErrors, ThrowOnError>({ url: '/api/v1/notifications/{id}/read', ...options });
+
+/**
+ * List all parties in workspace
+ */
+export const listParties = <ThrowOnError extends boolean = false>(options?: Options<ListPartiesData, ThrowOnError>): RequestResult<ListPartiesResponses, ListPartiesErrors, ThrowOnError> => (options?.client ?? client).get<ListPartiesResponses, ListPartiesErrors, ThrowOnError>({ url: '/api/v1/parties', ...options });
+
+/**
+ * Create a party
+ */
+export const createParty = <ThrowOnError extends boolean = false>(options: Options<CreatePartyData, ThrowOnError>): RequestResult<CreatePartyResponses, CreatePartyErrors, ThrowOnError> => (options.client ?? client).post<CreatePartyResponses, CreatePartyErrors, ThrowOnError>({
+    url: '/api/v1/parties',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List application records for a contractor
+ */
+export const listApplicationRecordsByContractor = <ThrowOnError extends boolean = false>(options: Options<ListApplicationRecordsByContractorData, ThrowOnError>): RequestResult<ListApplicationRecordsByContractorResponses, ListApplicationRecordsByContractorErrors, ThrowOnError> => (options.client ?? client).get<ListApplicationRecordsByContractorResponses, ListApplicationRecordsByContractorErrors, ThrowOnError>({ url: '/api/v1/parties/{contractorId}/applications', ...options });
+
+/**
+ * Delete a party
+ */
+export const deleteParty = <ThrowOnError extends boolean = false>(options: Options<DeletePartyData, ThrowOnError>): RequestResult<DeletePartyResponses, DeletePartyErrors, ThrowOnError> => (options.client ?? client).delete<DeletePartyResponses, DeletePartyErrors, ThrowOnError>({ url: '/api/v1/parties/{id}', ...options });
+
+/**
+ * Get a party
+ */
+export const getParty = <ThrowOnError extends boolean = false>(options: Options<GetPartyData, ThrowOnError>): RequestResult<GetPartyResponses, GetPartyErrors, ThrowOnError> => (options.client ?? client).get<GetPartyResponses, GetPartyErrors, ThrowOnError>({ url: '/api/v1/parties/{id}', ...options });
+
+/**
+ * Update a party
+ */
+export const updateParty = <ThrowOnError extends boolean = false>(options: Options<UpdatePartyData, ThrowOnError>): RequestResult<UpdatePartyResponses, UpdatePartyErrors, ThrowOnError> => (options.client ?? client).put<UpdatePartyResponses, UpdatePartyErrors, ThrowOnError>({
+    url: '/api/v1/parties/{id}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List consents for a party
+ */
+export const listConsents = <ThrowOnError extends boolean = false>(options: Options<ListConsentsData, ThrowOnError>): RequestResult<ListConsentsResponses, ListConsentsErrors, ThrowOnError> => (options.client ?? client).get<ListConsentsResponses, ListConsentsErrors, ThrowOnError>({ url: '/api/v1/parties/{partyId}/consents', ...options });
+
+/**
+ * List fields associated with a party
+ */
+export const listFieldsByParty = <ThrowOnError extends boolean = false>(options: Options<ListFieldsByPartyData, ThrowOnError>): RequestResult<ListFieldsByPartyResponses, ListFieldsByPartyErrors, ThrowOnError> => (options.client ?? client).get<ListFieldsByPartyResponses, ListFieldsByPartyErrors, ThrowOnError>({ url: '/api/v1/parties/{partyId}/fields', ...options });
+
+/**
+ * List notifications for a party
+ */
+export const listCoordinationNotifications = <ThrowOnError extends boolean = false>(options: Options<ListCoordinationNotificationsData, ThrowOnError>): RequestResult<ListCoordinationNotificationsResponses, ListCoordinationNotificationsErrors, ThrowOnError> => (options.client ?? client).get<ListCoordinationNotificationsResponses, ListCoordinationNotificationsErrors, ThrowOnError>({ url: '/api/v1/parties/{partyId}/notifications', ...options });
 
 /**
  * Get a physical evaluation and its sample evidence
@@ -329,6 +534,43 @@ export const getLatestReadinessRun = <ThrowOnError extends boolean = false>(opti
  * Get a readiness run and its evidence trace
  */
 export const getReadinessRun = <ThrowOnError extends boolean = false>(options: Options<GetReadinessRunData, ThrowOnError>): RequestResult<GetReadinessRunResponses, GetReadinessRunErrors, ThrowOnError> => (options.client ?? client).get<GetReadinessRunResponses, GetReadinessRunErrors, ThrowOnError>({ url: '/api/v1/readiness-runs/{id}', ...options });
+
+/**
+ * List discovery registry entries
+ */
+export const listRegistryEntries = <ThrowOnError extends boolean = false>(options?: Options<ListRegistryEntriesData, ThrowOnError>): RequestResult<ListRegistryEntriesResponses, ListRegistryEntriesErrors, ThrowOnError> => (options?.client ?? client).get<ListRegistryEntriesResponses, ListRegistryEntriesErrors, ThrowOnError>({ url: '/api/v1/registry/entries', ...options });
+
+/**
+ * Create a registry entry
+ */
+export const createRegistryEntry = <ThrowOnError extends boolean = false>(options: Options<CreateRegistryEntryData, ThrowOnError>): RequestResult<CreateRegistryEntryResponses, CreateRegistryEntryErrors, ThrowOnError> => (options.client ?? client).post<CreateRegistryEntryResponses, CreateRegistryEntryErrors, ThrowOnError>({
+    url: '/api/v1/registry/entries',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Delete a registry entry
+ */
+export const deleteRegistryEntry = <ThrowOnError extends boolean = false>(options: Options<DeleteRegistryEntryData, ThrowOnError>): RequestResult<DeleteRegistryEntryResponses, DeleteRegistryEntryErrors, ThrowOnError> => (options.client ?? client).delete<DeleteRegistryEntryResponses, DeleteRegistryEntryErrors, ThrowOnError>({ url: '/api/v1/registry/entries/{id}', ...options });
+
+/**
+ * Get a registry entry
+ */
+export const getRegistryEntry = <ThrowOnError extends boolean = false>(options: Options<GetRegistryEntryData, ThrowOnError>): RequestResult<GetRegistryEntryResponses, GetRegistryEntryErrors, ThrowOnError> => (options.client ?? client).get<GetRegistryEntryResponses, GetRegistryEntryErrors, ThrowOnError>({ url: '/api/v1/registry/entries/{id}', ...options });
+
+/**
+ * Find nearby registry entries by location
+ */
+export const findNearbyRegistry = <ThrowOnError extends boolean = false>(options: Options<FindNearbyRegistryData, ThrowOnError>): RequestResult<FindNearbyRegistryResponses, FindNearbyRegistryErrors, ThrowOnError> => (options.client ?? client).get<FindNearbyRegistryResponses, FindNearbyRegistryErrors, ThrowOnError>({ url: '/api/v1/registry/nearby', ...options });
+
+/**
+ * Full-text search registry entries
+ */
+export const searchRegistry = <ThrowOnError extends boolean = false>(options: Options<SearchRegistryData, ThrowOnError>): RequestResult<SearchRegistryResponses, SearchRegistryErrors, ThrowOnError> => (options.client ?? client).get<SearchRegistryResponses, SearchRegistryErrors, ThrowOnError>({ url: '/api/v1/registry/search', ...options });
 
 /**
  * Get an elevated or prohibited PFAS response

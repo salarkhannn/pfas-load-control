@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "mireye-revised-boundary-screening-v1",
+  "id": "a4c0b3a1-6f74-4cad-9df1-7d7bc68d1003",
+  "fieldId": "0f153cf7-0d2e-4bba-9aee-9388ae2379a1",
+  "boundaryVersion": 4,
+  "endpoint": "https://api.mireye.com/v1/fetch/batch",
+  "requestId": "req_605e4507cae5",
+  "httpStatus": 200,
+  "retrievedAt": "2026-08-20T10:04:16.901962Z",
+  "requestHash": "28035835d723dd46c06d795756a42b600fb8680fbb42911cd0376c19c7e5659f",
+  "responseHash": "42e7769cc8624bc41f965e28c536a120a518189bfa2be6296dd15c1117f41f6b",
+  "algorithmVersion": "POLYGON_STRATIFIED_SCREEN_V1",
+  "minimumSpacingMeters": 75,
+  "boundaryNearDistanceMeters": 120,
+  "maxRequestSamples": 8,
+  "requestedSampleCount": 5,
+  "returnedSampleCount": 5,
+  "request": {
+    "locations": [
+      {"lat": 42.733268, "lng": -84.5565},
+      {"lat": 42.732384, "lng": -84.5575},
+      {"lat": 42.732384, "lng": -84.5555},
+      {"lat": 42.734152, "lng": -84.5575},
+      {"lat": 42.734152, "lng": -84.5555}
+    ],
+    "fields": ["slope_degrees"]
+  },
+  "response": {
+    "fetched_at": "2026-08-20T10:04:16.901962+00:00",
+    "results": [
+      {"index":0,"ok":true,"lat":42.733268,"lng":-84.5565,"fetched_at":"2026-08-20T10:04:16.770929+00:00","fields":{"slope_degrees":{"value":1.0767041444778442,"unit":"degrees","source":"USGS_3DEP_COG","source_url":"https://www.usgs.gov/3d-elevation-program","confidence":"medium","fetched_at":"2026-08-20T10:04:16.755209+00:00","dataset_vintage":null,"ttl_seconds":31536000,"notes":null,"status":"ok"}},"partial_failures":[],"resolved_location":{"lat":42.733268,"lng":-84.5565,"source":"coordinate"}},
+      {"index":1,"ok":true,"lat":42.732384,"lng":-84.5575,"fetched_at":"2026-08-20T10:04:16.771607+00:00","fields":{"slope_degrees":{"value":1.501871109008789,"unit":"degrees","source":"USGS_3DEP_COG","source_url":"https://www.usgs.gov/3d-elevation-program","confidence":"medium","fetched_at":"2026-08-20T10:04:16.755752+00:00","dataset_vintage":null,"ttl_seconds":31536000,"notes":null,"status":"ok"}},"partial_failures":[],"resolved_location":{"lat":42.732384,"lng":-84.5575,"source":"coordinate"}},
+      {"index":2,"ok":true,"lat":42.732384,"lng":-84.5555,"fetched_at":"2026-08-20T10:04:16.771092+00:00","fields":{"slope_degrees":{"value":0.33520743250846863,"unit":"degrees","source":"USGS_3DEP_COG","source_url":"https://www.usgs.gov/3d-elevation-program","confidence":"medium","fetched_at":"2026-08-20T10:04:16.754591+00:00","dataset_vintage":null,"ttl_seconds":31536000,"notes":null,"status":"ok"}},"partial_failures":[],"resolved_location":{"lat":42.732384,"lng":-84.5555,"source":"coordinate"}},
+      {"index":3,"ok":true,"lat":42.734152,"lng":-84.5575,"fetched_at":"2026-08-20T10:04:16.774318+00:00","fields":{"slope_degrees":{"value":0.5246706008911133,"unit":"degrees","source":"USGS_3DEP_COG","source_url":"https://www.usgs.gov/3d-elevation-program","confidence":"medium","fetched_at":"2026-08-20T10:04:16.763466+00:00","dataset_vintage":null,"ttl_seconds":31536000,"notes":null,"status":"ok"}},"partial_failures":[],"resolved_location":{"lat":42.734152,"lng":-84.5575,"source":"coordinate"}},
+      {"index":4,"ok":true,"lat":42.734152,"lng":-84.5555,"fetched_at":"2026-08-20T10:04:16.901798+00:00","fields":{"slope_degrees":{"value":1.0075932741165161,"unit":"degrees","source":"USGS_3DEP_COG","source_url":"https://www.usgs.gov/3d-elevation-program","confidence":"medium","fetched_at":"2026-08-20T10:04:16.896086+00:00","dataset_vintage":null,"ttl_seconds":31536000,"notes":null,"status":"ok"}},"partial_failures":[],"resolved_location":{"lat":42.734152,"lng":-84.5555,"source":"coordinate"}}
+    ]
+  }
+}

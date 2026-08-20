@@ -80,6 +80,80 @@ export type AnalyteEvidence = {
     upperBoundUgKgDry?: string;
 };
 
+export type AppConfirmInput = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    farmerPartyId: string;
+    notes: string;
+};
+
+export type AppConfirmation = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    applicationId: string;
+    confirmed: boolean;
+    confirmedAt?: string;
+    createdAt: string;
+    farmerId: string;
+    farmerName?: string;
+    id: string;
+    notes: string;
+};
+
+export type AppCreateRecordInput = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    acresApplied: number;
+    applicationDate: string;
+    batchId?: string;
+    contractorPartyId: string;
+    dryTons: number;
+    fieldConditionNotes: string;
+    fieldId: string;
+    rateDryTonsPerAcre: number;
+    weatherConditions: string;
+};
+
+export type AppLoadingLedger = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    cumulativeDryTons: number;
+    fieldId: string;
+    id: string;
+    lastApplicationDate?: string;
+    lastUpdated: string;
+    year: number;
+};
+
+export type AppRecord = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    acresApplied: number;
+    applicationDate: string;
+    batchId?: string;
+    contractorId: string;
+    contractorName?: string;
+    createdAt: string;
+    dryTons: number;
+    fieldConditionNotes: string;
+    fieldId: string;
+    fieldName?: string;
+    id: string;
+    rateDryTonsPerAcre: number;
+    updatedAt: string;
+    weatherConditions: string;
+};
+
 export type ApprovalDecision = {
     acknowledgedGapCodes: Array<string> | null;
     actionRevision: number;
@@ -98,6 +172,16 @@ export type Artifact = {
     sha256: string;
     sizeBytes: number;
     url: string;
+};
+
+export type AssignFieldPartyInput = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    association: 'OWNER' | 'APPLICANT' | 'CONTRACTOR';
+    fieldId: string;
+    partyId: string;
 };
 
 export type Batch = {
@@ -139,6 +223,23 @@ export type Center = {
     reviewGaps: Array<ReviewGap> | null;
 };
 
+export type Consent = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    expiresAt?: string;
+    grantedAt: string;
+    granteeId: string;
+    granteeName?: string;
+    granterId: string;
+    granterName?: string;
+    id: string;
+    purpose: string;
+    revokedAt?: string;
+    scope: string;
+};
+
 export type Context = {
     /**
      * A URL to the JSON Schema for this object.
@@ -174,6 +275,95 @@ export type ControlledAction = {
     updatedAt: string;
 };
 
+export type CoordConfirmStepInput = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    notes: string;
+};
+
+export type CoordCreateDocumentInput = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    docType: string;
+    fileHash: string;
+    filename: string;
+    mimeType: string;
+    partyId: string;
+    sizeBytes: number;
+};
+
+export type CoordCreateWorkflowInput = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    batchId?: string;
+    createdByPartyId: string;
+    fieldId?: string;
+};
+
+export type CoordDocument = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    createdAt: string;
+    docType: string;
+    fileHash: string;
+    filename: string;
+    id: string;
+    mimeType: string;
+    partyId: string;
+    partyName: string;
+    sizeBytes: number;
+    workflowId: string;
+};
+
+export type CoordNotification = {
+    createdAt: string;
+    eventType: string;
+    id: string;
+    message: string;
+    readAt?: string;
+    recipientId: string;
+    recipientName: string;
+    workflowId: string;
+};
+
+export type CoordStep = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    confirmedAt?: string;
+    createdAt: string;
+    id: string;
+    notes: string;
+    partyEmail?: string;
+    partyId?: string;
+    partyName?: string;
+    status: string;
+    stepRole: string;
+    stepType: string;
+    workflowId: string;
+};
+
+export type CoordWorkflow = {
+    batchId?: string;
+    createdAt: string;
+    createdBy: string;
+    createdByName: string;
+    fieldId?: string;
+    fieldName?: string;
+    id: string;
+    status: string;
+    updatedAt: string;
+};
+
 export type Correction = {
     /**
      * A URL to the JSON Schema for this object.
@@ -189,6 +379,18 @@ export type Correction = {
     matrix?: string;
     method?: string;
     sampleIdentifier?: string;
+};
+
+export type CreateConsentInput = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    expiresAt?: string;
+    granteeId: string;
+    granterId: string;
+    purpose: string;
+    scope: string;
 };
 
 export type CreateDecisionPackageOutputBody = {
@@ -219,6 +421,19 @@ export type CreateInput = {
     locator?: string;
     locatorKind: 'ADDRESS' | 'COORDINATE' | 'APN' | 'GEOJSON';
     name: string;
+};
+
+export type CreatePartyInput = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    email: string;
+    latitude?: number;
+    longitude?: number;
+    name: string;
+    phone: string;
+    role: 'PLANT' | 'CONTRACTOR' | 'FARMER';
 };
 
 export type CreatePlacementOutputBody = {
@@ -545,6 +760,14 @@ export type FieldGeometryInputBody = {
     geojson: string;
 };
 
+export type FieldParty = {
+    association: string;
+    fieldId: string;
+    name?: string;
+    partyId: string;
+    role?: string;
+};
+
 export type Gap = {
     code: string;
     createdAt?: string;
@@ -691,6 +914,7 @@ export type Page = {
     extractionMethod: string;
     height?: string;
     number: number;
+    readError?: string;
     text: string;
     width?: string;
 };
@@ -702,6 +926,22 @@ export type Parcel = {
     matchDistanceM?: string;
     matchType?: string;
     source?: string;
+};
+
+export type Party = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    createdAt: string;
+    email: string;
+    id: string;
+    latitude?: number;
+    longitude?: number;
+    name: string;
+    phone: string;
+    role: string;
+    updatedAt: string;
 };
 
 export type PhysicalDataGap = {
@@ -796,6 +1036,36 @@ export type ProposedAction = {
     state: string;
     timing: string;
     title: string;
+};
+
+export type RegistryCreateEntryInput = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    data: {
+        [key: string]: unknown;
+    };
+    entryType: 'PLANT' | 'FIELD' | 'CONTRACTOR';
+    latitude?: number;
+    longitude?: number;
+    name: string;
+};
+
+export type RegistryEntry = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    data: unknown;
+    distanceM?: number;
+    entryType: string;
+    id: string;
+    latitude?: number;
+    longitude?: number;
+    name: string;
+    rank?: number;
+    updatedAt: string;
 };
 
 export type Report = {
@@ -1052,6 +1322,18 @@ export type ToolCall = {
     stepId: string;
 };
 
+export type UpdatePartyInput = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    email: string;
+    latitude?: number;
+    longitude?: number;
+    name: string;
+    phone: string;
+};
+
 export type UpdatePayloadInput = {
     /**
      * A URL to the JSON Schema for this object.
@@ -1074,6 +1356,75 @@ export type VulnerabilityCategory = {
     sourceUrl: string;
 };
 
+export type WorkflowDetailOutputBody = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    steps: Array<CoordStep> | null;
+    workflow: CoordWorkflow;
+};
+
+export type AppConfirmInputWritable = {
+    farmerPartyId: string;
+    notes: string;
+};
+
+export type AppConfirmationWritable = {
+    applicationId: string;
+    confirmed: boolean;
+    confirmedAt?: string;
+    createdAt: string;
+    farmerId: string;
+    farmerName?: string;
+    id: string;
+    notes: string;
+};
+
+export type AppCreateRecordInputWritable = {
+    acresApplied: number;
+    applicationDate: string;
+    batchId?: string;
+    contractorPartyId: string;
+    dryTons: number;
+    fieldConditionNotes: string;
+    fieldId: string;
+    rateDryTonsPerAcre: number;
+    weatherConditions: string;
+};
+
+export type AppLoadingLedgerWritable = {
+    cumulativeDryTons: number;
+    fieldId: string;
+    id: string;
+    lastApplicationDate?: string;
+    lastUpdated: string;
+    year: number;
+};
+
+export type AppRecordWritable = {
+    acresApplied: number;
+    applicationDate: string;
+    batchId?: string;
+    contractorId: string;
+    contractorName?: string;
+    createdAt: string;
+    dryTons: number;
+    fieldConditionNotes: string;
+    fieldId: string;
+    fieldName?: string;
+    id: string;
+    rateDryTonsPerAcre: number;
+    updatedAt: string;
+    weatherConditions: string;
+};
+
+export type AssignFieldPartyInputWritable = {
+    association: 'OWNER' | 'APPLICANT' | 'CONTRACTOR';
+    fieldId: string;
+    partyId: string;
+};
+
 export type CsvResultWritable = {
     field?: FieldWritable;
     problem?: string;
@@ -1088,6 +1439,19 @@ export type CenterWritable = {
     packageId: string;
     packageStatus: string;
     reviewGaps: Array<ReviewGap> | null;
+};
+
+export type ConsentWritable = {
+    expiresAt?: string;
+    grantedAt: string;
+    granteeId: string;
+    granteeName?: string;
+    granterId: string;
+    granterName?: string;
+    id: string;
+    purpose: string;
+    revokedAt?: string;
+    scope: string;
 };
 
 export type ContextWritable = {
@@ -1117,6 +1481,52 @@ export type ControlledActionWritable = {
     updatedAt: string;
 };
 
+export type CoordConfirmStepInputWritable = {
+    notes: string;
+};
+
+export type CoordCreateDocumentInputWritable = {
+    docType: string;
+    fileHash: string;
+    filename: string;
+    mimeType: string;
+    partyId: string;
+    sizeBytes: number;
+};
+
+export type CoordCreateWorkflowInputWritable = {
+    batchId?: string;
+    createdByPartyId: string;
+    fieldId?: string;
+};
+
+export type CoordDocumentWritable = {
+    createdAt: string;
+    docType: string;
+    fileHash: string;
+    filename: string;
+    id: string;
+    mimeType: string;
+    partyId: string;
+    partyName: string;
+    sizeBytes: number;
+    workflowId: string;
+};
+
+export type CoordStepWritable = {
+    confirmedAt?: string;
+    createdAt: string;
+    id: string;
+    notes: string;
+    partyEmail?: string;
+    partyId?: string;
+    partyName?: string;
+    status: string;
+    stepRole: string;
+    stepType: string;
+    workflowId: string;
+};
+
 export type CorrectionWritable = {
     analytes: [
         Analyte,
@@ -1128,6 +1538,14 @@ export type CorrectionWritable = {
     matrix?: string;
     method?: string;
     sampleIdentifier?: string;
+};
+
+export type CreateConsentInputWritable = {
+    expiresAt?: string;
+    granteeId: string;
+    granterId: string;
+    purpose: string;
+    scope: string;
 };
 
 export type CreateDecisionPackageOutputBodyWritable = {
@@ -1146,6 +1564,15 @@ export type CreateInputWritable = {
     locator?: string;
     locatorKind: 'ADDRESS' | 'COORDINATE' | 'APN' | 'GEOJSON';
     name: string;
+};
+
+export type CreatePartyInputWritable = {
+    email: string;
+    latitude?: number;
+    longitude?: number;
+    name: string;
+    phone: string;
+    role: 'PLANT' | 'CONTRACTOR' | 'FARMER';
 };
 
 export type CreatePlacementOutputBodyWritable = {
@@ -1334,6 +1761,18 @@ export type LocationSelectionWritable = {
     candidateIndex: number;
 };
 
+export type PartyWritable = {
+    createdAt: string;
+    email: string;
+    id: string;
+    latitude?: number;
+    longitude?: number;
+    name: string;
+    phone: string;
+    role: string;
+    updatedAt: string;
+};
+
 export type PlacementPlanWritable = {
     allocatedDryTons?: string;
     allocations: Array<PlacementAllocation> | null;
@@ -1356,6 +1795,28 @@ export type PlacementPlanWritable = {
 export type PlanInputWritable = {
     percentSolids?: string;
     wetMassKg?: string;
+};
+
+export type RegistryCreateEntryInputWritable = {
+    data: {
+        [key: string]: unknown;
+    };
+    entryType: 'PLANT' | 'FIELD' | 'CONTRACTOR';
+    latitude?: number;
+    longitude?: number;
+    name: string;
+};
+
+export type RegistryEntryWritable = {
+    data: unknown;
+    distanceM?: number;
+    entryType: string;
+    id: string;
+    latitude?: number;
+    longitude?: number;
+    name: string;
+    rank?: number;
+    updatedAt: string;
 };
 
 export type ReportWritable = {
@@ -1452,10 +1913,23 @@ export type StartResponseOutputBodyWritable = {
     run: ResponseRunWritable;
 };
 
+export type UpdatePartyInputWritable = {
+    email: string;
+    latitude?: number;
+    longitude?: number;
+    name: string;
+    phone: string;
+};
+
 export type UpdatePayloadInputWritable = {
     message: string;
     recipient: string;
     subject: string;
+};
+
+export type WorkflowDetailOutputBodyWritable = {
+    steps: Array<CoordStepWritable> | null;
+    workflow: CoordWorkflow;
 };
 
 export type ApproveActionData = {
@@ -1578,6 +2052,94 @@ export type RejectActionResponses = {
 };
 
 export type RejectActionResponse = RejectActionResponses[keyof RejectActionResponses];
+
+export type CreateApplicationRecordData = {
+    body: AppCreateRecordInputWritable;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/applications';
+};
+
+export type CreateApplicationRecordErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type CreateApplicationRecordError = CreateApplicationRecordErrors[keyof CreateApplicationRecordErrors];
+
+export type CreateApplicationRecordResponses = {
+    /**
+     * Created
+     */
+    201: AppRecord;
+};
+
+export type CreateApplicationRecordResponse = CreateApplicationRecordResponses[keyof CreateApplicationRecordResponses];
+
+export type GetApplicationRecordData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/applications/{id}';
+};
+
+export type GetApplicationRecordErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type GetApplicationRecordError = GetApplicationRecordErrors[keyof GetApplicationRecordErrors];
+
+export type GetApplicationRecordResponses = {
+    /**
+     * OK
+     */
+    200: AppRecord;
+};
+
+export type GetApplicationRecordResponse = GetApplicationRecordResponses[keyof GetApplicationRecordResponses];
+
+export type ConfirmApplicationData = {
+    body: AppConfirmInputWritable;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/applications/{id}/confirm';
+};
+
+export type ConfirmApplicationErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ConfirmApplicationError = ConfirmApplicationErrors[keyof ConfirmApplicationErrors];
+
+export type ConfirmApplicationResponses = {
+    /**
+     * OK
+     */
+    200: AppConfirmation;
+};
+
+export type ConfirmApplicationResponse = ConfirmApplicationResponses[keyof ConfirmApplicationResponses];
 
 export type GetCandidateFieldData = {
     body?: never;
@@ -1848,6 +2410,270 @@ export type ResolveCandidateFieldResponses = {
 };
 
 export type ResolveCandidateFieldResponse = ResolveCandidateFieldResponses[keyof ResolveCandidateFieldResponses];
+
+export type CreateConsentData = {
+    body: CreateConsentInputWritable;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/consents';
+};
+
+export type CreateConsentErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type CreateConsentError = CreateConsentErrors[keyof CreateConsentErrors];
+
+export type CreateConsentResponses = {
+    /**
+     * Created
+     */
+    201: Consent;
+};
+
+export type CreateConsentResponse = CreateConsentResponses[keyof CreateConsentResponses];
+
+export type RevokeConsentData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/consents/{id}/revoke';
+};
+
+export type RevokeConsentErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type RevokeConsentError = RevokeConsentErrors[keyof RevokeConsentErrors];
+
+export type RevokeConsentResponses = {
+    /**
+     * No Content
+     */
+    204: void;
+};
+
+export type RevokeConsentResponse = RevokeConsentResponses[keyof RevokeConsentResponses];
+
+export type ConfirmCoordinationStepData = {
+    body: CoordConfirmStepInputWritable;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        stepId: string;
+    };
+    query?: never;
+    url: '/api/v1/coordination/steps/{stepId}/confirm';
+};
+
+export type ConfirmCoordinationStepErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ConfirmCoordinationStepError = ConfirmCoordinationStepErrors[keyof ConfirmCoordinationStepErrors];
+
+export type ConfirmCoordinationStepResponses = {
+    /**
+     * OK
+     */
+    200: CoordStep;
+};
+
+export type ConfirmCoordinationStepResponse = ConfirmCoordinationStepResponses[keyof ConfirmCoordinationStepResponses];
+
+export type RejectCoordinationStepData = {
+    body: CoordConfirmStepInputWritable;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        stepId: string;
+    };
+    query?: never;
+    url: '/api/v1/coordination/steps/{stepId}/reject';
+};
+
+export type RejectCoordinationStepErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type RejectCoordinationStepError = RejectCoordinationStepErrors[keyof RejectCoordinationStepErrors];
+
+export type RejectCoordinationStepResponses = {
+    /**
+     * OK
+     */
+    200: CoordStep;
+};
+
+export type RejectCoordinationStepResponse = RejectCoordinationStepResponses[keyof RejectCoordinationStepResponses];
+
+export type ListCoordinationWorkflowsData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/coordination/workflows';
+};
+
+export type ListCoordinationWorkflowsErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ListCoordinationWorkflowsError = ListCoordinationWorkflowsErrors[keyof ListCoordinationWorkflowsErrors];
+
+export type ListCoordinationWorkflowsResponses = {
+    /**
+     * OK
+     */
+    200: Array<CoordWorkflow> | null;
+};
+
+export type ListCoordinationWorkflowsResponse = ListCoordinationWorkflowsResponses[keyof ListCoordinationWorkflowsResponses];
+
+export type CreateCoordinationWorkflowData = {
+    body: CoordCreateWorkflowInputWritable;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/coordination/workflows';
+};
+
+export type CreateCoordinationWorkflowErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type CreateCoordinationWorkflowError = CreateCoordinationWorkflowErrors[keyof CreateCoordinationWorkflowErrors];
+
+export type CreateCoordinationWorkflowResponses = {
+    /**
+     * Created
+     */
+    201: Array<CoordWorkflow> | null;
+};
+
+export type CreateCoordinationWorkflowResponse = CreateCoordinationWorkflowResponses[keyof CreateCoordinationWorkflowResponses];
+
+export type GetCoordinationWorkflowData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/coordination/workflows/{id}';
+};
+
+export type GetCoordinationWorkflowErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type GetCoordinationWorkflowError = GetCoordinationWorkflowErrors[keyof GetCoordinationWorkflowErrors];
+
+export type GetCoordinationWorkflowResponses = {
+    /**
+     * OK
+     */
+    200: WorkflowDetailOutputBody;
+};
+
+export type GetCoordinationWorkflowResponse = GetCoordinationWorkflowResponses[keyof GetCoordinationWorkflowResponses];
+
+export type ListCoordinationDocumentsData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        workflowId: string;
+    };
+    query?: never;
+    url: '/api/v1/coordination/workflows/{workflowId}/documents';
+};
+
+export type ListCoordinationDocumentsErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ListCoordinationDocumentsError = ListCoordinationDocumentsErrors[keyof ListCoordinationDocumentsErrors];
+
+export type ListCoordinationDocumentsResponses = {
+    /**
+     * OK
+     */
+    200: Array<CoordDocument> | null;
+};
+
+export type ListCoordinationDocumentsResponse = ListCoordinationDocumentsResponses[keyof ListCoordinationDocumentsResponses];
+
+export type UploadCoordinationDocumentData = {
+    body: CoordCreateDocumentInputWritable;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        workflowId: string;
+    };
+    query?: never;
+    url: '/api/v1/coordination/workflows/{workflowId}/documents';
+};
+
+export type UploadCoordinationDocumentErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type UploadCoordinationDocumentError = UploadCoordinationDocumentErrors[keyof UploadCoordinationDocumentErrors];
+
+export type UploadCoordinationDocumentResponses = {
+    /**
+     * Created
+     */
+    201: CoordDocument;
+};
+
+export type UploadCoordinationDocumentResponse = UploadCoordinationDocumentResponses[keyof UploadCoordinationDocumentResponses];
 
 export type GetDecisionPackageData = {
     body?: never;
@@ -2122,6 +2948,154 @@ export type GetFieldContextResponses = {
 
 export type GetFieldContextResponse = GetFieldContextResponses[keyof GetFieldContextResponses];
 
+export type AssignFieldPartyData = {
+    body: AssignFieldPartyInputWritable;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/field-parties';
+};
+
+export type AssignFieldPartyErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type AssignFieldPartyError = AssignFieldPartyErrors[keyof AssignFieldPartyErrors];
+
+export type AssignFieldPartyResponses = {
+    /**
+     * Created
+     */
+    201: unknown;
+};
+
+export type ListApplicationRecordsByFieldData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        fieldId: string;
+    };
+    query?: never;
+    url: '/api/v1/fields/{fieldId}/applications';
+};
+
+export type ListApplicationRecordsByFieldErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ListApplicationRecordsByFieldError = ListApplicationRecordsByFieldErrors[keyof ListApplicationRecordsByFieldErrors];
+
+export type ListApplicationRecordsByFieldResponses = {
+    /**
+     * OK
+     */
+    200: Array<AppRecord> | null;
+};
+
+export type ListApplicationRecordsByFieldResponse = ListApplicationRecordsByFieldResponses[keyof ListApplicationRecordsByFieldResponses];
+
+export type GetLoadingLedgerData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        fieldId: string;
+        year: number;
+    };
+    query?: never;
+    url: '/api/v1/fields/{fieldId}/loading/{year}';
+};
+
+export type GetLoadingLedgerErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type GetLoadingLedgerError = GetLoadingLedgerErrors[keyof GetLoadingLedgerErrors];
+
+export type GetLoadingLedgerResponses = {
+    /**
+     * OK
+     */
+    200: AppLoadingLedger;
+};
+
+export type GetLoadingLedgerResponse = GetLoadingLedgerResponses[keyof GetLoadingLedgerResponses];
+
+export type ListPartiesByFieldData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        fieldId: string;
+    };
+    query?: never;
+    url: '/api/v1/fields/{fieldId}/parties';
+};
+
+export type ListPartiesByFieldErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ListPartiesByFieldError = ListPartiesByFieldErrors[keyof ListPartiesByFieldErrors];
+
+export type ListPartiesByFieldResponses = {
+    /**
+     * OK
+     */
+    200: Array<FieldParty> | null;
+};
+
+export type ListPartiesByFieldResponse = ListPartiesByFieldResponses[keyof ListPartiesByFieldResponses];
+
+export type RemoveFieldPartyData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        fieldId: string;
+        partyId: string;
+    };
+    query?: never;
+    url: '/api/v1/fields/{fieldId}/parties/{partyId}';
+};
+
+export type RemoveFieldPartyErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type RemoveFieldPartyError = RemoveFieldPartyErrors[keyof RemoveFieldPartyErrors];
+
+export type RemoveFieldPartyResponses = {
+    /**
+     * No Content
+     */
+    204: void;
+};
+
+export type RemoveFieldPartyResponse = RemoveFieldPartyResponses[keyof RemoveFieldPartyResponses];
+
 export type GetLabIntakeContextData = {
     body?: never;
     headers?: {
@@ -2363,6 +3337,306 @@ export type CorrectLabReportResponses = {
 };
 
 export type CorrectLabReportResponse = CorrectLabReportResponses[keyof CorrectLabReportResponses];
+
+export type MarkNotificationReadData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/notifications/{id}/read';
+};
+
+export type MarkNotificationReadErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type MarkNotificationReadError = MarkNotificationReadErrors[keyof MarkNotificationReadErrors];
+
+export type MarkNotificationReadResponses = {
+    /**
+     * No Content
+     */
+    204: void;
+};
+
+export type MarkNotificationReadResponse = MarkNotificationReadResponses[keyof MarkNotificationReadResponses];
+
+export type ListPartiesData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path?: never;
+    query?: {
+        role?: string;
+    };
+    url: '/api/v1/parties';
+};
+
+export type ListPartiesErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ListPartiesError = ListPartiesErrors[keyof ListPartiesErrors];
+
+export type ListPartiesResponses = {
+    /**
+     * OK
+     */
+    200: Array<Party> | null;
+};
+
+export type ListPartiesResponse = ListPartiesResponses[keyof ListPartiesResponses];
+
+export type CreatePartyData = {
+    body: CreatePartyInputWritable;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/parties';
+};
+
+export type CreatePartyErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type CreatePartyError = CreatePartyErrors[keyof CreatePartyErrors];
+
+export type CreatePartyResponses = {
+    /**
+     * Created
+     */
+    201: Party;
+};
+
+export type CreatePartyResponse = CreatePartyResponses[keyof CreatePartyResponses];
+
+export type ListApplicationRecordsByContractorData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        contractorId: string;
+    };
+    query?: never;
+    url: '/api/v1/parties/{contractorId}/applications';
+};
+
+export type ListApplicationRecordsByContractorErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ListApplicationRecordsByContractorError = ListApplicationRecordsByContractorErrors[keyof ListApplicationRecordsByContractorErrors];
+
+export type ListApplicationRecordsByContractorResponses = {
+    /**
+     * OK
+     */
+    200: Array<AppRecord> | null;
+};
+
+export type ListApplicationRecordsByContractorResponse = ListApplicationRecordsByContractorResponses[keyof ListApplicationRecordsByContractorResponses];
+
+export type DeletePartyData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/parties/{id}';
+};
+
+export type DeletePartyErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type DeletePartyError = DeletePartyErrors[keyof DeletePartyErrors];
+
+export type DeletePartyResponses = {
+    /**
+     * No Content
+     */
+    204: void;
+};
+
+export type DeletePartyResponse = DeletePartyResponses[keyof DeletePartyResponses];
+
+export type GetPartyData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/parties/{id}';
+};
+
+export type GetPartyErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type GetPartyError = GetPartyErrors[keyof GetPartyErrors];
+
+export type GetPartyResponses = {
+    /**
+     * OK
+     */
+    200: Party;
+};
+
+export type GetPartyResponse = GetPartyResponses[keyof GetPartyResponses];
+
+export type UpdatePartyData = {
+    body: UpdatePartyInputWritable;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/parties/{id}';
+};
+
+export type UpdatePartyErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type UpdatePartyError = UpdatePartyErrors[keyof UpdatePartyErrors];
+
+export type UpdatePartyResponses = {
+    /**
+     * OK
+     */
+    200: Party;
+};
+
+export type UpdatePartyResponse = UpdatePartyResponses[keyof UpdatePartyResponses];
+
+export type ListConsentsData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        partyId: string;
+    };
+    query?: {
+        direction?: string;
+    };
+    url: '/api/v1/parties/{partyId}/consents';
+};
+
+export type ListConsentsErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ListConsentsError = ListConsentsErrors[keyof ListConsentsErrors];
+
+export type ListConsentsResponses = {
+    /**
+     * OK
+     */
+    200: Array<Consent> | null;
+};
+
+export type ListConsentsResponse = ListConsentsResponses[keyof ListConsentsResponses];
+
+export type ListFieldsByPartyData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        partyId: string;
+    };
+    query?: never;
+    url: '/api/v1/parties/{partyId}/fields';
+};
+
+export type ListFieldsByPartyErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ListFieldsByPartyError = ListFieldsByPartyErrors[keyof ListFieldsByPartyErrors];
+
+export type ListFieldsByPartyResponses = {
+    /**
+     * OK
+     */
+    200: Array<FieldParty> | null;
+};
+
+export type ListFieldsByPartyResponse = ListFieldsByPartyResponses[keyof ListFieldsByPartyResponses];
+
+export type ListCoordinationNotificationsData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        partyId: string;
+    };
+    query?: never;
+    url: '/api/v1/parties/{partyId}/notifications';
+};
+
+export type ListCoordinationNotificationsErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ListCoordinationNotificationsError = ListCoordinationNotificationsErrors[keyof ListCoordinationNotificationsErrors];
+
+export type ListCoordinationNotificationsResponses = {
+    /**
+     * OK
+     */
+    200: Array<CoordNotification> | null;
+};
+
+export type ListCoordinationNotificationsResponse = ListCoordinationNotificationsResponses[keyof ListCoordinationNotificationsResponses];
 
 export type GetPhysicalEvaluationData = {
     body?: never;
@@ -2735,6 +4009,187 @@ export type GetReadinessRunResponses = {
 };
 
 export type GetReadinessRunResponse = GetReadinessRunResponses[keyof GetReadinessRunResponses];
+
+export type ListRegistryEntriesData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path?: never;
+    query?: {
+        entryType?: string;
+    };
+    url: '/api/v1/registry/entries';
+};
+
+export type ListRegistryEntriesErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type ListRegistryEntriesError = ListRegistryEntriesErrors[keyof ListRegistryEntriesErrors];
+
+export type ListRegistryEntriesResponses = {
+    /**
+     * OK
+     */
+    200: Array<RegistryEntry> | null;
+};
+
+export type ListRegistryEntriesResponse = ListRegistryEntriesResponses[keyof ListRegistryEntriesResponses];
+
+export type CreateRegistryEntryData = {
+    body: RegistryCreateEntryInputWritable;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/registry/entries';
+};
+
+export type CreateRegistryEntryErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type CreateRegistryEntryError = CreateRegistryEntryErrors[keyof CreateRegistryEntryErrors];
+
+export type CreateRegistryEntryResponses = {
+    /**
+     * Created
+     */
+    201: RegistryEntry;
+};
+
+export type CreateRegistryEntryResponse = CreateRegistryEntryResponses[keyof CreateRegistryEntryResponses];
+
+export type DeleteRegistryEntryData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/registry/entries/{id}';
+};
+
+export type DeleteRegistryEntryErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type DeleteRegistryEntryError = DeleteRegistryEntryErrors[keyof DeleteRegistryEntryErrors];
+
+export type DeleteRegistryEntryResponses = {
+    /**
+     * No Content
+     */
+    204: void;
+};
+
+export type DeleteRegistryEntryResponse = DeleteRegistryEntryResponses[keyof DeleteRegistryEntryResponses];
+
+export type GetRegistryEntryData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/registry/entries/{id}';
+};
+
+export type GetRegistryEntryErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type GetRegistryEntryError = GetRegistryEntryErrors[keyof GetRegistryEntryErrors];
+
+export type GetRegistryEntryResponses = {
+    /**
+     * OK
+     */
+    200: RegistryEntry;
+};
+
+export type GetRegistryEntryResponse = GetRegistryEntryResponses[keyof GetRegistryEntryResponses];
+
+export type FindNearbyRegistryData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path?: never;
+    query: {
+        lat: number;
+        lng: number;
+        entryType: string;
+        limit?: number;
+    };
+    url: '/api/v1/registry/nearby';
+};
+
+export type FindNearbyRegistryErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type FindNearbyRegistryError = FindNearbyRegistryErrors[keyof FindNearbyRegistryErrors];
+
+export type FindNearbyRegistryResponses = {
+    /**
+     * OK
+     */
+    200: Array<RegistryEntry> | null;
+};
+
+export type FindNearbyRegistryResponse = FindNearbyRegistryResponses[keyof FindNearbyRegistryResponses];
+
+export type SearchRegistryData = {
+    body?: never;
+    headers?: {
+        'X-Workspace-Key'?: string;
+    };
+    path?: never;
+    query: {
+        q: string;
+    };
+    url: '/api/v1/registry/search';
+};
+
+export type SearchRegistryErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type SearchRegistryError = SearchRegistryErrors[keyof SearchRegistryErrors];
+
+export type SearchRegistryResponses = {
+    /**
+     * OK
+     */
+    200: Array<RegistryEntry> | null;
+};
+
+export type SearchRegistryResponse = SearchRegistryResponses[keyof SearchRegistryResponses];
 
 export type GetPfasResponseData = {
     body?: never;

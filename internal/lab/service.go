@@ -443,6 +443,7 @@ func (s *Service) Process(ctx context.Context, reportID string) error {
 			PageNumber:       int32(page.Number),
 			ExtractedText:    page.Text,
 			ExtractionMethod: page.ExtractionMethod,
+			ReadError:        optionalString(page.ReadError),
 			Width:            width,
 			Height:           height,
 		}); err != nil {
@@ -672,6 +673,7 @@ func reportPages(ctx context.Context, queries *db.Queries, reportID uuid.UUID) (
 			Number:           int(row.PageNumber),
 			Text:             row.ExtractedText,
 			ExtractionMethod: row.ExtractionMethod,
+			ReadError:        valueOrEmpty(row.ReadError),
 			Width:            optionalString(row.Width),
 			Height:           optionalString(row.Height),
 		})

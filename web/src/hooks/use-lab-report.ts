@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { Context, CorrectionWritable, Decision, Report } from '@/client/types.gen';
 import {
+  NotFoundError,
   createPolicyDecision,
   confirmLabEvidence,
   loadLabContext,
@@ -37,7 +38,14 @@ export function useLabReport() {
       setReport(nextReport);
       setError(null);
     }).catch((reason: Error) => {
-      if (active && reason.name !== 'AbortError') setError(reason.message);
+      if (!active || reason.name === 'AbortError') return;
+      if (reportId && (reason as NotFoundError).notFound) {
+        setCurrentReportId(null);
+        setReport(null);
+        setError(null);
+        return;
+      }
+      setError(reason.message);
     }).finally(() => {
       if (active) setIsLoading(false);
     });
@@ -52,19 +60,25 @@ export function useLabReport() {
     const reportStatus = report?.status;
     if (!reportId || !reportStatus || !ACTIVE_STATUSES.has(reportStatus)) return;
     const controller = new AbortController();
-    const timer = window.setInterval(() => {
-      loadLabReport(workspaceKey, reportId, controller.signal)
-        .then((nextReport) => {
-          setReport(nextReport);
-          setError(null);
-        })
-        .catch((reason: Error) => {
-          if (reason.name !== 'AbortError') setError(reason.message);
-        });
-    }, 1_500);
+    let failures = 0;
+    let timer: number | undefined;
+    const poll = async () => {
+      try {
+        const nextReport = await loadLabReport(workspaceKey, reportId, controller.signal);
+        failures = 0;
+        setReport(nextReport);
+        setError(null);
+      } catch (reason: unknown) {
+        if ((reason as Error).name === 'AbortError') return;
+        failures += 1;
+        setError((reason as Error).message);
+      }
+      timer = window.setTimeout(poll, Math.min(1_500 * 2 ** failures, 15_000));
+    };
+    void poll();
     return () => {
       controller.abort();
-      window.clearInterval(timer);
+      if (timer) window.clearTimeout(timer);
     };
   }, [report?.id, report?.status, workspaceKey]);
 

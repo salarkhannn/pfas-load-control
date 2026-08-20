@@ -1,8 +1,8 @@
 services:
   - type: web
-    name: pfas-load-control-api
+    name: fieldproof-api
     runtime: docker
-    plan: free
+    plan: starter
     region: ohio
     dockerfilePath: ./Dockerfile
     dockerContext: .
@@ -20,7 +20,7 @@ services:
         value: INFO
 
   - type: web
-    name: pfas-load-control
+    name: fieldproof
     runtime: static
     rootDir: web
     buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm build

@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "review-authorization-v1",
+  "programPolicyVersion": "DEMO-MI-LAND-APPLICATION-2026.08.1",
+  "id": "a4c0b3a1-6f74-4cad-9df1-7d7bc68d1002",
+  "evidenceRecordId": "a4c0b3a1-6f74-4cad-9df1-7d7bc68d1001",
+  "evidenceArtifactHash": "46190d7fc67eca328a845f62c1c41d0449505aeda5408bc49f35c0ec14cdc78e",
+  "fieldId": "0f153cf7-0d2e-4bba-9aee-9388ae2379a1",
+  "boundaryVersion": 4,
+  "reviewerRole": "DEMO_PLACEMENT_REVIEWER",
+  "approvalStatus": "APPROVED",
+  "recordedAt": "2026-08-20T07:59:00Z"
+}

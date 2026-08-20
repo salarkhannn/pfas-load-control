@@ -27,6 +27,10 @@ type decisionPackageOutput struct {
 	Body decisionpackage.DecisionPackage
 }
 
+type latestDecisionPackageOutput struct {
+	Body *decisionpackage.DecisionPackage
+}
+
 type createDecisionPackageOutput struct {
 	Body struct {
 		Package decisionpackage.DecisionPackage `json:"package"`
@@ -78,12 +82,15 @@ func (a *API) createDecisionPackage(ctx context.Context, input *decisionPackageI
 	return output, nil
 }
 
-func (a *API) latestDecisionPackage(ctx context.Context, input *decisionPackageInput) (*decisionPackageOutput, error) {
+func (a *API) latestDecisionPackage(ctx context.Context, input *decisionPackageInput) (*latestDecisionPackageOutput, error) {
 	result, err := a.packages.Latest(ctx, input.WorkspaceKey, input.ID)
 	if err != nil {
+		if errors.Is(err, decisionpackage.ErrNotFound) {
+			return &latestDecisionPackageOutput{}, nil
+		}
 		return nil, a.decisionPackageError("load latest decision package", err)
 	}
-	return &decisionPackageOutput{Body: result}, nil
+	return &latestDecisionPackageOutput{Body: &result}, nil
 }
 
 func (a *API) getDecisionPackage(ctx context.Context, input *decisionPackageInput) (*decisionPackageOutput, error) {

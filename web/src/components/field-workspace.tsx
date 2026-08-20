@@ -25,7 +25,7 @@ export function FieldWorkspace({ decision }: { decision: Decision }) {
   const fields = state.context?.fields ?? [];
 
   return <>
-    <section className="field-workspace-panel" aria-labelledby="fields-title">
+    <section className="field-workspace-panel" id="fields" aria-labelledby="fields-title">
       <div className="field-page-header">
         <div>
           <h2 id="fields-title">Candidate fields</h2>
@@ -121,7 +121,7 @@ function FieldRecord({ field, busy, onResolve, onChoose, onConfirmParcel, onConf
         <div>
           <p>{field.facility.name}</p>
           <h3 id="field-title">{field.name}</h3>
-          <span>{field.gaps?.length ? `${field.gaps.length} item${field.gaps.length === 1 ? '' : 's'} needed` : 'Ready for screening'}</span>
+          <span>{field.gaps?.length ? `${field.gaps.length} item${field.gaps.length === 1 ? '' : 's'} needed` : 'Operating facts complete; screening still required'}</span>
         </div>
         <FieldStatus status={field.status} />
       </header>
@@ -349,7 +349,7 @@ function EvidenceFootnote({ field }: { field: Field }) {
 }
 
 function FieldStatus({ status, compact = false }: { status: string; compact?: boolean }) {
-  const copy = status === 'READY' ? 'Ready' : status === 'NEEDS_LOCATION' ? 'Location needed' : status === 'NEEDS_GEOMETRY' ? 'Boundary needed' : 'Facts needed';
+  const copy = status === 'READY' ? 'Facts complete' : status === 'NEEDS_LOCATION' ? 'Location needed' : status === 'NEEDS_GEOMETRY' ? 'Boundary needed' : 'Facts needed';
   return <span className={`field-status field-status--${status.toLowerCase()}${compact ? ' field-status--compact' : ''}`}>{status === 'READY' ? <RiCheckLine aria-hidden="true" /> : null}{copy}</span>;
 }
 

@@ -30,7 +30,7 @@ func TestExcludeTreatmentPlant(t *testing.T) {
 		{RegistryID: "self", Name: "BLISSFIELD WWTP"},
 		{RegistryID: "lead", Name: "Crescent Manufacturing"},
 	}
-	got := excludeTreatmentPlant(facilities, "DEMO — Blissfield Wastewater Treatment Plant")
+	got := excludeTreatmentPlant(facilities, "Blissfield Wastewater Treatment Plant")
 	if len(got) != 1 || got[0].RegistryID != "lead" {
 		t.Fatalf("excludeTreatmentPlant() = %#v", got)
 	}

@@ -16,6 +16,7 @@ type Config struct {
 	DatabaseURL string
 	MireyeToken string
 	MireyeURL   string
+	NASSAPIKey  string
 	HTTPAddress string
 	WebOrigin   string
 	LogLevel    slog.Level
@@ -59,6 +60,7 @@ func Load() (Config, error) {
 		DatabaseURL: databaseURL,
 		MireyeToken: mireyeToken,
 		MireyeURL:   strings.TrimRight(mireyeURL, "/"),
+		NASSAPIKey:  strings.TrimSpace(os.Getenv("NASS_API_KEY")),
 		HTTPAddress: httpAddress,
 		WebOrigin:   strings.TrimRight(webOrigin, "/"),
 		LogLevel:    logLevel.Level(),

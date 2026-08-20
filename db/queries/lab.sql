@@ -91,12 +91,13 @@ WHERE id = $1 AND status IN ('UPLOADED', 'PROCESSING');
 
 -- name: UpsertLabReportPage :exec
 INSERT INTO pfas.lab_report_pages (
-    report_id, page_number, extracted_text, extraction_method, width, height
+    report_id, page_number, extracted_text, extraction_method, read_error, width, height
 )
-VALUES ($1, $2, $3, $4, $5, $6)
+VALUES ($1, $2, $3, $4, $5, $6, $7)
 ON CONFLICT (report_id, page_number) DO UPDATE
 SET extracted_text = EXCLUDED.extracted_text,
     extraction_method = EXCLUDED.extraction_method,
+    read_error = EXCLUDED.read_error,
     width = EXCLUDED.width,
     height = EXCLUDED.height;
 
@@ -145,7 +146,7 @@ SET status = 'FAILED', failure_code = $2, updated_at = now()
 WHERE id = $1 AND status <> 'CONFIRMED';
 
 -- name: ListLabReportPages :many
-SELECT page_number, extracted_text, extraction_method,
+SELECT page_number, extracted_text, extraction_method, read_error,
        CAST(COALESCE(width::text, '') AS text) AS width,
        CAST(COALESCE(height::text, '') AS text) AS height
 FROM pfas.lab_report_pages

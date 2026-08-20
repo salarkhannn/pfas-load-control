@@ -22,7 +22,7 @@ type createPlacementInput struct {
 	Body         placement.PlanInput `required:"true"`
 }
 
-type placementOutput struct{ Body placement.PlacementPlan }
+type placementOutput struct{ Body *placement.PlacementPlan }
 
 type createPlacementOutput struct {
 	Body struct {
@@ -58,9 +58,12 @@ func (a *API) createPlacement(ctx context.Context, input *createPlacementInput) 
 func (a *API) latestPlacement(ctx context.Context, input *placementInput) (*placementOutput, error) {
 	result, err := a.placement.Latest(ctx, input.WorkspaceKey, input.ID)
 	if err != nil {
+		if errors.Is(err, placement.ErrNotFound) {
+			return &placementOutput{}, nil
+		}
 		return nil, a.placementError("load latest placement evaluation", err)
 	}
-	return &placementOutput{Body: result}, nil
+	return &placementOutput{Body: &result}, nil
 }
 
 func (a *API) placementError(operation string, err error) error {

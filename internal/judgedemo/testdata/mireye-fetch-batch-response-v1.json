@@ -1,0 +1,680 @@
+{
+  "fetched_at": "2026-08-20T07:53:51.209857+00:00",
+  "results": [
+    {
+      "index": 0,
+      "ok": true,
+      "lat": 42.735,
+      "lng": -84.555,
+      "fetched_at": "2026-08-20T07:53:47.044221+00:00",
+      "fields": {
+        "nearest_road_distance_m": {
+          "value": 24.78821139810816,
+          "unit": "meters",
+          "source": "OVERTURE_TRANSPORTATION",
+          "source_url": "https://overturemaps.org/documentation/transportation/",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:53:46.958850+00:00",
+          "dataset_vintage": "2026-07-22.0",
+          "ttl_seconds": 2592000,
+          "notes": null,
+          "status": "ok"
+        },
+        "housing_units_within_1km": {
+          "value": 4001,
+          "unit": null,
+          "source": "CENSUS_TIGERWEB",
+          "source_url": "https://tigerweb.geo.census.gov/arcgisweb/",
+          "confidence": "medium",
+          "fetched_at": "2026-08-20T07:53:28.003618+00:00",
+          "dataset_vintage": "2020 Census (TIGERweb tabblock; HU100 housing-unit counts)",
+          "ttl_seconds": 31536000,
+          "notes": "2020 housing units across Census blocks intersecting the 1 km band; edge blocks counted whole (conservative-high)",
+          "status": "ok"
+        },
+        "within_floodplain_polygon": {
+          "value": false,
+          "unit": null,
+          "source": "FEMA_NFHL",
+          "source_url": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/28",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:53:27.152614+00:00",
+          "dataset_vintage": "26065C_STUDY1",
+          "ttl_seconds": 2592000,
+          "notes": "FEMA NFHL Flood Hazard Zones intersect, but not an SFHA: Zone X; AREA OF MINIMAL FLOOD HAZARD; SFHA_TF=F; FLD_AR_ID=26065C_856; SOURCE_CIT=26065C_STUDY1.",
+          "status": "ok"
+        },
+        "intersects_wetland": {
+          "value": false,
+          "unit": null,
+          "source": "USFWS_NWI",
+          "source_url": "https://www.fws.gov/program/national-wetlands-inventory",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:50:58.858454+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": null,
+          "status": "ok"
+        },
+        "intersects_nhd_area": {
+          "value": false,
+          "unit": null,
+          "source": "USGS_NHDPLUS_HR",
+          "source_url": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer/8/query?f=json&outFields=%2A&returnGeometry=true&geometry=-84.555%2C42.735&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outSR=4326&resultRecordCount=1",
+          "confidence": "medium",
+          "fetched_at": "2026-08-20T07:53:33.094600+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": "No NHDPlus HR NHDArea polygon intersects this coordinate. This does not rule out FEMA NFHL flood-hazard coverage.",
+          "status": "ok"
+        },
+        "nearest_wetland_distance_m": {
+          "value": 425.3164212577848,
+          "unit": "m",
+          "source": "USFWS_NWI",
+          "source_url": "https://www.fws.gov/program/national-wetlands-inventory",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:50:58.858797+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": null,
+          "status": "ok"
+        },
+        "wetlands_within_100m_count": {
+          "value": 0,
+          "unit": null,
+          "source": "USFWS_NWI",
+          "source_url": "https://www.fws.gov/program/national-wetlands-inventory",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:50:58.858805+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": null,
+          "status": "ok"
+        },
+        "wetlands_within_500m_count": {
+          "value": 1,
+          "unit": null,
+          "source": "USFWS_NWI",
+          "source_url": "https://www.fws.gov/program/national-wetlands-inventory",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:50:58.858813+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": null,
+          "status": "ok"
+        },
+        "slope_degrees": {
+          "value": 2.242448329925537,
+          "unit": "degrees",
+          "source": "USGS_3DEP_COG",
+          "source_url": "https://www.usgs.gov/3d-elevation-program",
+          "confidence": "medium",
+          "fetched_at": "2026-08-20T07:53:28.238296+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": null,
+          "status": "ok"
+        },
+        "nearest_groundwater_well_depth_to_water_m": {
+          "value": 17.68,
+          "unit": "meters",
+          "source": "USGS_NWIS_OGC",
+          "source_url": "https://api.waterdata.usgs.gov/ogcapi/v0/collections/latest-field-measurements/items",
+          "confidence": "medium",
+          "fetched_at": "2026-08-20T07:53:28.232663+00:00",
+          "dataset_vintage": "USGS NWIS depth-to-water (OGC latest-field-measurements, param 72019)",
+          "ttl_seconds": 86400,
+          "notes": "depth to water (m below land surface) at the nearest USGS groundwater well ~641 m away, latest reading 1927-01-01",
+          "status": "ok"
+        }
+      },
+      "partial_failures": [],
+      "resolved_location": {
+        "lat": 42.735,
+        "lng": -84.555,
+        "source": "coordinate"
+      }
+    },
+    {
+      "index": 1,
+      "ok": true,
+      "lat": 42.732,
+      "lng": -84.558,
+      "fetched_at": "2026-08-20T07:53:46.983847+00:00",
+      "fields": {
+        "nearest_road_distance_m": {
+          "value": 4.864958910659509,
+          "unit": "meters",
+          "source": "OVERTURE_TRANSPORTATION",
+          "source_url": "https://overturemaps.org/documentation/transportation/",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:53:46.091267+00:00",
+          "dataset_vintage": "2026-07-22.0",
+          "ttl_seconds": 2592000,
+          "notes": null,
+          "status": "ok"
+        },
+        "housing_units_within_1km": {
+          "value": 3990,
+          "unit": null,
+          "source": "CENSUS_TIGERWEB",
+          "source_url": "https://tigerweb.geo.census.gov/arcgisweb/",
+          "confidence": "medium",
+          "fetched_at": "2026-08-20T07:53:28.004675+00:00",
+          "dataset_vintage": "2020 Census (TIGERweb tabblock; HU100 housing-unit counts)",
+          "ttl_seconds": 31536000,
+          "notes": "2020 housing units across Census blocks intersecting the 1 km band; edge blocks counted whole (conservative-high)",
+          "status": "ok"
+        },
+        "within_floodplain_polygon": {
+          "value": false,
+          "unit": null,
+          "source": "FEMA_NFHL",
+          "source_url": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/28",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:53:27.147586+00:00",
+          "dataset_vintage": "26065C_STUDY1",
+          "ttl_seconds": 2592000,
+          "notes": "FEMA NFHL Flood Hazard Zones intersect, but not an SFHA: Zone X; AREA OF MINIMAL FLOOD HAZARD; SFHA_TF=F; FLD_AR_ID=26065C_856; SOURCE_CIT=26065C_STUDY1.",
+          "status": "ok"
+        },
+        "intersects_wetland": {
+          "value": false,
+          "unit": null,
+          "source": "USFWS_NWI",
+          "source_url": "https://www.fws.gov/program/national-wetlands-inventory",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:51:00.389133+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": null,
+          "status": "ok"
+        },
+        "intersects_nhd_area": {
+          "value": false,
+          "unit": null,
+          "source": "USGS_NHDPLUS_HR",
+          "source_url": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer/8/query?f=json&outFields=%2A&returnGeometry=true&geometry=-84.558%2C42.732&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outSR=4326&resultRecordCount=1",
+          "confidence": "medium",
+          "fetched_at": "2026-08-20T07:53:33.030680+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": "No NHDPlus HR NHDArea polygon intersects this coordinate. This does not rule out FEMA NFHL flood-hazard coverage.",
+          "status": "ok"
+        },
+        "nearest_wetland_distance_m": {
+          "value": null,
+          "unit": "m",
+          "source": "USFWS_NWI",
+          "source_url": "https://www.fws.gov/program/national-wetlands-inventory",
+          "confidence": "unknown",
+          "fetched_at": "2026-08-20T07:51:00.389212+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": null,
+          "status": "ok"
+        },
+        "wetlands_within_100m_count": {
+          "value": 0,
+          "unit": null,
+          "source": "USFWS_NWI",
+          "source_url": "https://www.fws.gov/program/national-wetlands-inventory",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:51:00.389219+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": null,
+          "status": "ok"
+        },
+        "wetlands_within_500m_count": {
+          "value": 0,
+          "unit": null,
+          "source": "USFWS_NWI",
+          "source_url": "https://www.fws.gov/program/national-wetlands-inventory",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:51:00.389226+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": null,
+          "status": "ok"
+        },
+        "slope_degrees": {
+          "value": 0.7024675607681274,
+          "unit": "degrees",
+          "source": "USGS_3DEP_COG",
+          "source_url": "https://www.usgs.gov/3d-elevation-program",
+          "confidence": "medium",
+          "fetched_at": "2026-08-20T07:53:28.238592+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": null,
+          "status": "ok"
+        },
+        "nearest_groundwater_well_depth_to_water_m": {
+          "value": 17.68,
+          "unit": "meters",
+          "source": "USGS_NWIS_OGC",
+          "source_url": "https://api.waterdata.usgs.gov/ogcapi/v0/collections/latest-field-measurements/items",
+          "confidence": "medium",
+          "fetched_at": "2026-08-20T07:53:28.165893+00:00",
+          "dataset_vintage": "USGS NWIS depth-to-water (OGC latest-field-measurements, param 72019)",
+          "ttl_seconds": 86400,
+          "notes": "depth to water (m below land surface) at the nearest USGS groundwater well ~843 m away, latest reading 1927-01-01",
+          "status": "ok"
+        }
+      },
+      "partial_failures": [],
+      "resolved_location": {
+        "lat": 42.732,
+        "lng": -84.558,
+        "source": "coordinate"
+      }
+    },
+    {
+      "index": 2,
+      "ok": true,
+      "lat": 42.732,
+      "lng": -84.552,
+      "fetched_at": "2026-08-20T07:53:46.985809+00:00",
+      "fields": {
+        "nearest_road_distance_m": {
+          "value": 22.549731767252897,
+          "unit": "meters",
+          "source": "OVERTURE_TRANSPORTATION",
+          "source_url": "https://overturemaps.org/documentation/transportation/",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:53:46.659202+00:00",
+          "dataset_vintage": "2026-07-22.0",
+          "ttl_seconds": 2592000,
+          "notes": null,
+          "status": "ok"
+        },
+        "housing_units_within_1km": {
+          "value": 3580,
+          "unit": null,
+          "source": "CENSUS_TIGERWEB",
+          "source_url": "https://tigerweb.geo.census.gov/arcgisweb/",
+          "confidence": "medium",
+          "fetched_at": "2026-08-20T07:53:28.764527+00:00",
+          "dataset_vintage": "2020 Census (TIGERweb tabblock; HU100 housing-unit counts)",
+          "ttl_seconds": 31536000,
+          "notes": "2020 housing units across Census blocks intersecting the 1 km band; edge blocks counted whole (conservative-high)",
+          "status": "ok"
+        },
+        "within_floodplain_polygon": {
+          "value": false,
+          "unit": null,
+          "source": "FEMA_NFHL",
+          "source_url": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/28",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:53:27.226411+00:00",
+          "dataset_vintage": "26065C_STUDY1",
+          "ttl_seconds": 2592000,
+          "notes": "FEMA NFHL Flood Hazard Zones intersect, but not an SFHA: Zone X; AREA OF MINIMAL FLOOD HAZARD; SFHA_TF=F; FLD_AR_ID=26065C_856; SOURCE_CIT=26065C_STUDY1.",
+          "status": "ok"
+        },
+        "intersects_wetland": {
+          "value": false,
+          "unit": null,
+          "source": "USFWS_NWI",
+          "source_url": "https://www.fws.gov/program/national-wetlands-inventory",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:50:59.623445+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": null,
+          "status": "ok"
+        },
+        "intersects_nhd_area": {
+          "value": false,
+          "unit": null,
+          "source": "USGS_NHDPLUS_HR",
+          "source_url": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer/8/query?f=json&outFields=%2A&returnGeometry=true&geometry=-84.552%2C42.732&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outSR=4326&resultRecordCount=1",
+          "confidence": "medium",
+          "fetched_at": "2026-08-20T07:53:32.983887+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": "No NHDPlus HR NHDArea polygon intersects this coordinate. This does not rule out FEMA NFHL flood-hazard coverage.",
+          "status": "ok"
+        },
+        "nearest_wetland_distance_m": {
+          "value": 168.97405732540318,
+          "unit": "m",
+          "source": "USFWS_NWI",
+          "source_url": "https://www.fws.gov/program/national-wetlands-inventory",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:50:59.623521+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": null,
+          "status": "ok"
+        },
+        "wetlands_within_100m_count": {
+          "value": 0,
+          "unit": null,
+          "source": "USFWS_NWI",
+          "source_url": "https://www.fws.gov/program/national-wetlands-inventory",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:50:59.623528+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": null,
+          "status": "ok"
+        },
+        "wetlands_within_500m_count": {
+          "value": 1,
+          "unit": null,
+          "source": "USFWS_NWI",
+          "source_url": "https://www.fws.gov/program/national-wetlands-inventory",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:50:59.623535+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": null,
+          "status": "ok"
+        },
+        "slope_degrees": {
+          "value": 0.3083963394165039,
+          "unit": "degrees",
+          "source": "USGS_3DEP_COG",
+          "source_url": "https://www.usgs.gov/3d-elevation-program",
+          "confidence": "medium",
+          "fetched_at": "2026-08-20T07:53:28.238801+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": null,
+          "status": "ok"
+        },
+        "nearest_groundwater_well_depth_to_water_m": {
+          "value": 17.68,
+          "unit": "meters",
+          "source": "USGS_NWIS_OGC",
+          "source_url": "https://api.waterdata.usgs.gov/ogcapi/v0/collections/latest-field-measurements/items",
+          "confidence": "medium",
+          "fetched_at": "2026-08-20T07:53:28.030818+00:00",
+          "dataset_vintage": "USGS NWIS depth-to-water (OGC latest-field-measurements, param 72019)",
+          "ttl_seconds": 86400,
+          "notes": "depth to water (m below land surface) at the nearest USGS groundwater well ~359 m away, latest reading 1927-01-01",
+          "status": "ok"
+        }
+      },
+      "partial_failures": [],
+      "resolved_location": {
+        "lat": 42.732,
+        "lng": -84.552,
+        "source": "coordinate"
+      }
+    },
+    {
+      "index": 3,
+      "ok": true,
+      "lat": 42.738,
+      "lng": -84.558,
+      "fetched_at": "2026-08-20T07:53:46.986757+00:00",
+      "fields": {
+        "nearest_road_distance_m": {
+          "value": 42.485508955955325,
+          "unit": "meters",
+          "source": "OVERTURE_TRANSPORTATION",
+          "source_url": "https://overturemaps.org/documentation/transportation/",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:53:46.379462+00:00",
+          "dataset_vintage": "2026-07-22.0",
+          "ttl_seconds": 2592000,
+          "notes": null,
+          "status": "ok"
+        },
+        "housing_units_within_1km": {
+          "value": 4002,
+          "unit": null,
+          "source": "CENSUS_TIGERWEB",
+          "source_url": "https://tigerweb.geo.census.gov/arcgisweb/",
+          "confidence": "medium",
+          "fetched_at": "2026-08-20T07:53:28.012220+00:00",
+          "dataset_vintage": "2020 Census (TIGERweb tabblock; HU100 housing-unit counts)",
+          "ttl_seconds": 31536000,
+          "notes": "2020 housing units across Census blocks intersecting the 1 km band; edge blocks counted whole (conservative-high)",
+          "status": "ok"
+        },
+        "within_floodplain_polygon": {
+          "value": false,
+          "unit": null,
+          "source": "FEMA_NFHL",
+          "source_url": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/28",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:53:27.219776+00:00",
+          "dataset_vintage": "26065C_STUDY1",
+          "ttl_seconds": 2592000,
+          "notes": "FEMA NFHL Flood Hazard Zones intersect, but not an SFHA: Zone X; AREA OF MINIMAL FLOOD HAZARD; SFHA_TF=F; FLD_AR_ID=26065C_856; SOURCE_CIT=26065C_STUDY1.",
+          "status": "ok"
+        },
+        "intersects_wetland": {
+          "value": false,
+          "unit": null,
+          "source": "USFWS_NWI",
+          "source_url": "https://www.fws.gov/program/national-wetlands-inventory",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:51:01.179315+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": null,
+          "status": "ok"
+        },
+        "intersects_nhd_area": {
+          "value": false,
+          "unit": null,
+          "source": "USGS_NHDPLUS_HR",
+          "source_url": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer/8/query?f=json&outFields=%2A&returnGeometry=true&geometry=-84.558%2C42.738&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outSR=4326&resultRecordCount=1",
+          "confidence": "medium",
+          "fetched_at": "2026-08-20T07:53:32.163936+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": "No NHDPlus HR NHDArea polygon intersects this coordinate. This does not rule out FEMA NFHL flood-hazard coverage.",
+          "status": "ok"
+        },
+        "nearest_wetland_distance_m": {
+          "value": null,
+          "unit": "m",
+          "source": "USFWS_NWI",
+          "source_url": "https://www.fws.gov/program/national-wetlands-inventory",
+          "confidence": "unknown",
+          "fetched_at": "2026-08-20T07:51:01.179391+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": null,
+          "status": "ok"
+        },
+        "wetlands_within_100m_count": {
+          "value": 0,
+          "unit": null,
+          "source": "USFWS_NWI",
+          "source_url": "https://www.fws.gov/program/national-wetlands-inventory",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:51:01.179398+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": null,
+          "status": "ok"
+        },
+        "wetlands_within_500m_count": {
+          "value": 0,
+          "unit": null,
+          "source": "USFWS_NWI",
+          "source_url": "https://www.fws.gov/program/national-wetlands-inventory",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:51:01.179405+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": null,
+          "status": "ok"
+        },
+        "slope_degrees": {
+          "value": 0.9526114463806152,
+          "unit": "degrees",
+          "source": "USGS_3DEP_COG",
+          "source_url": "https://www.usgs.gov/3d-elevation-program",
+          "confidence": "medium",
+          "fetched_at": "2026-08-20T07:53:28.239035+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": null,
+          "status": "ok"
+        },
+        "nearest_groundwater_well_depth_to_water_m": {
+          "value": 20.96,
+          "unit": "meters",
+          "source": "USGS_NWIS_OGC",
+          "source_url": "https://api.waterdata.usgs.gov/ogcapi/v0/collections/latest-field-measurements/items",
+          "confidence": "medium",
+          "fetched_at": "2026-08-20T07:53:28.228179+00:00",
+          "dataset_vintage": "USGS NWIS depth-to-water (OGC latest-field-measurements, param 72019)",
+          "ttl_seconds": 86400,
+          "notes": "depth to water (m below land surface) at the nearest USGS groundwater well ~808 m away, latest reading 2016-06-30",
+          "status": "ok"
+        }
+      },
+      "partial_failures": [],
+      "resolved_location": {
+        "lat": 42.738,
+        "lng": -84.558,
+        "source": "coordinate"
+      }
+    },
+    {
+      "index": 4,
+      "ok": true,
+      "lat": 42.738,
+      "lng": -84.552,
+      "fetched_at": "2026-08-20T07:53:51.209423+00:00",
+      "fields": {
+        "nearest_road_distance_m": {
+          "value": 47.16825345407739,
+          "unit": "meters",
+          "source": "OVERTURE_TRANSPORTATION",
+          "source_url": "https://overturemaps.org/documentation/transportation/",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:53:51.194720+00:00",
+          "dataset_vintage": "2026-07-22.0",
+          "ttl_seconds": 2592000,
+          "notes": null,
+          "status": "ok"
+        },
+        "housing_units_within_1km": {
+          "value": 3517,
+          "unit": null,
+          "source": "CENSUS_TIGERWEB",
+          "source_url": "https://tigerweb.geo.census.gov/arcgisweb/",
+          "confidence": "medium",
+          "fetched_at": "2026-08-20T07:53:47.418160+00:00",
+          "dataset_vintage": "2020 Census (TIGERweb tabblock; HU100 housing-unit counts)",
+          "ttl_seconds": 31536000,
+          "notes": "2020 housing units across Census blocks intersecting the 1 km band; edge blocks counted whole (conservative-high)",
+          "status": "ok"
+        },
+        "within_floodplain_polygon": {
+          "value": false,
+          "unit": null,
+          "source": "FEMA_NFHL",
+          "source_url": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/28",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:53:47.042748+00:00",
+          "dataset_vintage": "26065C_STUDY1",
+          "ttl_seconds": 2592000,
+          "notes": "FEMA NFHL Flood Hazard Zones intersect, but not an SFHA: Zone X; AREA OF MINIMAL FLOOD HAZARD; SFHA_TF=F; FLD_AR_ID=26065C_856; SOURCE_CIT=26065C_STUDY1.",
+          "status": "ok"
+        },
+        "intersects_wetland": {
+          "value": false,
+          "unit": null,
+          "source": "USFWS_NWI",
+          "source_url": "https://www.fws.gov/program/national-wetlands-inventory",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:51:02.254776+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": null,
+          "status": "ok"
+        },
+        "intersects_nhd_area": {
+          "value": false,
+          "unit": null,
+          "source": "USGS_NHDPLUS_HR",
+          "source_url": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer/8/query?f=json&outFields=%2A&returnGeometry=true&geometry=-84.552%2C42.738&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outSR=4326&resultRecordCount=1",
+          "confidence": "medium",
+          "fetched_at": "2026-08-20T07:53:47.181261+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": "No NHDPlus HR NHDArea polygon intersects this coordinate. This does not rule out FEMA NFHL flood-hazard coverage.",
+          "status": "ok"
+        },
+        "nearest_wetland_distance_m": {
+          "value": 213.35478167392677,
+          "unit": "m",
+          "source": "USFWS_NWI",
+          "source_url": "https://www.fws.gov/program/national-wetlands-inventory",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:51:02.254878+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": null,
+          "status": "ok"
+        },
+        "wetlands_within_100m_count": {
+          "value": 0,
+          "unit": null,
+          "source": "USFWS_NWI",
+          "source_url": "https://www.fws.gov/program/national-wetlands-inventory",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:51:02.254888+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": null,
+          "status": "ok"
+        },
+        "wetlands_within_500m_count": {
+          "value": 1,
+          "unit": null,
+          "source": "USFWS_NWI",
+          "source_url": "https://www.fws.gov/program/national-wetlands-inventory",
+          "confidence": "high",
+          "fetched_at": "2026-08-20T07:51:02.254912+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": null,
+          "status": "ok"
+        },
+        "slope_degrees": {
+          "value": 9.42482852935791,
+          "unit": "degrees",
+          "source": "USGS_3DEP_COG",
+          "source_url": "https://www.usgs.gov/3d-elevation-program",
+          "confidence": "medium",
+          "fetched_at": "2026-08-20T07:53:47.362147+00:00",
+          "dataset_vintage": null,
+          "ttl_seconds": 31536000,
+          "notes": null,
+          "status": "ok"
+        },
+        "nearest_groundwater_well_depth_to_water_m": {
+          "value": 17.68,
+          "unit": "meters",
+          "source": "USGS_NWIS_OGC",
+          "source_url": "https://api.waterdata.usgs.gov/ogcapi/v0/collections/latest-field-measurements/items",
+          "confidence": "medium",
+          "fetched_at": "2026-08-20T07:53:47.752498+00:00",
+          "dataset_vintage": "USGS NWIS depth-to-water (OGC latest-field-measurements, param 72019)",
+          "ttl_seconds": 86400,
+          "notes": "depth to water (m below land surface) at the nearest USGS groundwater well ~672 m away, latest reading 1927-01-01",
+          "status": "ok"
+        }
+      },
+      "partial_failures": [],
+      "resolved_location": {
+        "lat": 42.738,
+        "lng": -84.552,
+        "source": "coordinate"
+      }
+    }
+  ]
+}

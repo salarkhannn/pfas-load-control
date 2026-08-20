@@ -1,0 +1,11 @@
+{
+  "fixtureVersion": "seeded-operator-boundary-adjustment-v1",
+  "inputType": "OPERATOR_SUPPLIED",
+  "boundaryVersion": 3,
+  "recordedBoundaryAcres": 50,
+  "excludedAcres": 18.4,
+  "effectiveAcres": 31.6,
+  "recordedAt": "2026-08-20T07:53:55Z",
+  "source": "Seeded operator boundary adjustment",
+  "reason": "The demo operator revised the proposed application boundary after reviewing the sampled slope concern. This acreage is not a Mireye measurement."
+}

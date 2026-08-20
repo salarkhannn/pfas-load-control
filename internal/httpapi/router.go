@@ -18,27 +18,37 @@ import (
 
 	"github.com/salarkhannn/pfas-load-control/internal/actioncenter"
 	"github.com/salarkhannn/pfas-load-control/internal/agent"
+	"github.com/salarkhannn/pfas-load-control/internal/application"
+	"github.com/salarkhannn/pfas-load-control/internal/coordination"
 	"github.com/salarkhannn/pfas-load-control/internal/decisionpackage"
 	"github.com/salarkhannn/pfas-load-control/internal/evidence"
 	"github.com/salarkhannn/pfas-load-control/internal/field"
+	"github.com/salarkhannn/pfas-load-control/internal/judgedemo"
 	"github.com/salarkhannn/pfas-load-control/internal/lab"
+	"github.com/salarkhannn/pfas-load-control/internal/party"
 	"github.com/salarkhannn/pfas-load-control/internal/placement"
 	"github.com/salarkhannn/pfas-load-control/internal/policy"
+	"github.com/salarkhannn/pfas-load-control/internal/registry"
 	"github.com/salarkhannn/pfas-load-control/internal/responseplan"
 )
 
 type API struct {
-	service   *agent.Service
-	lab       *lab.Service
-	policy    *policy.Service
-	fields    *field.Service
-	evidence  *evidence.Service
-	placement *placement.Service
-	response  *responseplan.Service
-	packages  *decisionpackage.Service
-	actions   *actioncenter.Service
-	pool      *pgxpool.Pool
-	logger    *slog.Logger
+	service      *agent.Service
+	lab          *lab.Service
+	policy       *policy.Service
+	fields       *field.Service
+	evidence     *evidence.Service
+	placement    *placement.Service
+	response     *responseplan.Service
+	packages     *decisionpackage.Service
+	actions      *actioncenter.Service
+	parties      *party.Service
+	registry     *registry.Service
+	coordination *coordination.Service
+	applications *application.Service
+	judgeDemo    *judgedemo.Service
+	pool         *pgxpool.Pool
+	logger       *slog.Logger
 }
 
 type runOutput struct {
@@ -62,7 +72,7 @@ type healthOutput struct {
 	}
 }
 
-func NewRouter(service *agent.Service, labService *lab.Service, policyService *policy.Service, fieldService *field.Service, evidenceService *evidence.Service, placementService *placement.Service, responseService *responseplan.Service, packageService *decisionpackage.Service, actionService *actioncenter.Service, pool *pgxpool.Pool, logger *slog.Logger, webOrigin string) http.Handler {
+func NewRouter(service *agent.Service, labService *lab.Service, policyService *policy.Service, fieldService *field.Service, evidenceService *evidence.Service, placementService *placement.Service, responseService *responseplan.Service, packageService *decisionpackage.Service, actionService *actioncenter.Service, partyService *party.Service, registryService *registry.Service, coordService *coordination.Service, appService *application.Service, pool *pgxpool.Pool, logger *slog.Logger, webOrigin string) http.Handler {
 	router := chi.NewRouter()
 	router.Use(middleware.RequestID)
 	router.Use(middleware.Recoverer)
@@ -75,10 +85,10 @@ func NewRouter(service *agent.Service, labService *lab.Service, policyService *p
 		MaxAge:           300,
 	}))
 
-	config := huma.DefaultConfig("PFAS Load Control API", "0.8.0")
-	config.Info.Description = "A bounded, auditable control plane for PFAS decision workflows."
+	config := huma.DefaultConfig("FieldProof API", "0.8.0")
+	config.Info.Description = "A bounded, auditable land-application evidence and placement agent."
 	api := humachi.New(router, config)
-	handler := &API{service: service, lab: labService, policy: policyService, fields: fieldService, evidence: evidenceService, placement: placementService, response: responseService, packages: packageService, actions: actionService, pool: pool, logger: logger}
+	handler := &API{service: service, lab: labService, policy: policyService, fields: fieldService, evidence: evidenceService, placement: placementService, response: responseService, packages: packageService, actions: actionService, parties: partyService, registry: registryService, coordination: coordService, applications: appService, judgeDemo: judgedemo.NewService(pool), pool: pool, logger: logger}
 
 	huma.Register(api, huma.Operation{
 		OperationID: "health-live",
@@ -125,6 +135,11 @@ func NewRouter(service *agent.Service, labService *lab.Service, policyService *p
 	handler.registerResponseRoutes(api)
 	handler.registerDecisionPackageRoutes(api)
 	handler.registerActionRoutes(api)
+	handler.registerPartyRoutes(api)
+	handler.registerRegistryRoutes(api)
+	handler.registerCoordinationRoutes(api)
+	handler.registerApplicationRoutes(api)
+	handler.registerJudgeDemoRoutes(api)
 	return router
 }
 

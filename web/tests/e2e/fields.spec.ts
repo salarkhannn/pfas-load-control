@@ -134,8 +134,8 @@ test('adds, resolves, confirms, and completes a candidate field', async ({ page 
   await page.getByLabel('Approved in the Residuals Management Program').check();
   await page.getByRole('button', { name: 'Save facts' }).click();
 
-  await expect(page.getByText('Ready for screening')).toBeVisible();
-  await expect(page.locator('.field-record__header').getByText('Ready', { exact: true })).toBeVisible();
+  await expect(page.getByText('Operating facts complete; screening still required')).toBeVisible();
+  await expect(page.locator('.field-record__header').getByText('Facts complete', { exact: true })).toBeVisible();
 });
 
 test('keeps an uploaded boundary estimated until the operator confirms it', async ({ page }) => {

@@ -25,12 +25,3 @@ The report is suitable for demonstrating Michigan's PFAS biosolids tier
 screening. The resulting tier is not permission to land apply: an actual land
 application also requires an approved RMP and compliance with all batch,
 facility, field, agronomic, and site-specific requirements.
-
-## Synthetic Module 6 branch fixtures
-
-`synthetic-module-06-elevated.csv` and
-`synthetic-module-06-prohibited.csv` are deterministic test fixtures, not
-laboratory reports and not measurements from Blissfield WWTP or any other real
-facility. They exist only to exercise the elevated and prohibited product
-branches. Their EPA 1633 method, dry-weight basis, units, and required PFOS/PFOA
-columns match the application's supported lab-report contract.

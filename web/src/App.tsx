@@ -1,16 +1,30 @@
+import { lazy, Suspense, useEffect } from 'react';
 import { RiErrorWarningLine } from '@remixicon/react';
 
 import type { DataGap } from '@/client/types.gen';
 import { ReadinessChecks } from '@/components/readiness-checks';
 import { RunStatus } from '@/components/run-status';
+import { TopNav } from '@/components/top-nav';
 import * as Alert from '@/components/ui/alert';
 import * as Button from '@/components/ui/button';
 import { useReadinessRun } from '@/hooks/use-readiness-run';
-import { LabEvidencePage } from '@/pages/lab-evidence-page';
+const LabEvidencePage = lazy(() => import('@/pages/lab-evidence-page').then((module) => ({ default: module.LabEvidencePage })));
+const CoordinationPage = lazy(() => import('@/pages/coordination-page').then((module) => ({ default: module.CoordinationPage })));
+const WorkflowDetailPage = lazy(() => import('@/pages/workflow-detail-page').then((module) => ({ default: module.WorkflowDetailPage })));
+const JudgeDemoPage = lazy(() => import('@/pages/judge-demo-page').then((module) => ({ default: module.JudgeDemoPage })));
 
 export function App() {
-  if (window.location.pathname === '/data-access') return <DataAccessPage />;
-  return <LabEvidencePage />;
+  const path = window.location.pathname;
+  useEffect(() => {
+    document.title = path === '/judge-demo' ? 'Judge Demo | FieldProof' : path === '/data-access' ? 'Data Access | FieldProof' : 'FieldProof';
+  }, [path]);
+  if (path === '/data-access') return <DataAccessPage />;
+  const route = path === '/judge-demo' ? <JudgeDemoPage /> : path.startsWith('/coordination/workflow/') ? <WorkflowDetailPage /> : path === '/coordination' ? <CoordinationPage /> : <LabEvidencePage />;
+  return <Suspense fallback={<RouteLoading />}>{route}</Suspense>;
+}
+
+function RouteLoading() {
+  return <div className="app-shell"><TopNav /><main className="workspace"><div className="center-state" role="status"><span className="state-spinner" /><h1>Loading workspace</h1></div></main></div>;
 }
 
 function DataAccessPage() {
@@ -22,15 +36,7 @@ function DataAccessPage() {
 
   return (
     <div className="app-shell">
-      <header className="topbar">
-        <a className="brand" href="/" aria-label="PFAS Load Control home">
-          <span className="brand-mark" aria-hidden="true">
-            {Array.from({ length: 9 }, (_, index) => <i key={index} />)}
-          </span>
-          <span>PFAS Load Control</span>
-        </a>
-      </header>
-
+      <TopNav />
       <main className="workspace">
         <section className="page-header" aria-labelledby="page-title">
           <div>

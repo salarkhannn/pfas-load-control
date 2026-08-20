@@ -2,8 +2,12 @@
 .env.*
 !.env.example
 
-# Local planning and outreach material
-docs/
+# Local planning and outreach material. Keep the three redacted, submission-facing
+# records versioned so README links work in a clean checkout.
+docs/*
+!docs/CONTRACTOR_INTERVIEW.md
+!docs/CUSTOMER_EVIDENCE.md
+!docs/SUBMISSION_NOTES.md
 
 # Real-world source documents used for local validation and demos
 /sample-data/*.pdf

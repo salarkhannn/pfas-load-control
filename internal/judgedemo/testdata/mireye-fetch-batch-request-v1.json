@@ -1,0 +1,21 @@
+{
+  "locations": [
+    { "lat": 42.735, "lng": -84.555 },
+    { "lat": 42.732, "lng": -84.558 },
+    { "lat": 42.732, "lng": -84.552 },
+    { "lat": 42.738, "lng": -84.558 },
+    { "lat": 42.738, "lng": -84.552 }
+  ],
+  "fields": [
+    "within_floodplain_polygon",
+    "intersects_wetland",
+    "intersects_nhd_area",
+    "nearest_wetland_distance_m",
+    "wetlands_within_100m_count",
+    "wetlands_within_500m_count",
+    "nearest_groundwater_well_depth_to_water_m",
+    "slope_degrees",
+    "housing_units_within_1km",
+    "nearest_road_distance_m"
+  ]
+}

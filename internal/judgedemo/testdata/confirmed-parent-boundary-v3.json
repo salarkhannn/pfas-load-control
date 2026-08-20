@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "confirmed-field-boundary-v1",
+  "id": "a4c0b3a1-6f74-4cad-9df1-7d7bc68d1000",
+  "fieldId": "0f153cf7-0d2e-4bba-9aee-9388ae2379a1",
+  "boundaryVersion": 3,
+  "crs": "EPSG:4326",
+  "confirmationStatus": "CONFIRMED",
+  "recordedAt": "2026-08-20T07:45:00Z",
+  "boundary": {
+    "type": "Polygon",
+    "coordinates": [[
+      [-84.5585, 42.7315],
+      [-84.5545, 42.7315],
+      [-84.5545, 42.735036],
+      [-84.551, 42.739156],
+      [-84.5585, 42.735036],
+      [-84.5585, 42.7315]
+    ]]
+  }
+}

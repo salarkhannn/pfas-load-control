@@ -97,12 +97,37 @@ func (e *SystemPDFExtractor) Extract(ctx context.Context, content []byte) ([]Pag
 		}
 		text, ocrErr := e.ocrPage(ctx, inputPath, directory, pages[index].Number)
 		if ocrErr != nil {
+			var extractionErr *ExtractionError
+			if errors.As(ocrErr, &extractionErr) && ocrFailureRecoverable(extractionErr.Code) {
+				if !anyReadablePage(pages) {
+					return nil, ocrErr
+				}
+				pages[index].ReadError = extractionErr.Detail
+				continue
+			}
 			return nil, ocrErr
 		}
 		pages[index].Text = text
 		pages[index].ExtractionMethod = "OCR"
 	}
 	return pages, nil
+}
+
+func ocrFailureRecoverable(code string) bool {
+	switch code {
+	case "OCR_UNAVAILABLE", "OCR_RENDER_FAILED", "OCR_FAILED":
+		return true
+	}
+	return false
+}
+
+func anyReadablePage(pages []Page) bool {
+	for _, page := range pages {
+		if usefulText(page.Text) >= 20 {
+			return true
+		}
+	}
+	return false
 }
 
 func applyLayoutText(pages []Page, data []byte) {

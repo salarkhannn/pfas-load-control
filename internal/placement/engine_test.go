@@ -1,6 +1,7 @@
 package placement
 
 import (
+	"context"
 	"encoding/json"
 	"math/big"
 	"math/rand/v2"
@@ -52,6 +53,61 @@ func TestEvaluateExcludesReviewRequiredField(t *testing.T) {
 		if field.FieldID == "water" && field.Disposition != DispositionReviewRequired {
 			t.Fatalf("water field disposition = %s", field.Disposition)
 		}
+	}
+}
+
+func TestEvaluateExcludesExcessiveSlopeWithoutDocumentedResolution(t *testing.T) {
+	review := eligibleField("slope", "Slope review", "100", "1", "0", 20, "grain")
+	review.Facts = append(review.Facts, rangeFact("slope_degrees", "Slope", 1, 9.42, 4))
+	eligible := eligibleField("eligible", "Eligible field", "3", "1", "0", 80, "grain")
+
+	result, err := Evaluate(Input{Tier: "STANDARD", WetMassKg: "9071.8474", PercentSolids: "100", Fields: []FieldInput{review, eligible}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.Status != StatusReviewRequired || result.AllocatedDryTons != "3" || result.UnallocatedDryTons != "7" {
+		t.Fatalf("unexpected slope-review plan: %#v", result)
+	}
+	if len(result.Allocations) != 1 || result.Allocations[0].FieldID != "eligible" || result.Allocations[0].Position != 1 {
+		t.Fatalf("review-required field received an allocation: %#v", result.Allocations)
+	}
+	if len(result.Fields) != 2 || result.Fields[0].FieldID != "eligible" || result.Fields[0].Disposition != DispositionEligible || result.Fields[0].Rank == nil || *result.Fields[0].Rank != 1 {
+		t.Fatalf("eligible field rank or disposition is wrong: %#v", result.Fields)
+	}
+	if result.Fields[1].FieldID != "slope" || result.Fields[1].Disposition != DispositionReviewRequired || result.Fields[1].Rank == nil || *result.Fields[1].Rank != 2 {
+		t.Fatalf("slope field rank or disposition is wrong: %#v", result.Fields)
+	}
+	if result.Fields[1].AvailableCapacity != "" || result.Fields[1].AllowedRate != "" {
+		t.Fatalf("capacity was calculated before slope review was resolved: %#v", result.Fields[1])
+	}
+
+	encoded, err := json.Marshal(result)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var decoded PlacementPlan
+	if err := json.Unmarshal(encoded, &decoded); err != nil {
+		t.Fatal(err)
+	}
+	if decoded.Fields[0].Rank == nil || *decoded.Fields[0].Rank != 1 || decoded.Fields[1].Rank == nil || *decoded.Fields[1].Rank != 2 {
+		t.Fatalf("distinct ranks did not survive JSON serialization: %#v", decoded.Fields)
+	}
+}
+
+func TestEvaluateReconsidersExcessiveSlopeWithVerifiedBoundaryEvidence(t *testing.T) {
+	field := eligibleField("slope", "Approved slope field", "10", "1", "0", 20, "grain")
+	field.Facts = append(field.Facts, rangeFact("slope_degrees", "Slope", 1, 9.42, 4))
+	field, store, asOf := validResolutionFixture(t, field)
+
+	result, err := EvaluateWithEvidence(context.Background(), Input{Tier: "STANDARD", WetMassKg: "9071.8474", PercentSolids: "100", Fields: []FieldInput{field}, EvidenceAsOf: asOf}, store)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.Status != StatusReady || len(result.Allocations) != 1 || result.Allocations[0].DryTons != "10" {
+		t.Fatalf("verified boundary evidence did not permit reconsideration: %#v", result)
+	}
+	if result.Fields[0].Disposition != DispositionEligible {
+		t.Fatalf("field disposition = %s", result.Fields[0].Disposition)
 	}
 }
 

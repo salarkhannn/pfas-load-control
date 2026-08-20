@@ -1,0 +1,9 @@
+{
+  "fixtureVersion": "mireye-fetch-batch-20260820-v1",
+  "endpoint": "https://api.mireye.com/v1/fetch/batch",
+  "requestId": "req_088804c2fcb6",
+  "httpStatus": 200,
+  "retrievedAt": "2026-08-20T07:53:51.209857Z",
+  "requestHash": "9e00f68a9d3718536a8af0fd5018ab06259241300e8177ca2a380f96fa14e7c5",
+  "responseHash": "8a6cfc9863a09c337be4290b4da156296357ebe25463f801fcabc27835ec737a"
+}

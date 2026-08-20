@@ -1,0 +1,18 @@
+{
+  "fixtureVersion": "seeded-reviewed-boundary-20260820-v1",
+  "programPolicyVersion": "DEMO-MI-LAND-APPLICATION-2026.08.1",
+  "evidenceRecordId": "a4c0b3a1-6f74-4cad-9df1-7d7bc68d1001",
+  "evidenceType": "CONFIRMED_BOUNDARY_EXCLUSION",
+  "artifactHash": "46190d7fc67eca328a845f62c1c41d0449505aeda5408bc49f35c0ec14cdc78e",
+  "boundaryVersion": 4,
+  "parentBoundaryEvidenceRecordId": "a4c0b3a1-6f74-4cad-9df1-7d7bc68d1000",
+  "parentBoundaryArtifactHash": "790c4933ec22fcf16ad4630c18ca6c8bd29877f786e8e059d8106cfefe85d7c3",
+  "parentBoundaryVersion": 3,
+  "sourceEvidenceRecordId": "088804c2-fcb6-4c00-8000-000000000001",
+  "sourceArtifactHash": "8a6cfc9863a09c337be4290b4da156296357ebe25463f801fcabc27835ec737a",
+  "revisedScreeningEvidenceRecordId": "a4c0b3a1-6f74-4cad-9df1-7d7bc68d1003",
+  "revisedScreeningArtifactHash": "9d9c59dc98853d6aea1f3ff141bb0d776fed2db08031d56888591c7dde300a57",
+  "reviewerAuthorizationRecordId": "a4c0b3a1-6f74-4cad-9df1-7d7bc68d1002",
+  "reviewerAuthorizationHash": "5606f59ece4f37aff1e19f7ee20d95122b3b86197a55773a5944f5e43b640655",
+  "label": "Seeded reviewed boundary evidence — demonstration only"
+}

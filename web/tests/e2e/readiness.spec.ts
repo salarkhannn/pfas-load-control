@@ -61,8 +61,7 @@ test('checks data access and keeps technical evidence available on demand', asyn
   await expect(page.getByText('3 of 3 verified')).toBeVisible();
   await expect(page.getByRole('link', { name: 'Mireye property data source' })).toBeVisible();
   await expect(page.getByText('req_fixture_1')).not.toBeVisible();
-  await page.locator('summary').first().focus();
-  await page.keyboard.press('Enter');
+  await page.getByText('Technical details', { exact: true }).first().click();
   await expect(page.getByText('req_fixture_1')).toBeVisible();
   await expect(page.locator('details[open] dt').getByText('Credits used', { exact: true })).toBeVisible();
 });

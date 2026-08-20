@@ -4,15 +4,18 @@ import type { GeoJsonObject } from 'geojson';
 
 import 'leaflet/dist/leaflet.css';
 
+import { configuredOverlays, DEFAULT_OVERLAYS, wmsOverlayLayer, type MapOverlay } from '@/lib/map-overlays';
+
 const DEFAULT_TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const DEFAULT_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
-export function ParcelMap({ geometry, latitude, longitude, label, samples = [] }: {
+export function ParcelMap({ geometry, latitude, longitude, label, samples = [], overlays }: {
   geometry: unknown;
   latitude?: string;
   longitude?: string;
   label: string;
   samples?: Array<{ index: number; label: string; latitude: number; longitude: number }>;
+  overlays?: MapOverlay[];
 }) {
   const container = useRef<HTMLDivElement>(null);
 
@@ -35,6 +38,15 @@ export function ParcelMap({ geometry, latitude, longitude, label, samples = [] }
       attribution: import.meta.env.VITE_MAP_ATTRIBUTION || DEFAULT_ATTRIBUTION,
       maxZoom: 19,
     }).addTo(map);
+
+    const activeOverlays = overlays ?? configuredOverlays() ?? DEFAULT_OVERLAYS;
+    const overlayControls: Record<string, L.Layer> = {};
+    activeOverlays.forEach((overlay) => {
+      const layer = wmsOverlayLayer(overlay);
+      overlayControls[overlay.label] = layer;
+      layer.addTo(map);
+    });
+    L.control.layers(undefined, overlayControls, { position: 'topright', collapsed: true }).addTo(map);
 
     const parcelLayer = L.geoJSON(parcel, {
       style: {
@@ -79,7 +91,7 @@ export function ParcelMap({ geometry, latitude, longitude, label, samples = [] }
       observer.disconnect();
       map.remove();
     };
-  }, [geometry, label, latitude, longitude, samples]);
+  }, [geometry, label, latitude, longitude, samples, overlays]);
 
   if (!geoJSON(geometry)) return null;
   const sampleCopy = samples.length ? ` with ${samples.length} evidence points` : '';

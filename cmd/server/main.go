@@ -46,7 +46,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	runtime, err := agent.NewRuntime(startupCtx, pool, mireye.NewClient(cfg.MireyeURL, cfg.MireyeToken, nil), logger)
+	runtime, err := agent.NewRuntime(startupCtx, pool, mireye.NewClient(cfg.MireyeURL, cfg.MireyeToken, nil), cfg.NASSAPIKey, logger)
 	if err != nil {
 		logger.Error("agent runtime initialization failed", "error", err)
 		os.Exit(1)
@@ -58,7 +58,7 @@ func main() {
 
 	server := &http.Server{
 		Addr:              cfg.HTTPAddress,
-		Handler:           httpapi.NewRouter(runtime.Service, runtime.Lab, runtime.Policy, runtime.Fields, runtime.Evidence, runtime.Placement, runtime.Response, runtime.Packages, runtime.Actions, pool, logger, cfg.WebOrigin),
+		Handler:           httpapi.NewRouter(runtime.Service, runtime.Lab, runtime.Policy, runtime.Fields, runtime.Evidence, runtime.Placement, runtime.Response, runtime.Packages, runtime.Actions, runtime.Parties, runtime.Registry, runtime.Coordination, runtime.Applications, pool, logger, cfg.WebOrigin),
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       15 * time.Second,
 		WriteTimeout:      15 * time.Second,

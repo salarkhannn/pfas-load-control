@@ -1,0 +1,26 @@
+{
+  "laboratory": "Great Lakes Analytical",
+  "sampleIdentifier": "B-240820",
+  "collectionDate": "2026-08-12",
+  "matrix": "Biosolids",
+  "method": "EPA 1633",
+  "basis": "DRY",
+  "analytes": [
+    {
+      "analyte": "PFOS",
+      "result": "18.6",
+      "unit": "ug/kg",
+      "basis": "DRY",
+      "sourcePage": 4,
+      "sourceExcerpt": "PFOS 18.6 ug/kg dry"
+    },
+    {
+      "analyte": "PFOA",
+      "result": "2.1",
+      "unit": "ug/kg",
+      "basis": "DRY",
+      "sourcePage": 4,
+      "sourceExcerpt": "PFOA 2.1 ug/kg dry"
+    }
+  ]
+}

@@ -63,7 +63,7 @@ func renderPDF(value DecisionPackage) ([]byte, error) {
 	pdf.SetMargins(16, 16, 16)
 	pdf.SetAutoPageBreak(true, 16)
 	pdf.SetTitle(pdfText("PFAS decision package - "+value.Snapshot.Decision.BatchIdentifier), false)
-	pdf.SetAuthor("PFAS Load Control", false)
+	pdf.SetAuthor("FieldProof", false)
 	pdf.AddPage()
 
 	pdf.SetTextColor(18, 119, 131)

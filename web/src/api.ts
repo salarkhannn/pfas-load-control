@@ -16,7 +16,6 @@ import {
   getFieldContext,
   getLatestDecisionPackage,
   getLabIntakeContext,
-  getLabReport,
   getLatestReadinessRun,
   getLatestPhysicalEvaluation,
   getLatestPlacementEvaluation,
@@ -65,6 +64,187 @@ import type {
 
 const baseUrl = (import.meta.env.VITE_API_URL ?? 'http://localhost:8080').replace(/\/$/, '');
 client.setConfig({ baseUrl });
+
+export interface JudgeDemoToolCall {
+  position: number;
+  toolName: string;
+  status: string;
+  summary: string;
+  sourceUrl: string;
+  requestId: string;
+  inputHash: string;
+  outputHash: string;
+  input: unknown;
+  output?: unknown;
+  error?: string;
+  startedAt: string;
+  completedAt: string;
+}
+
+export interface JudgeDemoCitation {
+  id: string;
+  finding: string;
+  value: string;
+  source: string;
+  sourceUrl: string;
+  retrievedAt: string;
+  effect: string;
+}
+
+export interface JudgeDemoRun {
+  id: string;
+  fixtureVersion: string;
+  mode: 'UNRESOLVED' | 'REVIEWED_EVIDENCE';
+  parentRunId?: string;
+  kind: string;
+  runStatus: 'SUCCEEDED' | 'FAILED';
+  calculationStatus: 'READY' | 'REVIEW_REQUIRED';
+  authorizationStatus: 'REQUIRED' | 'AUTHORIZED';
+  authorizationRequired: boolean;
+  caseId: string;
+  batchDryTons: string;
+  before: PlacementPlan;
+  after: PlacementPlan;
+  excludedAcres: string;
+  reviewRequired: boolean;
+  reviewQuestion: string;
+  mireyeCapture: {
+    fixtureVersion: string;
+    endpoint: string;
+    requestId: string;
+    httpStatus: number;
+    retrievedAt: string;
+    requestHash: string;
+    responseHash: string;
+    request: unknown;
+    response: unknown;
+  };
+  acreageAdjustment: {
+    fixtureVersion: string;
+    inputType: 'OPERATOR_SUPPLIED';
+    boundaryVersion: number;
+    recordedBoundaryAcres: string;
+    excludedAcres: string;
+    effectiveAcres: string;
+    recordedAt: string;
+    source: string;
+    reason: string;
+    inputHash: string;
+    rawFixture: unknown;
+  };
+  resolutionEvidence?: {
+    fixtureVersion: string;
+    label: string;
+    recordId: string;
+    evidenceType: string;
+    artifactHash: string;
+    artifact: unknown;
+    reviewerAuthorizationRecordId: string;
+    reviewerAuthorizationHash: string;
+    reviewerAuthorizationArtifact: unknown;
+    parentBoundaryRecordId: string;
+    parentBoundaryArtifactHash: string;
+    parentBoundaryArtifact: unknown;
+    revisedScreeningRecordId: string;
+    revisedScreeningArtifactHash: string;
+    revisedScreeningArtifact: unknown;
+    verification: {
+      programPolicyVersion: string;
+      demonstrationRoles: boolean;
+      evidenceRecordId: string;
+      evidenceType: string;
+      artifactHash: string;
+      fieldId: string;
+      boundaryVersion: number;
+      crs: string;
+      parentBoundaryEvidenceRecordId: string;
+      parentBoundaryArtifactHash: string;
+      parentBoundaryVersion: number;
+      sourceEvidenceRecordId: string;
+      sourceArtifactHash: string;
+      revisedScreeningEvidenceRecordId: string;
+      revisedScreeningArtifactHash: string;
+      issuingRole: string;
+      reviewerRole: string;
+      reviewerAuthorizationRecordId: string;
+      reviewerAuthorizationHash: string;
+      recordedAt: string;
+      verifiedAt: string;
+      derivedUsableAcres: string;
+      highSlopeSamplesExcluded: number;
+      parentBoundaryAcres: string;
+      revisedScreening: {
+        evidenceRecordId: string;
+        artifactHash: string;
+        endpoint: string;
+        requestId: string;
+        requestHash: string;
+        responseHash: string;
+        retrievedAt: string;
+        algorithmVersion: string;
+        minimumSpacingMeters: string;
+        maxRequestSamples: number;
+        requestedSampleCount: number;
+        returnedSampleCount: number;
+        boundaryNearSampleCount: number;
+        interiorSampleCount: number;
+        maximumSlopeDegrees: string;
+        maximumSlopeGradePercent: string;
+        status: 'SAMPLED_TERRAIN_SCREEN_PASSED';
+        limitation: string;
+      };
+      slopeConversion: {
+        originalDegrees: string;
+        derivedGradePercent: string;
+        thresholdGradePercent: string;
+        thresholdDegrees: string;
+        formula: string;
+        policySourceUrl: string;
+      };
+    };
+  };
+  toolCalls: JudgeDemoToolCall[];
+  freezeReceipt: {
+    position: number;
+    toolName: 'decisionpackage.freeze';
+    status: string;
+    artifactId: string;
+    artifactHash: string;
+    startedAt: string;
+    completedAt: string;
+  };
+  citations: JudgeDemoCitation[];
+  package: { id: string; status: string; inputHash: string; decisionHash: string; payloadHash: string; downloadUrl: string; createdAt: string };
+  createdAt: string;
+  completedAt: string;
+}
+
+export function judgeDemoPackageURL(run: JudgeDemoRun): string { return `${baseUrl}${run.package.downloadUrl}`; }
+
+export async function startJudgeDemoRun(signal?: AbortSignal, idempotencyKey = crypto.randomUUID()): Promise<JudgeDemoRun> {
+  const response = await fetch(`${baseUrl}/api/v1/judge-demo/runs`, { method: 'POST', headers: { 'Idempotency-Key': idempotencyKey }, signal });
+  if (response.ok) return (await response.json()) as JudgeDemoRun;
+  throwIfAborted(signal);
+  throw new Error('The prepared case could not be replayed through the decision agent.');
+}
+
+export async function startReviewedJudgeDemoRun(parentRunId: string, signal?: AbortSignal, idempotencyKey = crypto.randomUUID()): Promise<JudgeDemoRun> {
+  const response = await fetch(`${baseUrl}/api/v1/judge-demo/runs/${encodeURIComponent(parentRunId)}/reviewed`, { method: 'POST', headers: { 'Idempotency-Key': idempotencyKey }, signal });
+  if (response.ok) return (await response.json()) as JudgeDemoRun;
+  throwIfAborted(signal);
+  throw new Error('The reviewed evidence could not be verified and replayed through the decision agent.');
+}
+
+let initialJudgeDemoRun: Promise<JudgeDemoRun> | undefined;
+export function loadInitialJudgeDemoRun(): Promise<JudgeDemoRun> {
+  if (!initialJudgeDemoRun) {
+    initialJudgeDemoRun = startJudgeDemoRun().catch((error: unknown) => {
+      initialJudgeDemoRun = undefined;
+      throw error;
+    });
+  }
+  return initialJudgeDemoRun;
+}
 
 export async function loadLatestRun(signal?: AbortSignal): Promise<Run | null> {
   const result = await getLatestReadinessRun({ signal });
@@ -121,10 +301,13 @@ export async function submitLabReport(
 }
 
 export async function loadLabReport(workspaceKey: string, id: string, signal?: AbortSignal): Promise<Report> {
-  const result = await getLabReport({ headers: workspaceHeaders(workspaceKey), path: { id }, signal });
-  if (result.data) return result.data;
+  const response = await fetch(`${baseUrl}/api/v1/lab-reports/${id}`, {
+    headers: workspaceHeaders(workspaceKey),
+    signal,
+  });
+  if (response.ok) return (await response.json()) as Report;
   throwIfAborted(signal);
-  throw apiError(result.error, 'The report could not be loaded.');
+  throw new NotFoundError('The report could not be loaded.', response.status === 404);
 }
 
 export async function saveLabEvidence(workspaceKey: string, id: string, body: CorrectionWritable): Promise<Report> {
@@ -274,9 +457,9 @@ export async function loadLatestPlacementPlan(
   const result = await getLatestPlacementEvaluation({
     headers: workspaceHeaders(workspaceKey), path: { id: decisionId }, signal,
   });
-  if (result.data) return result.data;
+  if (result.data != null) return result.data;
   throwIfAborted(signal);
-  if (result.response?.status === 404) return null;
+  if (result.response?.status === 404 || result.response?.status === 204 || result.data === null) return null;
   throw apiError(result.error, 'The draft placement plan could not be loaded.');
 }
 
@@ -378,9 +561,9 @@ export async function loadLatestDecisionPackage(
   const result = await getLatestDecisionPackage({
     headers: workspaceHeaders(workspaceKey), path: { id: decisionId }, signal,
   });
-  if (result.data) return result.data;
+  if (result.data != null) return result.data;
   throwIfAborted(signal);
-  if (result.response?.status === 404) return null;
+  if (result.response?.status === 404 || result.response?.status === 204 || result.data === null) return null;
   throw apiError(result.error, 'The decision package could not be loaded.');
 }
 
@@ -494,12 +677,268 @@ export async function downloadActionHandoffFile(
   URL.revokeObjectURL(url);
 }
 
+// ─── Module 9: Parties ────────────────────────────────────────────────
+
+export interface Party {
+  id: string;
+  role: 'PLANT' | 'CONTRACTOR' | 'FARMER';
+  name: string;
+  email: string;
+  phone: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Consent {
+  id: string;
+  granterId: string;
+  granteeId: string;
+  scope: string;
+  purpose: string;
+  revokedAt?: string | null;
+  createdAt: string;
+}
+
+export interface FieldParty {
+  fieldId: string;
+  partyId: string;
+  partyName?: string;
+  partyRole?: string;
+  association: string;
+  createdAt: string;
+}
+
+export async function listParties(ws: string, role?: string, signal?: AbortSignal): Promise<Party[]> {
+  const url = role ? `${baseUrl}/api/v1/parties?role=${encodeURIComponent(role)}` : `${baseUrl}/api/v1/parties`;
+  const res = await fetch(url, { headers: { ...workspaceHeaders(ws) }, signal });
+  if (!res.ok) throw new Error('Could not load parties.');
+  return res.json();
+}
+
+export async function createParty(ws: string, body: { role: string; name: string; email?: string; phone?: string }): Promise<Party> {
+  const res = await fetch(`${baseUrl}/api/v1/parties`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json', ...workspaceHeaders(ws) }, body: JSON.stringify({ ...body, email: body.email ?? '' }),
+  });
+  if (!res.ok) throw new Error('Could not create party.');
+  return res.json();
+}
+
+export async function listConsents(ws: string, partyId: string, signal?: AbortSignal): Promise<Consent[]> {
+  const res = await fetch(`${baseUrl}/api/v1/parties/${partyId}/consents`, { headers: { ...workspaceHeaders(ws) }, signal });
+  if (!res.ok) throw new Error('Could not load consents.');
+  return res.json();
+}
+
+export async function createConsent(ws: string, body: { granterId: string; granteeId: string; scope: string; purpose: string }): Promise<Consent> {
+  const res = await fetch(`${baseUrl}/api/v1/consents`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json', ...workspaceHeaders(ws) }, body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error('Could not create consent.');
+  return res.json();
+}
+
+export async function revokeConsent(ws: string, id: string): Promise<void> {
+  const res = await fetch(`${baseUrl}/api/v1/consents/${id}/revoke`, {
+    method: 'POST', headers: { ...workspaceHeaders(ws) },
+  });
+  if (!res.ok) throw new Error('Could not revoke consent.');
+}
+
+// ─── Module 10: Registry ──────────────────────────────────────────────
+
+export interface RegistryEntry {
+  id: string;
+  entryType: string;
+  name: string;
+  data: Record<string, unknown>;
+  latitude?: number | null;
+  longitude?: number | null;
+  updatedAt: string;
+  rank?: number;
+  distanceM?: number;
+}
+
+export async function listRegistryEntries(ws: string, entryType?: string, signal?: AbortSignal): Promise<RegistryEntry[]> {
+  const url = entryType ? `${baseUrl}/api/v1/registry/entries?entryType=${encodeURIComponent(entryType)}` : `${baseUrl}/api/v1/registry/entries`;
+  const res = await fetch(url, { headers: { ...workspaceHeaders(ws) }, signal });
+  if (!res.ok) throw new Error('Could not load registry entries.');
+  return res.json();
+}
+
+export async function searchRegistry(ws: string, query: string, signal?: AbortSignal): Promise<RegistryEntry[]> {
+  const res = await fetch(`${baseUrl}/api/v1/registry/search?q=${encodeURIComponent(query)}`, { headers: { ...workspaceHeaders(ws) }, signal });
+  if (!res.ok) throw new Error('Could not search registry.');
+  return res.json();
+}
+
+export async function createRegistryEntry(ws: string, body: { entryType: string; name: string; data?: Record<string, unknown>; latitude?: number; longitude?: number }): Promise<RegistryEntry> {
+  const res = await fetch(`${baseUrl}/api/v1/registry/entries`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json', ...workspaceHeaders(ws) }, body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error('Could not create registry entry.');
+  return res.json();
+}
+
+// ─── Module 11: Coordination ──────────────────────────────────────────
+
+export interface CoordWorkflow {
+  id: string;
+  batchId?: string;
+  fieldId?: string;
+  status: string;
+  createdBy: string;
+  createdByName: string;
+  fieldName?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CoordStep {
+  id: string;
+  workflowId: string;
+  partyId?: string | null;
+  partyName?: string;
+  partyEmail?: string;
+  stepRole: string;
+  stepType: string;
+  status: string;
+  notes: string;
+  confirmedAt?: string | null;
+  createdAt: string;
+}
+
+export interface CoordDocument {
+  id: string;
+  workflowId: string;
+  partyId: string;
+  partyName: string;
+  docType: string;
+  filename: string;
+  fileHash: string;
+  mimeType: string;
+  sizeBytes: number;
+  createdAt: string;
+}
+
+export async function listWorkflows(ws: string, signal?: AbortSignal): Promise<CoordWorkflow[]> {
+  const res = await fetch(`${baseUrl}/api/v1/coordination/workflows`, { headers: { ...workspaceHeaders(ws) }, signal });
+  if (!res.ok) throw new Error('Could not load workflows.');
+  return res.json();
+}
+
+export async function getWorkflow(ws: string, id: string, signal?: AbortSignal): Promise<{ workflow: CoordWorkflow; steps: CoordStep[] }> {
+  const res = await fetch(`${baseUrl}/api/v1/coordination/workflows/${id}`, { headers: { ...workspaceHeaders(ws) }, signal });
+  if (!res.ok) throw new Error('Could not load workflow.');
+  return res.json();
+}
+
+export async function createWorkflow(ws: string, body: { createdByPartyId: string; fieldId?: string; batchId?: string }): Promise<CoordWorkflow> {
+  const res = await fetch(`${baseUrl}/api/v1/coordination/workflows`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json', ...workspaceHeaders(ws) }, body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error('Could not create workflow.');
+  const list = await res.json();
+  return list[0];
+}
+
+export async function confirmStep(ws: string, stepId: string, body: { partyId: string; notes?: string }): Promise<CoordStep> {
+  const res = await fetch(`${baseUrl}/api/v1/coordination/steps/${stepId}/confirm`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json', ...workspaceHeaders(ws) }, body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error('Could not confirm step.');
+  return res.json();
+}
+
+export async function assignStep(ws: string, stepId: string, partyId: string): Promise<CoordStep> {
+  const res = await fetch(`${baseUrl}/api/v1/coordination/steps/${stepId}/assign`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json', ...workspaceHeaders(ws) }, body: JSON.stringify({ partyId }),
+  });
+  if (!res.ok) throw new Error('Could not assign this party. Check that their role matches the step.');
+  return res.json();
+}
+
+export async function rejectStep(ws: string, stepId: string, body: { partyId: string; notes?: string }): Promise<CoordStep> {
+  const res = await fetch(`${baseUrl}/api/v1/coordination/steps/${stepId}/reject`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json', ...workspaceHeaders(ws) }, body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error('Could not reject step.');
+  return res.json();
+}
+
+export async function listWorkflowDocuments(ws: string, workflowId: string, signal?: AbortSignal): Promise<CoordDocument[]> {
+  const res = await fetch(`${baseUrl}/api/v1/coordination/workflows/${workflowId}/documents`, { headers: { ...workspaceHeaders(ws) }, signal });
+  if (!res.ok) throw new Error('Could not load documents.');
+  return res.json();
+}
+
+// ─── Module 12: Applications ──────────────────────────────────────────
+
+export interface AppRecord {
+  id: string;
+  batchId?: string;
+  fieldId: string;
+  fieldName?: string;
+  contractorId: string;
+  contractorName?: string;
+  applicationDate: string;
+  dryTons: number;
+  rateDryTonsPerAcre: number;
+  acresApplied: number;
+  weatherConditions: string;
+  fieldConditionNotes: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface LoadingLedger {
+  id: string;
+  fieldId: string;
+  year: number;
+  cumulativeDryTons: number;
+  lastApplicationDate?: string;
+  lastUpdated: string;
+}
+
+export async function listApplicationsByField(ws: string, fieldId: string, signal?: AbortSignal): Promise<AppRecord[]> {
+  const res = await fetch(`${baseUrl}/api/v1/fields/${fieldId}/applications`, { headers: { ...workspaceHeaders(ws) }, signal });
+  if (!res.ok) throw new Error('Could not load applications.');
+  return res.json();
+}
+
+export async function createApplication(ws: string, body: {
+  fieldId: string; contractorPartyId: string; applicationDate: string;
+  dryTons: number; rateDryTonsPerAcre: number; acresApplied: number;
+  weatherConditions: string; fieldConditionNotes: string;
+}): Promise<AppRecord> {
+  const res = await fetch(`${baseUrl}/api/v1/applications`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json', ...workspaceHeaders(ws) }, body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error('Could not create application record.');
+  return res.json();
+}
+
+export async function getLoadingLedger(ws: string, fieldId: string, year: number, signal?: AbortSignal): Promise<LoadingLedger> {
+  const res = await fetch(`${baseUrl}/api/v1/fields/${fieldId}/loading/${year}`, { headers: { ...workspaceHeaders(ws) }, signal });
+  if (!res.ok) throw new Error('Could not load loading ledger.');
+  return res.json();
+}
+
 function workspaceHeaders(workspaceKey: string): { 'X-Workspace-Key': string } {
   return { 'X-Workspace-Key': workspaceKey };
 }
 
 function throwIfAborted(signal?: AbortSignal): void {
   if (signal?.aborted) throw new DOMException('The request was canceled.', 'AbortError');
+}
+
+export class NotFoundError extends Error {
+  readonly notFound: boolean;
+  constructor(message: string, is404: boolean) {
+    super(message);
+    this.notFound = is404;
+  }
 }
 
 function apiError(error: unknown, fallback: string): Error {

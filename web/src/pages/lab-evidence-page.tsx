@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
-import { RiArrowLeftLine, RiCheckLine, RiErrorWarningLine, RiFileTextLine } from '@remixicon/react';
+import { useEffect, useId, useMemo, useState } from 'react';
+import { RiArrowDownLine, RiArrowLeftLine, RiCheckLine, RiErrorWarningLine, RiFileTextLine, RiShieldCheckLine } from '@remixicon/react';
 
 import { loadLabReportFile } from '@/api';
 import type { Analyte, CorrectionWritable, Report } from '@/client/types.gen';
 import { PolicyDecisionView } from '@/components/policy-decision';
+import { TopNav } from '@/components/top-nav';
 import * as Alert from '@/components/ui/alert';
 import * as Button from '@/components/ui/button';
 import { useLabReport } from '@/hooks/use-lab-report';
@@ -14,16 +15,10 @@ export function LabEvidencePage() {
 
   return (
     <div className="app-shell lab-shell">
-      <header className="topbar lab-topbar">
-        <a className="brand" href="/" aria-label="PFAS Load Control home">
-          <span className="brand-mark" aria-hidden="true">
-            {Array.from({ length: 9 }, (_, index) => <i key={index} />)}
-          </span>
-          <span>PFAS Load Control</span>
-        </a>
-      </header>
+      <TopNav />
 
       <main className="workspace lab-workspace">
+        {!state.report ? <DemoBrief /> : null}
         {state.error ? (
           <Alert.Root className="error-alert lab-error" variant="lighter" status="error" size="large" role="alert">
             <Alert.Icon as={RiErrorWarningLine} />
@@ -45,6 +40,79 @@ export function LabEvidencePage() {
   );
 }
 
+const AGENT_STEPS = [
+  ['Checks', 'Batch evidence + policy'],
+  ['Finds', 'Candidate fields'],
+  ['Qualifies', 'Agreements + soil tests'],
+  ['Compares', 'Mireye + field records'],
+  ['Calculates', 'Conservative capacity'],
+  ['Blocks or prepares', 'Professional handoff'],
+  ['Freezes', 'Cited decision package'],
+];
+
+function DemoBrief() {
+  return (
+    <section className="demo-brief" aria-labelledby="demo-title">
+      <div className="demo-brief__lead">
+        <span className="demo-brief__mark"><RiShieldCheckLine aria-hidden="true" /></span>
+        <div>
+          <h1 id="demo-title">FieldProof</h1>
+          <strong className="demo-brief__descriptor">Land-application evidence and placement agent</strong>
+          <p>FieldProof combines Mireye terrain evidence with laboratory reports, field boundaries, operating records, and application history. It identifies missing evidence, proposes a conservative placement plan, and prepares a cited record for professional authorization.</p>
+          <p className="demo-brief__buyer">Built for third-party land-application contractors and utilities that manage their own land-application programs. PFAS is one batch input.</p>
+          <div className="demo-brief__actions">
+            <Button.Root asChild variant="primary" mode="filled" size="small"><a href="/judge-demo">Open judge demo</a></Button.Root>
+            <Button.Root asChild variant="neutral" mode="stroke" size="small"><a href="#evidence">Add lab report</a></Button.Root>
+          </div>
+        </div>
+      </div>
+
+      <ol className="agent-loop" aria-label="Agent decision loop">
+        {AGENT_STEPS.map(([verb, object], index) => (
+          <li key={object}>
+            <span>{verb}</span><strong>{object}</strong>
+            {index < AGENT_STEPS.length - 1 ? <RiArrowDownLine aria-hidden="true" /> : null}
+          </li>
+        ))}
+      </ol>
+
+      <details className="agent-loop-mobile">
+        <summary>How the agent decides</summary>
+        <ol>{AGENT_STEPS.map(([verb, object]) => <li key={object}><span>{verb}</span><strong>{object}</strong></li>)}</ol>
+      </details>
+
+      <div className="demo-brief__proof">
+        <div>
+          <strong>Economic buyer</strong>
+          <p>Contractor owner, operations manager, or utility biosolids program manager.</p>
+        </div>
+        <div>
+          <strong>Daily user</strong>
+          <p>Land-application coordinator, operator, or configured program reviewer.</p>
+        </div>
+        <div>
+          <strong>Current alternative</strong>
+          <p>Spreadsheets, GIS, email, paper agreements, consultant review, and MiEnviro.</p>
+        </div>
+        <div>
+          <strong>Buying trigger</strong>
+          <p>Field shortages, expiring records, new farms, repeated evidence follow-up, or a failed review.</p>
+        </div>
+        <div>
+          <strong>Pilot</strong>
+          <p>Reconstruct 20 historical placement decisions without influencing live applications.</p>
+        </div>
+        <div>
+          <strong>Success measures</strong>
+          <p>Missing evidence, reviewer agreement, preparation time, package completeness, and false-clear rate.</p>
+        </div>
+      </div>
+
+      <p className="demo-brief__estimate"><strong>Buyer-hypothesis status:</strong> labor cost, budget, pricing, pilot interest, and willingness to pay remain unvalidated. Unanswered outreach is not demand evidence.</p>
+    </section>
+  );
+}
+
 function IntakeForm({ context, busy, onSubmit }: {
   context: ReturnType<typeof useLabReport>['context'];
   busy: boolean;
@@ -60,7 +128,7 @@ function IntakeForm({ context, busy, onSubmit }: {
   const selectedFacility = selectedBatch?.facilityName ?? facilityName;
 
   return (
-    <section className="intake" aria-labelledby="page-title">
+    <section className="intake" id="evidence" aria-labelledby="page-title">
       <div className="page-header lab-page-header">
         <div>
           <p className="eyebrow">Lab evidence</p>
@@ -68,6 +136,12 @@ function IntakeForm({ context, busy, onSubmit }: {
           <p>Choose the tested batch and upload the original report. You’ll verify every extracted value before it is used.</p>
         </div>
       </div>
+
+      <ol className="flow-steps" aria-label="Report flow">
+        <li className="flow-steps__step flow-steps__step--current"><span>1</span>Upload report</li>
+        <li className="flow-steps__step"><span>2</span>Verify values</li>
+        <li className="flow-steps__step"><span>3</span>Get classification</li>
+      </ol>
 
       <form className="intake-form" onSubmit={(event) => {
         event.preventDefault();
@@ -99,21 +173,24 @@ function IntakeForm({ context, busy, onSubmit }: {
           <label htmlFor="report">Lab report</label>
           <label className={`file-picker${file ? ' file-picker--selected' : ''}`} htmlFor="report">
             <RiFileTextLine aria-hidden="true" />
-            <span><strong>{file?.name ?? 'Choose a PDF, CSV, or JSON file'}</strong><small>{file ? formatBytes(file.size) : 'Up to 10 MB'}</small></span>
+            <span><strong>{file?.name ?? 'Choose a PDF, CSV, or JSON file'}</strong><small>{file ? formatBytes(file.size) : 'PDF, CSV, or JSON · up to 10 MB'}</small></span>
           </label>
           <input className="visually-hidden" id="report" type="file" accept=".pdf,.csv,.json,application/pdf,text/csv,application/json" onChange={(event) => setFile(event.target.files?.[0] ?? null)} required />
         </div>
 
-        <details className="optional-details">
-          <summary>Batch details</summary>
-          <div className="optional-fields">
-            <div className="form-field"><label htmlFor="mass">Wet mass <span>kg</span></label><input id="mass" inputMode="decimal" value={wetMassKg} onChange={(event) => setWetMassKg(event.target.value)} /></div>
-            <div className="form-field"><label htmlFor="solids">Total solids <span>%</span></label><input id="solids" inputMode="decimal" value={percentSolids} onChange={(event) => setPercentSolids(event.target.value)} /></div>
+        <div className="batch-details">
+          <div>
+            <strong>Batch details</strong>
+            <small>Optional — used to compute the dry tons that need a field.</small>
           </div>
-        </details>
+          <div className="optional-fields">
+            <div className="form-field"><label htmlFor="mass">Wet mass <span>kg</span></label><input id="mass" type="number" min="0" step="any" value={wetMassKg} onChange={(event) => setWetMassKg(event.target.value)} /></div>
+            <div className="form-field"><label htmlFor="solids">Total solids <span>%</span></label><input id="solids" type="number" min="0" max="100" step="any" value={percentSolids} onChange={(event) => setPercentSolids(event.target.value)} /></div>
+          </div>
+        </div>
 
         <Button.Root className="intake-submit" type="submit" variant="primary" mode="filled" disabled={busy || !file || !selectedFacility || !batchId}>
-          {busy ? 'Uploading…' : 'Extract report'}
+          {busy ? 'Uploading…' : 'Extract and review'}
         </Button.Root>
       </form>
     </section>
@@ -167,7 +244,10 @@ function EvidenceReview({ report, workspaceKey, busy, onConfirm, startNew, onSho
         <SourcePane report={report} workspaceKey={workspaceKey} page={page} />
         <form className="evidence-form" onSubmit={(event) => { event.preventDefault(); void onConfirm(form, changed); }}>
           <div className="evidence-section evidence-metadata">
-            <h2>Report details</h2>
+            <div className="evidence-section__head">
+              <h2>Report details</h2>
+              <span>From {report.originalFilename}</span>
+            </div>
             <div className="field-grid">
               <TextField label="Laboratory" value={form.laboratory} onChange={(value) => setForm({ ...form, laboratory: value })} disabled={confirmed} />
               <TextField label="Sample ID" value={form.sampleIdentifier} onChange={(value) => setForm({ ...form, sampleIdentifier: value })} disabled={confirmed} />
@@ -178,13 +258,15 @@ function EvidenceReview({ report, workspaceKey, busy, onConfirm, startNew, onSho
             </div>
           </div>
 
-          {form.analytes?.map((analyte, index) => (
-            <AnalyteEditor key={analyte.canonicalAnalyte} analyte={analyte} disabled={confirmed} onFocusPage={setPage} onChange={(next) => {
-              const analytes = [...(form.analytes ?? [])] as [Analyte, Analyte];
-              analytes[index] = next;
-              setForm({ ...form, analytes });
-            }} />
-          ))}
+          <div className="analyte-grid">
+            {form.analytes?.map((analyte, index) => (
+              <AnalyteEditor key={analyte.canonicalAnalyte} analyte={analyte} disabled={confirmed} onFocusPage={setPage} onChange={(next) => {
+                const analytes = [...(form.analytes ?? [])] as [Analyte, Analyte];
+                analytes[index] = next;
+                setForm({ ...form, analytes });
+              }} />
+            ))}
+          </div>
 
           {!confirmed ? (
             <div className="confirm-bar">
@@ -211,11 +293,13 @@ function SourcePane({ report, workspaceKey, page }: { report: Report; workspaceK
     return () => { controller.abort(); if (objectUrl) URL.revokeObjectURL(objectUrl); };
   }, [report.id, workspaceKey]);
   const pageText = report.pages?.find((item) => item.number === page)?.text ?? '';
+  const pageReadError = report.pages?.find((item) => item.number === page)?.readError ?? '';
 
   return (
     <details className="source-pane" open>
       <summary>Original report · page {page}</summary>
       <div className="source-document">
+        {pageReadError ? <p className="source-read-error" role="alert">{pageReadError} The extracted values below may miss results shown on this page.</p> : null}
         {report.mediaType === 'application/pdf' && url ? <iframe title="Original lab report" src={`${url}#page=${page}&zoom=page-width`} /> : <pre>{pageText}</pre>}
       </div>
     </details>
@@ -244,11 +328,13 @@ function AnalyteEditor({ analyte, disabled, onChange, onFocusPage }: { analyte: 
 }
 
 function TextField({ label, value, onChange, disabled, type = 'text' }: { label: string; value?: string; onChange: (value: string) => void; disabled: boolean; type?: string }) {
-  return <div className="form-field"><label>{label}</label><input type={type} value={value ?? ''} onChange={(event) => onChange(event.target.value)} disabled={disabled} /></div>;
+  const id = useId();
+  return <div className="form-field"><label htmlFor={id}>{label}</label><input id={id} type={type} value={value ?? ''} onChange={(event) => onChange(event.target.value)} disabled={disabled} /></div>;
 }
 
 function SelectField({ label, value, options, onChange, disabled }: { label: string; value: string; options: Array<{ value: string; label: string }>; onChange: (value: string) => void; disabled: boolean }) {
-  return <div className="form-field"><label>{label}</label><select value={value} onChange={(event) => onChange(event.target.value)} disabled={disabled}><option value="">Choose</option>{options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></div>;
+  const id = useId();
+  return <div className="form-field"><label htmlFor={id}>{label}</label><select id={id} value={value} onChange={(event) => onChange(event.target.value)} disabled={disabled}><option value="">Choose</option>{options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></div>;
 }
 
 function LoadingState() { return <div className="center-state"><span className="state-spinner" /><h1>Loading lab evidence</h1></div>; }
@@ -272,6 +358,9 @@ function failureCopy(code?: string) {
   if (code === 'UNSUPPORTED_FILE') return 'Use a PDF, CSV, or JSON report.';
   if (code === 'ENCRYPTED_PDF') return 'Remove the PDF password, then upload it again.';
   if (code === 'PAGE_LIMIT_EXCEEDED') return 'Use a report with 15 pages or fewer.';
+  if (code === 'OCR_UNAVAILABLE') return 'This report is a scanned document, but OCR is not available on this server. Try a PDF with a text layer or export the results as CSV.';
+  if (code === 'OCR_FAILED') return 'The scanned pages of this report could not be read. Try a clearer scan or export the results as CSV.';
+  if (code === 'OCR_RENDER_FAILED') return 'The scanned pages of this report could not be prepared for reading. Try a clearer scan or export the results as CSV.';
   return 'Check that the file is readable, then upload it again.';
 }
 

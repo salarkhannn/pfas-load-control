@@ -12,30 +12,38 @@ import (
 	"github.com/riverqueue/river/riverdriver/riverpgxv5"
 
 	"github.com/salarkhannn/pfas-load-control/internal/actioncenter"
+	"github.com/salarkhannn/pfas-load-control/internal/application"
+	"github.com/salarkhannn/pfas-load-control/internal/coordination"
 	"github.com/salarkhannn/pfas-load-control/internal/decisionpackage"
 	"github.com/salarkhannn/pfas-load-control/internal/evidence"
 	"github.com/salarkhannn/pfas-load-control/internal/field"
 	"github.com/salarkhannn/pfas-load-control/internal/lab"
 	"github.com/salarkhannn/pfas-load-control/internal/mireye"
+	"github.com/salarkhannn/pfas-load-control/internal/party"
 	"github.com/salarkhannn/pfas-load-control/internal/placement"
 	"github.com/salarkhannn/pfas-load-control/internal/policy"
+	"github.com/salarkhannn/pfas-load-control/internal/registry"
 	"github.com/salarkhannn/pfas-load-control/internal/responseplan"
 )
 
 type Runtime struct {
-	Jobs      *river.Client[pgx.Tx]
-	Service   *Service
-	Lab       *lab.Service
-	Policy    *policy.Service
-	Fields    *field.Service
-	Evidence  *evidence.Service
-	Placement *placement.Service
-	Response  *responseplan.Service
-	Packages  *decisionpackage.Service
-	Actions   *actioncenter.Service
+	Jobs         *river.Client[pgx.Tx]
+	Service      *Service
+	Lab          *lab.Service
+	Policy       *policy.Service
+	Fields       *field.Service
+	Evidence     *evidence.Service
+	Placement    *placement.Service
+	Response     *responseplan.Service
+	Packages     *decisionpackage.Service
+	Actions      *actioncenter.Service
+	Parties      *party.Service
+	Registry     *registry.Service
+	Coordination *coordination.Service
+	Applications *application.Service
 }
 
-func NewRuntime(ctx context.Context, pool *pgxpool.Pool, mireyeClient *mireye.Client, logger *slog.Logger) (*Runtime, error) {
+func NewRuntime(ctx context.Context, pool *pgxpool.Pool, mireyeClient *mireye.Client, nassAPIKey string, logger *slog.Logger) (*Runtime, error) {
 	worker := &readinessWorker{pool: pool, mireye: mireyeClient, logger: logger}
 	labWorker := lab.NewWorker(logger)
 	evidenceWorker := evidence.NewWorker(logger)
@@ -83,5 +91,7 @@ func NewRuntime(ctx context.Context, pool *pgxpool.Pool, mireyeClient *mireye.Cl
 		Jobs: jobs, Service: NewService(pool, jobs), Lab: labService,
 		Policy: policyService, Fields: field.NewService(pool, mireyeClient), Evidence: evidenceService,
 		Placement: placementService, Response: responseService, Packages: packageService, Actions: actionService,
+		Parties: party.NewService(pool), Registry: registry.NewService(pool, nassAPIKey),
+		Coordination: coordination.NewService(pool), Applications: application.NewService(pool),
 	}, nil
 }

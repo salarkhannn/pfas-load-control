@@ -14,6 +14,8 @@ import (
 
 const maxFetchResponseBytes = 16 << 20
 
+const FetchBatchPath = "/v1/fetch/batch"
+
 type Coordinate struct {
 	Latitude  float64 `json:"lat"`
 	Longitude float64 `json:"lng"`
@@ -25,15 +27,26 @@ type FetchBatchRequest struct {
 }
 
 type FetchBatchResult struct {
-	SourceURL    string
-	RequestHash  string
-	ResponseHash string
-	RequestID    string
-	HTTPStatus   int
-	FetchedAt    time.Time
-	Request      json.RawMessage
-	Raw          json.RawMessage
-	Results      []FetchLocationResult
+	SourceURL    string                `json:"sourceUrl"`
+	RequestHash  string                `json:"requestHash"`
+	ResponseHash string                `json:"responseHash"`
+	RequestID    string                `json:"requestId"`
+	HTTPStatus   int                   `json:"httpStatus"`
+	FetchedAt    time.Time             `json:"fetchedAt"`
+	Request      json.RawMessage       `json:"request"`
+	Raw          json.RawMessage       `json:"raw"`
+	Results      []FetchLocationResult `json:"results"`
+}
+
+type FetchBatchCapture struct {
+	SourceURL            string
+	RequestID            string
+	HTTPStatus           int
+	FetchedAt            time.Time
+	ExpectedRequestHash  string
+	ExpectedResponseHash string
+	Request              json.RawMessage
+	Response             json.RawMessage
 }
 
 type FetchLocationResult struct {
@@ -83,7 +96,7 @@ type FetchEntryError struct {
 }
 
 func (c *Client) FetchBatch(ctx context.Context, input FetchBatchRequest) (FetchBatchResult, error) {
-	result := FetchBatchResult{SourceURL: c.baseURL + "/v1/fetch/batch"}
+	result := FetchBatchResult{SourceURL: c.baseURL + FetchBatchPath}
 	if err := validateBatchRequest(input); err != nil {
 		return result, err
 	}
@@ -128,30 +141,80 @@ func (c *Client) FetchBatch(ctx context.Context, input FetchBatchRequest) (Fetch
 	if len(body) > maxFetchResponseBytes {
 		return result, &CallError{Code: "MIREYE_RESPONSE_TOO_LARGE", Detail: "Mireye batch response exceeded the allowed size", Status: response.StatusCode}
 	}
+	results, err := decodeFetchBatchResponse(input, body)
+	if err != nil {
+		return result, &CallError{Code: "MIREYE_SCHEMA_MISMATCH", Detail: err.Error(), Status: response.StatusCode}
+	}
+	result.Raw = body
+	result.ResponseHash = hash(body)
+	result.Results = results
+	return result, nil
+}
+
+// ReplayFetchBatch verifies and parses a captured provider response through the
+// same request and response contracts used by FetchBatch. It performs no network
+// call and fails closed if the stored bytes no longer match their capture hashes.
+func ReplayFetchBatch(capture FetchBatchCapture) (FetchBatchResult, error) {
+	request, err := compactJSON(capture.Request)
+	if err != nil {
+		return FetchBatchResult{}, fmt.Errorf("decode captured Mireye request: %w", err)
+	}
+	response, err := compactJSON(capture.Response)
+	if err != nil {
+		return FetchBatchResult{}, fmt.Errorf("decode captured Mireye response: %w", err)
+	}
+	if !strings.HasSuffix(capture.SourceURL, FetchBatchPath) {
+		return FetchBatchResult{}, errors.New("captured Mireye endpoint does not match the batch adapter")
+	}
+	if hash(request) != capture.ExpectedRequestHash || hash(response) != capture.ExpectedResponseHash {
+		return FetchBatchResult{}, errors.New("captured Mireye request or response hash does not match")
+	}
+	var input FetchBatchRequest
+	decoder := json.NewDecoder(bytes.NewReader(request))
+	decoder.DisallowUnknownFields()
+	if err := decoder.Decode(&input); err != nil {
+		return FetchBatchResult{}, fmt.Errorf("decode captured Mireye request: %w", err)
+	}
+	if err := validateBatchRequest(input); err != nil {
+		return FetchBatchResult{}, err
+	}
+	results, err := decodeFetchBatchResponse(input, response)
+	if err != nil {
+		return FetchBatchResult{}, err
+	}
+	return FetchBatchResult{SourceURL: capture.SourceURL, RequestHash: capture.ExpectedRequestHash, ResponseHash: capture.ExpectedResponseHash, RequestID: capture.RequestID, HTTPStatus: capture.HTTPStatus, FetchedAt: capture.FetchedAt, Request: request, Raw: response, Results: results}, nil
+}
+
+func decodeFetchBatchResponse(input FetchBatchRequest, body []byte) ([]FetchLocationResult, error) {
 	var payload struct {
 		Results []FetchLocationResult `json:"results"`
 	}
 	if err := json.Unmarshal(body, &payload); err != nil {
-		return result, &CallError{Code: "MIREYE_SCHEMA_MISMATCH", Detail: "Mireye batch response was not valid JSON", Status: response.StatusCode}
+		return nil, err
 	}
 	if len(payload.Results) != len(input.Locations) {
-		return result, &CallError{Code: "MIREYE_SCHEMA_MISMATCH", Detail: "Mireye batch response was not aligned to the requested locations", Status: response.StatusCode}
+		return nil, errors.New("batch response was not aligned to the requested locations")
 	}
 	for index, item := range payload.Results {
 		if item.Index != index {
-			return result, &CallError{Code: "MIREYE_SCHEMA_MISMATCH", Detail: "Mireye batch response changed location order", Status: response.StatusCode}
+			return nil, errors.New("batch response changed location order")
 		}
 		if item.OK && item.Fields == nil {
-			return result, &CallError{Code: "MIREYE_SCHEMA_MISMATCH", Detail: "Mireye batch result omitted requested fields", Status: response.StatusCode}
+			return nil, errors.New("batch result omitted requested fields")
 		}
 		if !item.OK && item.Error == nil {
-			return result, &CallError{Code: "MIREYE_SCHEMA_MISMATCH", Detail: "Mireye batch result omitted its location error", Status: response.StatusCode}
+			return nil, errors.New("batch result omitted its location error")
 		}
 	}
-	result.Raw = body
-	result.ResponseHash = hash(body)
-	result.Results = payload.Results
-	return result, nil
+	return payload.Results, nil
+}
+
+func compactJSON(value []byte) ([]byte, error) {
+	var output bytes.Buffer
+	if err := json.Compact(&output, value); err != nil {
+		return nil, err
+	}
+	return output.Bytes(), nil
 }
 
 func validateBatchRequest(input FetchBatchRequest) error {

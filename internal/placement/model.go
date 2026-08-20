@@ -41,21 +41,38 @@ type FactInput struct {
 	SourceURL string          `json:"sourceUrl,omitempty"`
 }
 
+type SlopeResolutionReference struct {
+	ProgramPolicyVersion             string `json:"programPolicyVersion"`
+	EvidenceRecordID                 string `json:"evidenceRecordId"`
+	EvidenceType                     string `json:"evidenceType"`
+	ArtifactHash                     string `json:"artifactHash"`
+	BoundaryVersion                  int    `json:"boundaryVersion"`
+	ParentBoundaryEvidenceRecordID   string `json:"parentBoundaryEvidenceRecordId"`
+	ParentBoundaryArtifactHash       string `json:"parentBoundaryArtifactHash"`
+	ParentBoundaryVersion            int    `json:"parentBoundaryVersion"`
+	SourceEvidenceRecordID           string `json:"sourceEvidenceRecordId"`
+	SourceArtifactHash               string `json:"sourceArtifactHash"`
+	RevisedScreeningEvidenceRecordID string `json:"revisedScreeningEvidenceRecordId"`
+	RevisedScreeningArtifactHash     string `json:"revisedScreeningArtifactHash"`
+}
+
 type FieldInput struct {
-	ID                    string      `json:"id"`
-	Name                  string      `json:"name"`
-	Status                string      `json:"status"`
-	RMPApproved           bool        `json:"rmpApproved"`
-	UsableAcres           string      `json:"usableAcres,omitempty"`
-	AgronomicRate         string      `json:"agronomicRate,omitempty"`
-	PriorLoadingDryTons   string      `json:"priorLoadingDryTons,omitempty"`
-	CropOrUse             string      `json:"cropOrUse,omitempty"`
-	PhysicalEvaluationID  string      `json:"physicalEvaluationId,omitempty"`
-	PhysicalStatus        string      `json:"physicalStatus,omitempty"`
-	PhysicalCriticalGaps  int         `json:"physicalCriticalGaps"`
-	PhysicalOtherGaps     int         `json:"physicalOtherGaps"`
-	SupplementalAvailable bool        `json:"supplementalAvailable"`
-	Facts                 []FactInput `json:"facts"`
+	ID                    string                    `json:"id"`
+	Name                  string                    `json:"name"`
+	Status                string                    `json:"status"`
+	RMPApproved           bool                      `json:"rmpApproved"`
+	UsableAcres           string                    `json:"usableAcres,omitempty"`
+	AgronomicRate         string                    `json:"agronomicRate,omitempty"`
+	PriorLoadingDryTons   string                    `json:"priorLoadingDryTons,omitempty"`
+	CropOrUse             string                    `json:"cropOrUse,omitempty"`
+	PhysicalEvaluationID  string                    `json:"physicalEvaluationId,omitempty"`
+	PhysicalStatus        string                    `json:"physicalStatus,omitempty"`
+	PhysicalCriticalGaps  int                       `json:"physicalCriticalGaps"`
+	PhysicalOtherGaps     int                       `json:"physicalOtherGaps"`
+	SupplementalAvailable bool                      `json:"supplementalAvailable"`
+	BoundaryVersion       int                       `json:"boundaryVersion,omitempty"`
+	SlopeResolution       *SlopeResolutionReference `json:"slopeResolution,omitempty"`
+	Facts                 []FactInput               `json:"facts"`
 }
 
 type Input struct {
@@ -65,6 +82,7 @@ type Input struct {
 	PercentSolids     string       `json:"percentSolids,omitempty"`
 	Fields            []FieldInput `json:"fields"`
 	DecisionInputHash string       `json:"decisionInputHash"`
+	EvidenceAsOf      time.Time    `json:"evidenceAsOf,omitempty"`
 }
 
 type PlacementComponent struct {
@@ -103,6 +121,7 @@ type PlacementField struct {
 	AvailableCapacity    string                  `json:"availableCapacityDryTons,omitempty"`
 	RoadAccessDistanceM  *float64                `json:"roadAccessDistanceM,omitempty"`
 	PhysicalEvaluationID string                  `json:"physicalEvaluationId,omitempty"`
+	SlopeResolution      *ResolutionVerification `json:"slopeResolution,omitempty"`
 	Reasons              []string                `json:"reasons"`
 	Categories           []VulnerabilityCategory `json:"categories"`
 }
