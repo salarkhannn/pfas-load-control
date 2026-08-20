@@ -18,6 +18,29 @@ Result: **pass**.
 - Production build: passed
 - Playwright: 15 passed, including the 320px judge-demo replay and desktop judging path
 
+## Public deployment verification
+
+The final judging route is
+[`https://fieldproof-inky.vercel.app/judge-demo`](https://fieldproof-inky.vercel.app/judge-demo).
+The Vercel frontend builds from `web/` on Node 24 and calls the Northflank API at
+`https://p01--fieldproof--6yz627dp2pb8.code.run`. The backend readiness endpoint returned
+HTTP 200 and its exact CORS allowlist accepted the final Vercel origin.
+
+A fresh browser profile with no Vercel or Northflank session opened the public route and
+completed both agent paths. The unresolved run allocated 28 dry tons to North Forty and
+held 24 dry tons while Riverbend East remained under review. The reviewed-evidence action
+created a distinct run, reported `SAMPLED_TERRAIN_SCREEN_PASSED`, allocated all 52 dry tons,
+and continued to report professional authorization as required. The same flow passed at
+desktop width and at 320px with no horizontal overflow. The 320px page issued one initial
+create-run request.
+
+Live run `67e58d76-749a-457f-8cfa-25b9303daa23` returned `SUCCEEDED`, calculation status
+`READY`, authorization status `REQUIRED`, and zero unallocated dry tons. The downloaded
+package SHA-256 was
+`d0cb4d9bde5267e866759ec680b972ecc2d0e4fb8af06586fe2a1eea51ac7b0b`, exactly matching
+the durable run's decision hash. Repeating a separate public create request with the same
+idempotency key returned the same run ID and decision hash.
+
 The judge demo starts a backend `LAND_APPLICATION_READINESS_DECISION` run. All six
 decision calls in the unresolved replay execute: the production lab parser, reviewed policy
 classifier, captured Mireye batch replay through the real adapter schema and aggregation
