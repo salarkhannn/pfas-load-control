@@ -231,7 +231,7 @@ replaces professional agronomic judgment, direct farm knowledge, or regulatory a
 
 ## Local development
 
-Requirements: Go 1.26.5, Node 20.20 or newer, and pnpm 10.
+Requirements: Go 1.26.5, Node 24, and pnpm 10.
 
 1. Copy `.env.example` to `.env` and set `DATABASE_URL` plus either
    `MIREYE_API_TOKEN` or the supported local alias `MIREYE_TOKEN`.
