@@ -250,7 +250,9 @@ The latest full verification result is recorded in `docs/SUBMISSION_NOTES.md`.
 The production `Dockerfile` builds the React frontend and serves it from the same Go
 process as the API on a Northflank Developer Sandbox combined service. The public judging
 frontend can also be deployed from `web/` to Vercel, with `VITE_API_URL` pointing to the
-Northflank API. Configure the backend with:
+Northflank API. The final judging route is
+[`https://fieldproof-inky.vercel.app/judge-demo`](https://fieldproof-inky.vercel.app/judge-demo).
+Configure the backend with:
 
 - `DATABASE_URL`: the Supabase session-pooler URI;
 - `MIREYE_API_TOKEN`: the server-only Mireye bearer token;
