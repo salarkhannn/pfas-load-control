@@ -248,12 +248,13 @@ The latest full verification result is recorded in `docs/SUBMISSION_NOTES.md`.
 ## Deployment
 
 The production `Dockerfile` builds the React frontend and serves it from the same Go
-process as the API. It is designed for a Northflank Developer Sandbox combined service,
-so the public application and API share one stable origin. Configure:
+process as the API on a Northflank Developer Sandbox combined service. The public judging
+frontend can also be deployed from `web/` to Vercel, with `VITE_API_URL` pointing to the
+Northflank API. Configure the backend with:
 
 - `DATABASE_URL`: the Supabase session-pooler URI;
 - `MIREYE_API_TOKEN`: the server-only Mireye bearer token;
-- `WEB_ORIGIN`: the final public service origin.
+- `WEB_ORIGIN`: the final Vercel frontend origin when using the split deployment.
 
 The service honors the platform-assigned `PORT`, applies idempotent application and River
 migrations on startup, and keeps all durable state in Supabase.
