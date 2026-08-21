@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-go run ./cmd/server &
+WEB_ORIGIN="${WEB_ORIGIN:-http://localhost:5174}" go run ./cmd/server &
 api_pid=$!
 
 cleanup() {
