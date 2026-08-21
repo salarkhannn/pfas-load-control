@@ -1,5 +1,5 @@
 import { useEffect, useId, useMemo, useState } from 'react';
-import { RiArrowDownLine, RiArrowLeftLine, RiCheckLine, RiErrorWarningLine, RiFileTextLine, RiShieldCheckLine } from '@remixicon/react';
+import { RiArrowLeftLine, RiCheckLine, RiErrorWarningLine, RiFileTextLine, RiShieldCheckLine } from '@remixicon/react';
 
 import { loadLabReportFile } from '@/api';
 import type { Analyte, CorrectionWritable, Report } from '@/client/types.gen';
@@ -18,7 +18,6 @@ export function LabEvidencePage() {
       <TopNav />
 
       <main className="workspace lab-workspace">
-        {!state.report ? <DemoBrief /> : null}
         {state.error ? (
           <Alert.Root className="error-alert lab-error" variant="lighter" status="error" size="large" role="alert">
             <Alert.Icon as={RiErrorWarningLine} />
@@ -33,7 +32,10 @@ export function LabEvidencePage() {
         ) : state.report ? (
           <ReportWorkspace {...state} report={state.report} onShowPolicy={state.decision ? () => setShowEvidence(false) : undefined} />
         ) : (
-          <IntakeForm context={state.context} busy={state.isSubmitting} onSubmit={state.upload} />
+          <div className="lab-onboarding">
+            <DemoBrief />
+            <IntakeForm context={state.context} busy={state.isSubmitting} onSubmit={state.upload} />
+          </div>
         )}
       </main>
     </div>
@@ -41,28 +43,25 @@ export function LabEvidencePage() {
 }
 
 const AGENT_STEPS = [
-  ['Checks', 'Batch evidence + policy'],
-  ['Finds', 'Candidate fields'],
-  ['Qualifies', 'Agreements + soil tests'],
-  ['Compares', 'Mireye + field records'],
-  ['Calculates', 'Conservative capacity'],
-  ['Blocks or prepares', 'Professional handoff'],
-  ['Freezes', 'Cited decision package'],
+  ['Reads', 'Laboratory report + policy'],
+  ['Qualifies', 'Candidate fields + operating records'],
+  ['Investigates', 'Mireye terrain + field boundaries'],
+  ['Calculates', 'Conservative placement capacity'],
+  ['Prepares', 'Cited professional handoff'],
 ];
 
 function DemoBrief() {
   return (
-    <section className="demo-brief" aria-labelledby="demo-title">
+    <aside className="demo-brief" aria-labelledby="demo-title">
       <div className="demo-brief__lead">
         <span className="demo-brief__mark"><RiShieldCheckLine aria-hidden="true" /></span>
         <div>
           <h1 id="demo-title">FieldProof</h1>
           <strong className="demo-brief__descriptor">Land-application evidence and placement agent</strong>
-          <p>FieldProof combines Mireye terrain evidence with laboratory reports, field boundaries, operating records, and application history. It identifies missing evidence, proposes a conservative placement plan, and prepares a cited record for professional authorization.</p>
-          <p className="demo-brief__buyer">Built for third-party land-application contractors and utilities that manage their own land-application programs. PFAS is one batch input.</p>
+          <p>Combine Mireye terrain evidence with laboratory results, field boundaries, operating records, and application history before material is assigned.</p>
+          <p className="demo-brief__buyer">For third-party land-application contractors and utilities that manage their own programs. PFAS is one batch input.</p>
           <div className="demo-brief__actions">
-            <Button.Root asChild variant="primary" mode="filled" size="small"><a href="/judge-demo">Open judge demo</a></Button.Root>
-            <Button.Root asChild variant="neutral" mode="stroke" size="small"><a href="#evidence">Add lab report</a></Button.Root>
+            <Button.Root asChild variant="neutral" mode="stroke" size="small"><a href="/judge-demo">View prepared case</a></Button.Root>
           </div>
         </div>
       </div>
@@ -70,16 +69,18 @@ function DemoBrief() {
       <ol className="agent-loop" aria-label="Agent decision loop">
         {AGENT_STEPS.map(([verb, object], index) => (
           <li key={object}>
-            <span>{verb}</span><strong>{object}</strong>
-            {index < AGENT_STEPS.length - 1 ? <RiArrowDownLine aria-hidden="true" /> : null}
+            <span aria-hidden="true">{index + 1}</span>
+            <div><strong>{verb}</strong><p>{object}</p></div>
           </li>
         ))}
       </ol>
 
       <details className="agent-loop-mobile">
-        <summary>How the agent decides</summary>
-        <ol>{AGENT_STEPS.map(([verb, object]) => <li key={object}><span>{verb}</span><strong>{object}</strong></li>)}</ol>
+        <summary>How FieldProof decides</summary>
+        <ol>{AGENT_STEPS.map(([verb, object]) => <li key={object}><strong>{verb}</strong><span>{object}</span></li>)}</ol>
       </details>
+
+      <p className="demo-brief__boundary">FieldProof prepares a calculation and evidence package. A responsible professional still authorizes application.</p>
 
       <details className="demo-brief__commercial">
         <summary>Buyer and pilot hypothesis</summary>
@@ -111,7 +112,7 @@ function DemoBrief() {
         </div>
         <p className="demo-brief__estimate"><strong>Status:</strong> labor cost, budget, pricing, pilot interest, and willingness to pay remain unvalidated. Unanswered outreach is not demand evidence.</p>
       </details>
-    </section>
+    </aside>
   );
 }
 
@@ -133,9 +134,8 @@ function IntakeForm({ context, busy, onSubmit }: {
     <section className="intake" id="evidence" aria-labelledby="page-title">
       <div className="page-header lab-page-header">
         <div>
-          <p className="eyebrow">Lab evidence</p>
-          <h1 id="page-title">Add a PFAS lab report</h1>
-          <p>Choose the tested batch and upload the original report. You’ll verify every extracted value before it is used.</p>
+          <h2 id="page-title">Add a PFAS lab report</h2>
+          <p>Choose the tested batch and its original report. You’ll verify every extracted value before it is used.</p>
         </div>
       </div>
 

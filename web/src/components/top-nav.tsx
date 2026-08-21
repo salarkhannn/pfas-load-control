@@ -11,12 +11,15 @@ export function TopNav() {
 
   const onJudgePath = path === '/judge-demo';
   const navItems = [
-    { href: onJudgePath ? '/judge-demo' : '/', label: 'Cases', path: onJudgePath ? '/judge-demo' : '/', hash: '' },
-    { href: onJudgePath ? '/judge-demo#evidence' : '/#evidence', label: 'Evidence', path: onJudgePath ? '/judge-demo' : '/', hash: '#evidence' },
+    { href: '/', label: 'Cases', path: '/', hash: '' },
+    { href: onJudgePath ? '/judge-demo#evidence' : '/', label: 'Evidence', path: onJudgePath ? '/judge-demo' : '/', hash: onJudgePath ? '#evidence' : '' },
     { href: '/judge-demo#fields', label: 'Fields', path: '/judge-demo', hash: '#fields' },
     { href: '/judge-demo#decision-package', label: 'Decision package', path: '/judge-demo', hash: '#decision-package' },
   ];
-  const current = (item: { path: string; hash: string }) => path === item.path && hash === item.hash;
+  const current = (item: { path: string; hash: string; label: string }) => {
+    if (item.label === 'Cases') return false;
+    return path === item.path && (hash === item.hash || (item.label === 'Evidence' && path === '/' && hash === '#evidence'));
+  };
   return (
     <header className="topbar">
       <a className="brand" href="/" aria-label="FieldProof home">
@@ -34,7 +37,7 @@ export function TopNav() {
       </nav>
       <details className="mobile-stage-nav">
         <summary>Stages</summary>
-        <div>{navItems.slice(1).map((item) => <a key={item.href} href={item.href} aria-current={current(item) ? 'location' : undefined}>{item.label}</a>)}</div>
+        <div>{navItems.map((item) => <a key={item.href} href={item.href} aria-current={current(item) ? 'location' : undefined}>{item.label}</a>)}</div>
       </details>
       <details className="utility-nav">
         <summary>Setup</summary>

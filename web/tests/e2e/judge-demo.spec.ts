@@ -102,6 +102,7 @@ test('keeps the complete judging path visible on desktop', async ({ page }) => {
   await page.route('http://localhost:8080/api/v1/judge-demo/runs/*/reviewed', async (route) => {
     await route.fulfill(json(judgeRun(101, true, '00000000-0000-4000-8000-000000000001')));
   });
+  await page.route('http://localhost:8080/api/v1/lab-context', async (route) => route.fulfill(json({ facilities: [], batches: [] })));
   await page.goto('/judge-demo');
   await expect(page).toHaveTitle('Judge Demo | FieldProof');
   await expect(page.getByText('Physical evidence changed this plan')).toBeVisible();
@@ -122,6 +123,9 @@ test('keeps the complete judging path visible on desktop', async ({ page }) => {
   expect(requests).toBe(1);
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(0);
+  await page.getByRole('navigation', { name: 'Primary' }).getByRole('link', { name: 'Cases' }).click();
+  await expect(page).toHaveURL('/');
+  await expect(page.getByRole('heading', { name: 'Add a PFAS lab report' })).toBeVisible();
 });
 
 test('keeps the case header readable and exposes keyboard focus at tablet width', async ({ page }) => {

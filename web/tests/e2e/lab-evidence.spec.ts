@@ -106,19 +106,39 @@ test('uploads, reviews, and confirms source-linked lab evidence', async ({ page 
   await expect(page.getByRole('heading', { name: 'Candidate fields' })).toBeVisible();
 });
 
+test('presents product context beside the intake on desktop', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await mockLabAPI(page);
+  await page.goto('/');
+
+  const brief = page.locator('.demo-brief');
+  const intake = page.locator('.lab-onboarding .intake');
+  const [briefBox, intakeBox] = await Promise.all([brief.boundingBox(), intake.boundingBox()]);
+
+  expect(briefBox).not.toBeNull();
+  expect(intakeBox).not.toBeNull();
+  expect(Math.abs((briefBox?.y ?? 0) - (intakeBox?.y ?? 0))).toBeLessThanOrEqual(1);
+  expect(intakeBox?.x ?? 0).toBeGreaterThan((briefBox?.x ?? 0) + (briefBox?.width ?? 0));
+  expect(intakeBox?.width ?? 0).toBeGreaterThan(briefBox?.width ?? 0);
+  await expect(page.getByText('LAB EVIDENCE', { exact: true })).toHaveCount(0);
+});
+
 test('keeps lab intake usable at 320px', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 800 });
   await mockLabAPI(page);
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'FieldProof' })).toBeVisible();
   await expect(page.getByText('Land-application evidence and placement agent')).toBeVisible();
-  await expect(page.getByText(/Built for third-party land-application contractors/)).toBeVisible();
-  const judgeDemoLink = page.getByRole('link', { name: 'Open judge demo' });
+  await expect(page.getByText(/For third-party land-application contractors/)).toBeVisible();
+  const judgeDemoLink = page.getByRole('link', { name: 'View prepared case' });
   await expect(judgeDemoLink).toBeVisible();
   expect((await judgeDemoLink.boundingBox())?.y).toBeLessThan(800);
   await expect(page.getByText('Buyer and pilot hypothesis', { exact: true })).toBeVisible();
   await expect(page.getByText('Economic buyer', { exact: true })).not.toBeVisible();
+  await expect(page.getByText('LAB EVIDENCE', { exact: true })).toHaveCount(0);
+  await expect(page.getByRole('navigation', { name: 'Primary' }).getByRole('link', { name: 'Evidence' })).toHaveAttribute('aria-current', 'location');
   await page.getByText('Stages', { exact: true }).click();
+  await expect(page.locator('.mobile-stage-nav').getByRole('link', { name: 'Cases' })).toHaveAttribute('href', '/');
   await expect(page.locator('.mobile-stage-nav').getByRole('link', { name: 'Fields' })).toHaveAttribute('href', '/judge-demo#fields');
   await expect(page.locator('.mobile-stage-nav').getByRole('link', { name: 'Decision package' })).toHaveAttribute('href', '/judge-demo#decision-package');
   await expect(page.getByRole('heading', { name: 'Add a PFAS lab report' })).toBeVisible();
