@@ -1,25 +1,11 @@
-import { useEffect, useState } from 'react';
-
 export function TopNav() {
-  const path = window.location.pathname;
-  const [hash, setHash] = useState(() => window.location.hash);
-  useEffect(() => {
-    const updateHash = () => setHash(window.location.hash);
-    window.addEventListener('hashchange', updateHash);
-    return () => window.removeEventListener('hashchange', updateHash);
-  }, []);
+  const path = window.location.pathname.replace(/\/+$/, '') || '/';
 
-  const onJudgePath = path === '/judge-demo';
   const navItems = [
-    { href: '/', label: 'Cases', path: '/', hash: '' },
-    { href: onJudgePath ? '/judge-demo#evidence' : '/', label: 'Evidence', path: onJudgePath ? '/judge-demo' : '/', hash: onJudgePath ? '#evidence' : '' },
-    { href: '/judge-demo#fields', label: 'Fields', path: '/judge-demo', hash: '#fields' },
-    { href: '/judge-demo#decision-package', label: 'Decision package', path: '/judge-demo', hash: '#decision-package' },
+    { href: '/', label: 'New case', active: path === '/' },
+    { href: '/judge-demo', label: 'Prepared case', active: path === '/judge-demo' },
+    { href: '/coordination', label: 'Coordination', active: path.startsWith('/coordination') },
   ];
-  const current = (item: { path: string; hash: string; label: string }) => {
-    if (item.label === 'Cases') return false;
-    return path === item.path && (hash === item.hash || (item.label === 'Evidence' && path === '/' && hash === '#evidence'));
-  };
   return (
     <header className="topbar">
       <a className="brand" href="/" aria-label="FieldProof home">
@@ -30,20 +16,19 @@ export function TopNav() {
       </a>
       <nav className="topnav" aria-label="Primary">
         {navItems.map((item) => (
-          <a key={item.href} className={`topnav__link${current(item) ? ' topnav__link--active' : ''}`} href={item.href} aria-current={current(item) ? 'location' : undefined}>
+          <a key={item.href} className={`topnav__link${item.active ? ' topnav__link--active' : ''}`} href={item.href} aria-current={item.active ? 'page' : undefined}>
             {item.label}
           </a>
         ))}
       </nav>
       <details className="mobile-stage-nav">
-        <summary>Stages</summary>
-        <div>{navItems.map((item) => <a key={item.href} href={item.href} aria-current={current(item) ? 'location' : undefined}>{item.label}</a>)}</div>
+        <summary>Menu</summary>
+        <div>{navItems.map((item) => <a key={item.href} href={item.href} aria-current={item.active ? 'page' : undefined}>{item.label}</a>)}</div>
       </details>
-      <details className="utility-nav">
+      <details className={`utility-nav${path === '/data-access' ? ' utility-nav--active' : ''}`}>
         <summary>Setup</summary>
         <div>
-          <a href="/data-access">Data access</a>
-          <a href="/coordination">Coordination records</a>
+          <a href="/data-access" aria-current={path === '/data-access' ? 'page' : undefined}>Data access</a>
         </div>
       </details>
     </header>

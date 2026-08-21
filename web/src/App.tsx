@@ -14,17 +14,41 @@ const WorkflowDetailPage = lazy(() => import('@/pages/workflow-detail-page').the
 const JudgeDemoPage = lazy(() => import('@/pages/judge-demo-page').then((module) => ({ default: module.JudgeDemoPage })));
 
 export function App() {
-  const path = window.location.pathname;
+  const path = window.location.pathname.replace(/\/+$/, '') || '/';
   useEffect(() => {
-    document.title = path === '/judge-demo' ? 'Judge Demo | FieldProof' : path === '/data-access' ? 'Data Access | FieldProof' : 'FieldProof';
+    document.title = path === '/judge-demo' ? 'Judge Demo | FieldProof' : path === '/data-access' ? 'Data Access | FieldProof' : path.startsWith('/coordination') ? 'Coordination | FieldProof' : path === '/' ? 'FieldProof' : 'Page Not Found | FieldProof';
   }, [path]);
   if (path === '/data-access') return <DataAccessPage />;
-  const route = path === '/judge-demo' ? <JudgeDemoPage /> : path.startsWith('/coordination/workflow/') ? <WorkflowDetailPage /> : path === '/coordination' ? <CoordinationPage /> : <LabEvidencePage />;
+  const route = path === '/'
+    ? <LabEvidencePage />
+    : path === '/judge-demo'
+      ? <JudgeDemoPage />
+      : /^\/coordination\/workflow\/[^/]+$/.test(path)
+        ? <WorkflowDetailPage />
+        : path === '/coordination'
+          ? <CoordinationPage />
+          : <NotFoundPage />;
   return <Suspense fallback={<RouteLoading />}>{route}</Suspense>;
 }
 
 function RouteLoading() {
   return <div className="app-shell"><TopNav /><main className="workspace"><div className="center-state" role="status"><span className="state-spinner" /><h1>Loading workspace</h1></div></main></div>;
+}
+
+function NotFoundPage() {
+  return (
+    <div className="app-shell">
+      <TopNav />
+      <main className="workspace">
+        <section className="center-state not-found-state" aria-labelledby="not-found-title">
+          <RiErrorWarningLine aria-hidden="true" />
+          <h1 id="not-found-title">Page not found</h1>
+          <p>This address does not match a FieldProof workspace.</p>
+          <Button.Root asChild variant="primary" mode="filled" size="small"><a href="/">Start a new case</a></Button.Root>
+        </section>
+      </main>
+    </div>
+  );
 }
 
 function DataAccessPage() {

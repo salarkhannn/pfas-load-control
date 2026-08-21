@@ -11,6 +11,11 @@
   list-style: none;
 }
 
+.utility-nav--active summary {
+  color: var(--accent-solid);
+  font-weight: 650;
+}
+
 .utility-nav summary::-webkit-details-marker { display: none; }
 
 .utility-nav[open] > div {

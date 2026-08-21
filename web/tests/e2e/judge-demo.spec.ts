@@ -123,7 +123,7 @@ test('keeps the complete judging path visible on desktop', async ({ page }) => {
   expect(requests).toBe(1);
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(0);
-  await page.getByRole('navigation', { name: 'Primary' }).getByRole('link', { name: 'Cases' }).click();
+  await page.getByRole('navigation', { name: 'Primary' }).getByRole('link', { name: 'New case' }).click();
   await expect(page).toHaveURL('/');
   await expect(page.getByRole('heading', { name: 'Add a PFAS lab report' })).toBeVisible();
 });
@@ -147,9 +147,9 @@ test('keeps the case header readable and exposes keyboard focus at tablet width'
   expect(await action.evaluate((element) => getComputedStyle(element).outlineStyle)).toBe('solid');
   expect(Number.parseFloat(await action.evaluate((element) => getComputedStyle(element).outlineWidth))).toBeGreaterThanOrEqual(2);
 
-  await page.getByRole('navigation', { name: 'Primary' }).getByRole('link', { name: 'Evidence' }).click();
+  await page.getByRole('navigation', { name: 'Judge demo sequence' }).getByRole('link', { name: /Decisive evidence/ }).click();
   await expect(page).toHaveURL(/#evidence$/);
-  await expect(page.getByRole('navigation', { name: 'Primary' }).getByRole('link', { name: 'Evidence' })).toHaveAttribute('aria-current', 'location');
+  await expect(page.getByRole('heading', { name: 'The decisive facts sit beside their effect' })).toBeVisible();
 });
 
 function judgeRun(replay: number, reviewed = false, parentRunId?: string) {

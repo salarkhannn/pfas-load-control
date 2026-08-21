@@ -136,11 +136,11 @@ test('keeps lab intake usable at 320px', async ({ page }) => {
   await expect(page.getByText('Buyer and pilot hypothesis', { exact: true })).toBeVisible();
   await expect(page.getByText('Economic buyer', { exact: true })).not.toBeVisible();
   await expect(page.getByText('LAB EVIDENCE', { exact: true })).toHaveCount(0);
-  await expect(page.getByRole('navigation', { name: 'Primary' }).getByRole('link', { name: 'Evidence' })).toHaveAttribute('aria-current', 'location');
-  await page.getByText('Stages', { exact: true }).click();
-  await expect(page.locator('.mobile-stage-nav').getByRole('link', { name: 'Cases' })).toHaveAttribute('href', '/');
-  await expect(page.locator('.mobile-stage-nav').getByRole('link', { name: 'Fields' })).toHaveAttribute('href', '/judge-demo#fields');
-  await expect(page.locator('.mobile-stage-nav').getByRole('link', { name: 'Decision package' })).toHaveAttribute('href', '/judge-demo#decision-package');
+  await expect(page.getByRole('navigation', { name: 'Primary' }).getByRole('link', { name: 'New case' })).toHaveAttribute('aria-current', 'page');
+  await page.getByText('Menu', { exact: true }).click();
+  await expect(page.locator('.mobile-stage-nav').getByRole('link', { name: 'New case' })).toHaveAttribute('href', '/');
+  await expect(page.locator('.mobile-stage-nav').getByRole('link', { name: 'Prepared case' })).toHaveAttribute('href', '/judge-demo');
+  await expect(page.locator('.mobile-stage-nav').getByRole('link', { name: 'Coordination' })).toHaveAttribute('href', '/coordination');
   await expect(page.getByRole('heading', { name: 'Add a PFAS lab report' })).toBeVisible();
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(0);
