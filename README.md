@@ -13,9 +13,8 @@ that actively manages its own land-application program. Practitioner corresponde
 rejected several parts of the original PFAS-automation thesis and identified
 farmer-plant discovery and communication as a stronger problem lead. Repeated labor,
 budget ownership, pricing, and willingness to pay remain unvalidated. See
-[`docs/CUSTOMER_EVIDENCE.md`](docs/CUSTOMER_EVIDENCE.md). The next contractor interview is
-prepared in [`docs/CONTRACTOR_INTERVIEW.md`](docs/CONTRACTOR_INTERVIEW.md); no response or
-purchase interest is claimed.
+[`docs/CUSTOMER_EVIDENCE.md`](docs/CUSTOMER_EVIDENCE.md). No response or purchase interest
+is claimed.
 
 ### Buyer hypothesis
 
