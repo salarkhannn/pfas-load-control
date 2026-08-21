@@ -346,7 +346,7 @@
   }
   .demo-status-strip { display: grid; grid-template-columns: 1fr; }
   .demo-progress { grid-template-columns: 1fr 1fr; }
-  .demo-progress a { min-height: 42px; }
+  .demo-progress a { min-height: 56px; }
   .demo-progress a:nth-child(3) { border-top: 1px solid var(--border-default); border-left: 0; }
   .demo-progress a:nth-child(4) { border-top: 1px solid var(--border-default); }
   .run-comparison { grid-template-columns: 1fr; }
