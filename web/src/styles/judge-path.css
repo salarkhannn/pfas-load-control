@@ -316,6 +316,7 @@
   .demo-status-strip span,
   .demo-status-strip strong,
   .demo-progress a,
+  .demo-progress span,
   .run-comparison > button span,
   .run-comparison > button small,
   .changed-decision__copy > span,
@@ -365,7 +366,7 @@
   .demo-field dl { grid-template-columns: 1fr; }
   .demo-field dl div + div { border-top: 1px solid var(--border-default); }
   .agent-timeline li { grid-template-columns: 48px minmax(0, 1fr); gap: 9px; align-items: start; padding: 12px 14px; }
-  .agent-timeline a { grid-column: 2; justify-content: flex-start; }
+  .agent-timeline a { grid-column: 2; justify-content: flex-start; font-size: 12px; }
   .agent-timeline__toggle { display: inline-flex; width: 100%; margin-bottom: 8px; }
   .agent-timeline:not(.is-expanded) .agent-timeline__secondary { display: none; }
   .demo-package { padding: 18px; }
@@ -379,4 +380,3 @@
   .demo-case { width: 100%; margin: 0; }
   .demo-section { break-inside: avoid; }
 }
-

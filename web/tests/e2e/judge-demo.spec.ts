@@ -64,6 +64,9 @@ test('replays the prepared case through the backend contract and preserves place
   await expect(page.getByText(/gradePercent = tan/)).toBeVisible();
   await expect(page.locator('.agent-timeline__receipt')).toContainText('Froze the decision payload');
   await expect(page.getByText(/Verified parent boundary/)).toBeVisible();
+  await expect(page.locator('.agent-timeline__secondary').first()).not.toBeVisible();
+  await page.getByRole('button', { name: /Inspect all 8 decision calls/ }).click();
+  await expect(page.locator('.agent-timeline__secondary').first()).toBeVisible();
   await expect(page.getByRole('button', { name: /Initial frozen run/ })).toBeVisible();
   await expect(page.getByRole('button', { name: /Reviewed-evidence run/ })).toBeVisible();
 
@@ -79,6 +82,12 @@ test('replays the prepared case through the backend contract and preserves place
 
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(0);
+  const undersizedText = await page.locator('.demo-case').evaluate((root) => Array.from(root.querySelectorAll('*')).filter((node) => {
+    const element = node as HTMLElement;
+    const style = getComputedStyle(element);
+    return element.children.length === 0 && element.textContent?.trim() && style.display !== 'none' && style.visibility !== 'hidden' && Number.parseFloat(style.fontSize) < 12;
+  }).map((node) => `${node.tagName.toLowerCase()}:${node.textContent?.trim()}`));
+  expect(undersizedText).toEqual([]);
 });
 
 test('keeps the complete judging path visible on desktop', async ({ page }) => {
@@ -111,6 +120,30 @@ test('keeps the complete judging path visible on desktop', async ({ page }) => {
   expect(requests).toBe(1);
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(0);
+});
+
+test('keeps the case header readable and exposes keyboard focus at tablet width', async ({ page }) => {
+  await page.setViewportSize({ width: 768, height: 900 });
+  await page.route('http://localhost:8080/api/v1/judge-demo/runs', async (route) => route.fulfill(json(judgeRun(1))));
+  await page.goto('/judge-demo');
+
+  const header = page.locator('.demo-case__header');
+  await expect(header).toHaveCSS('flex-direction', 'column');
+  const heading = page.getByRole('heading', { name: 'Great Lakes WRRF · Batch B-240820' });
+  expect((await heading.boundingBox())?.height).toBeLessThanOrEqual(72);
+
+  const action = page.getByRole('button', { name: 'Apply reviewed evidence' });
+  for (let index = 0; index < 20; index += 1) {
+    if (await action.evaluate((element) => element === document.activeElement)) break;
+    await page.keyboard.press('Tab');
+  }
+  await expect(action).toBeFocused();
+  expect(await action.evaluate((element) => getComputedStyle(element).outlineStyle)).toBe('solid');
+  expect(Number.parseFloat(await action.evaluate((element) => getComputedStyle(element).outlineWidth))).toBeGreaterThanOrEqual(2);
+
+  await page.getByRole('navigation', { name: 'Primary' }).getByRole('link', { name: 'Evidence' }).click();
+  await expect(page).toHaveURL(/#evidence$/);
+  await expect(page.getByRole('navigation', { name: 'Primary' }).getByRole('link', { name: 'Evidence' })).toHaveAttribute('aria-current', 'location');
 });
 
 function judgeRun(replay: number, reviewed = false, parentRunId?: string) {

@@ -116,6 +116,11 @@ test('keeps lab intake usable at 320px', async ({ page }) => {
   const judgeDemoLink = page.getByRole('link', { name: 'Open judge demo' });
   await expect(judgeDemoLink).toBeVisible();
   expect((await judgeDemoLink.boundingBox())?.y).toBeLessThan(800);
+  await expect(page.getByText('Buyer and pilot hypothesis', { exact: true })).toBeVisible();
+  await expect(page.getByText('Economic buyer', { exact: true })).not.toBeVisible();
+  await page.getByText('Stages', { exact: true }).click();
+  await expect(page.locator('.mobile-stage-nav').getByRole('link', { name: 'Fields' })).toHaveAttribute('href', '/judge-demo#fields');
+  await expect(page.locator('.mobile-stage-nav').getByRole('link', { name: 'Decision package' })).toHaveAttribute('href', '/judge-demo#decision-package');
   await expect(page.getByRole('heading', { name: 'Add a PFAS lab report' })).toBeVisible();
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(0);
