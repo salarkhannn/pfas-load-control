@@ -248,11 +248,11 @@ export function loadInitialJudgeDemoRun(): Promise<JudgeDemoRun> {
 
 export async function loadLatestRun(signal?: AbortSignal): Promise<Run | null> {
   const result = await getLatestReadinessRun({ signal });
+  if (result.response?.status === 204) {
+    return null;
+  }
   if (result.data) {
     return result.data;
-  }
-  if (result.response?.status === 404) {
-    return null;
   }
   throw new Error('The latest data access check could not be loaded.');
 }

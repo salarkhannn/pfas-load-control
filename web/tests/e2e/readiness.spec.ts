@@ -83,7 +83,7 @@ async function mockAPI(page: Page, initialRun: typeof readyRun | null = null) {
     if (currentRun) {
       await route.fulfill(json(currentRun));
     } else {
-      await route.fulfill(json({ status: 404, detail: 'no readiness run exists' }, 404));
+      await route.fulfill({ status: 204, headers: { 'access-control-allow-origin': 'http://127.0.0.1:4173' } });
     }
   });
   await page.route('http://localhost:8080/api/v1/readiness-runs', async (route) => {

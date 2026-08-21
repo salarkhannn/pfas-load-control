@@ -195,7 +195,7 @@ func (a *API) createRun(ctx context.Context, _ *struct{}) (*createRunOutput, err
 func (a *API) latestRun(ctx context.Context, _ *struct{}) (*runOutput, error) {
 	run, err := a.service.GetLatestRun(ctx)
 	if errors.Is(err, agent.ErrNotFound) {
-		return nil, huma.Error404NotFound("no readiness run exists")
+		return nil, nil
 	}
 	if err != nil {
 		a.logger.Error("get latest readiness run failed", "error_type", typeName(err))
