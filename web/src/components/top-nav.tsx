@@ -5,6 +5,7 @@ export function TopNav() {
     { href: '/', label: 'New case', active: path === '/' },
     { href: '/judge-demo', label: 'Prepared case', active: path === '/judge-demo' },
     { href: '/coordination', label: 'Coordination', active: path.startsWith('/coordination') },
+    { href: '/about', label: 'About', active: path === '/about' },
   ];
   return (
     <header className="topbar">

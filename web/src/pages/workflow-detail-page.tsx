@@ -137,7 +137,7 @@ export function WorkflowDetailPage() {
     return (
       <div className="app-shell">
         <TopNav />
-        <main className="workspace coord-workspace">
+        <main className="workspace page-content coord-workspace">
           <a className="back-button coord-back" href="/coordination"><RiArrowLeftLine aria-hidden="true" /> Workflows</a>
           <div className="coord-loading"><RiLoader4Line className="spin" aria-hidden="true" /> Loading workflow...</div>
         </main>
@@ -149,7 +149,7 @@ export function WorkflowDetailPage() {
     return (
       <div className="app-shell">
         <TopNav />
-        <main className="workspace coord-workspace">
+        <main className="workspace page-content coord-workspace">
           <a className="back-button coord-back" href="/coordination"><RiArrowLeftLine aria-hidden="true" /> Workflows</a>
           <Alert.Root variant="lighter" status="error" size="large" role="alert">
             <Alert.Icon as={RiErrorWarningLine} />
@@ -169,7 +169,7 @@ export function WorkflowDetailPage() {
     <div className="app-shell">
       <TopNav />
 
-      <main className="workspace coord-workspace">
+      <main className="workspace page-content coord-workspace">
         <a className="back-button coord-back" href="/coordination"><RiArrowLeftLine aria-hidden="true" /> Workflows</a>
         <section className="coord-detail" aria-labelledby="wf-detail-title">
           <div className="page-header">

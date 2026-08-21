@@ -11,6 +11,7 @@ describe('TopNav', () => {
     ['/judge-demo', 'Prepared case'],
     ['/coordination', 'Coordination'],
     ['/coordination/workflow/workflow-1', 'Coordination'],
+    ['/about', 'About'],
   ])('marks the actual workspace for %s', (path, currentLabel) => {
     window.history.replaceState(null, '', path);
     render(<TopNav />);
@@ -20,10 +21,11 @@ describe('TopNav', () => {
       primary.getByRole('link', { name: 'New case' }),
       primary.getByRole('link', { name: 'Prepared case' }),
       primary.getByRole('link', { name: 'Coordination' }),
+      primary.getByRole('link', { name: 'About' }),
     ];
 
-    expect(links.map((link) => link.getAttribute('href'))).toEqual(['/', '/judge-demo', '/coordination']);
-    expect(new Set(links.map((link) => link.getAttribute('href'))).size).toBe(3);
+    expect(links.map((link) => link.getAttribute('href'))).toEqual(['/', '/judge-demo', '/coordination', '/about']);
+    expect(new Set(links.map((link) => link.getAttribute('href'))).size).toBe(4);
     expect(primary.getByRole('link', { name: currentLabel })).toHaveAttribute('aria-current', 'page');
   });
 

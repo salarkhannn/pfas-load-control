@@ -12,17 +12,20 @@ const LabEvidencePage = lazy(() => import('@/pages/lab-evidence-page').then((mod
 const CoordinationPage = lazy(() => import('@/pages/coordination-page').then((module) => ({ default: module.CoordinationPage })));
 const WorkflowDetailPage = lazy(() => import('@/pages/workflow-detail-page').then((module) => ({ default: module.WorkflowDetailPage })));
 const JudgeDemoPage = lazy(() => import('@/pages/judge-demo-page').then((module) => ({ default: module.JudgeDemoPage })));
+const AboutPage = lazy(() => import('@/pages/about-page').then((module) => ({ default: module.AboutPage })));
 
 export function App() {
   const path = window.location.pathname.replace(/\/+$/, '') || '/';
   useEffect(() => {
-    document.title = path === '/judge-demo' ? 'Judge Demo | FieldProof' : path === '/data-access' ? 'Data Access | FieldProof' : path.startsWith('/coordination') ? 'Coordination | FieldProof' : path === '/' ? 'FieldProof' : 'Page Not Found | FieldProof';
+    document.title = path === '/judge-demo' ? 'Judge Demo | FieldProof' : path === '/about' ? 'About | FieldProof' : path === '/data-access' ? 'Data Access | FieldProof' : path.startsWith('/coordination') ? 'Coordination | FieldProof' : path === '/' ? 'FieldProof' : 'Page Not Found | FieldProof';
   }, [path]);
   if (path === '/data-access') return <DataAccessPage />;
   const route = path === '/'
     ? <LabEvidencePage />
     : path === '/judge-demo'
       ? <JudgeDemoPage />
+      : path === '/about'
+        ? <AboutPage />
       : /^\/coordination\/workflow\/[^/]+$/.test(path)
         ? <WorkflowDetailPage />
         : path === '/coordination'
@@ -32,14 +35,14 @@ export function App() {
 }
 
 function RouteLoading() {
-  return <div className="app-shell"><TopNav /><main className="workspace"><div className="center-state" role="status"><span className="state-spinner" /><h1>Loading workspace</h1></div></main></div>;
+  return <div className="app-shell"><TopNav /><main className="workspace page-content"><div className="center-state" role="status"><span className="state-spinner" /><h1>Loading workspace</h1></div></main></div>;
 }
 
 function NotFoundPage() {
   return (
     <div className="app-shell">
       <TopNav />
-      <main className="workspace">
+      <main className="workspace page-content">
         <section className="center-state not-found-state" aria-labelledby="not-found-title">
           <RiErrorWarningLine aria-hidden="true" />
           <h1 id="not-found-title">Page not found</h1>
@@ -61,7 +64,7 @@ function DataAccessPage() {
   return (
     <div className="app-shell">
       <TopNav />
-      <main className="workspace">
+      <main className="workspace page-content">
         <section className="page-header" aria-labelledby="page-title">
           <div>
             <h1 id="page-title">Check data access</h1>

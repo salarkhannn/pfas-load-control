@@ -218,7 +218,7 @@
 }
 
 /* Prepared judge case */
-.demo-case { width: min(var(--measure-work), calc(100% - (var(--inset-page) * 2))); margin: 28px auto 72px; }
+.demo-case { width: 100%; margin: 0; padding-block: 28px 72px; }
 .demo-case__seed { margin-bottom: 18px; }
 .demo-case__seed > div { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px; }
 .demo-case__seed svg { flex: 0 0 auto; }
@@ -365,7 +365,7 @@
 @media (max-width: 620px) {
   .demo-case__seed svg { display: none; }
   .demo-case__seed > div { grid-template-columns: minmax(0, 1fr); }
-  .demo-case { margin-top: 18px; }
+  .demo-case { margin: 0; padding-block: 18px 72px; }
   .demo-case__header { align-items: stretch; flex-direction: column; padding-block: 16px 22px; }
   .demo-case__header h1 { font-size: 25px; line-height: 31px; }
   .demo-case__run { justify-items: stretch; }

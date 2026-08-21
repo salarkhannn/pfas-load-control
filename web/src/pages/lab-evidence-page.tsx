@@ -17,7 +17,7 @@ export function LabEvidencePage() {
     <div className="app-shell lab-shell">
       <TopNav />
 
-      <main className="workspace lab-workspace">
+      <main className="workspace page-content lab-workspace">
         {state.error ? (
           <Alert.Root className="error-alert lab-error" variant="lighter" status="error" size="large" role="alert">
             <Alert.Icon as={RiErrorWarningLine} />

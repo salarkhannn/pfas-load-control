@@ -36,7 +36,7 @@ export function JudgeDemoPage() {
 
   const run = activeMode === 'REVIEWED_EVIDENCE' && reviewedRun ? reviewedRun : unresolvedRun;
 
-  return <div className="app-shell demo-case-shell"><TopNav /><main className="workspace demo-case">
+  return <div className="app-shell demo-case-shell"><TopNav /><main className="workspace page-content demo-case">
     <Alert.Root className="demo-case__seed" variant="lighter" status="feature" size="large"><Alert.Icon as={RiShieldCheckLine} /><div><strong>Prepared competition case — seeded, not a live customer record</strong><p>Frozen external inputs run through the production service pipeline; the resulting trace and package are stored in PostgreSQL. No live application is affected.</p></div></Alert.Root>
     {error ? <DemoError message={error} onRetry={() => void replay()} /> : !run ? <DemoLoading /> : <DemoResult run={run} unresolvedRun={unresolvedRun!} reviewedRun={reviewedRun} runningAction={runningAction} onReplay={() => void replay()} onApplyReviewed={() => void applyReviewedEvidence()} onSelectMode={setActiveMode} />}
   </main></div>;

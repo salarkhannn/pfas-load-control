@@ -104,7 +104,7 @@ export function CoordinationPage() {
         </nav>
       </header>
 
-      <main className="workspace coord-workspace">
+      <main className="workspace page-content coord-workspace">
         {tab === 'workflows' && (
           <WorkflowPanel
             showNew={showNewWorkflow}
