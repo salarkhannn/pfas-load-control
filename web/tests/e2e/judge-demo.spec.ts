@@ -51,6 +51,7 @@ test('replays the prepared case through the backend contract and preserves place
   await expect(fieldA).toContainText('Available capacity29.92 t');
   await expect(fieldA).toContainText('Engine allocation24 t');
   await expect(page.getByRole('heading', { name: 'Seeded reviewed boundary evidence — demonstration only' })).toBeVisible();
+  await page.getByText('Inspect evidence lineage', { exact: true }).click();
   await expect(page.getByText(/stored authorization a4c0b3a1-6f74-4cad-9df1-7d7bc68d1002/)).toBeVisible();
   await expect(page.locator('.reviewed-evidence-record code').filter({ hasText: 'approval' })).toBeVisible();
   await expect(page.locator('.reviewed-evidence-record')).toContainText('parent boundary v3');
@@ -69,6 +70,7 @@ test('replays the prepared case through the backend contract and preserves place
   await expect(page.locator('.agent-timeline__secondary').first()).toBeVisible();
   await expect(page.getByRole('button', { name: /Initial frozen run/ })).toBeVisible();
   await expect(page.getByRole('button', { name: /Reviewed-evidence run/ })).toBeVisible();
+  await expect(page.getByText('PFAS laboratory report', { exact: true })).not.toBeVisible();
 
   await page.getByRole('button', { name: /Initial frozen run/ }).click();
   await expect(page.getByRole('heading', { name: 'A captured Mireye slope result blocked Field A from this allocation.' })).toBeVisible();
