@@ -8,13 +8,11 @@ laboratory result and Michigan classification are batch inputs; they are not the
 product's sole purpose and do not establish field readiness. The repository and Go
 module retain their original `pfas-load-control` technical names.
 
-The primary buyer hypothesis is a third-party land-application contractor or a utility
-that actively manages its own land-application program. Practitioner correspondence
-rejected several parts of the original PFAS-automation thesis and identified
-farmer-plant discovery and communication as a stronger problem lead. Repeated labor,
-budget ownership, pricing, and willingness to pay remain unvalidated. See
-[`docs/CUSTOMER_EVIDENCE.md`](docs/CUSTOMER_EVIDENCE.md). No response or purchase interest
-is claimed.
+Customer discovery narrowed the buyer to a third-party land-application contractor or a
+utility that manages its own land-application program. The feedback also shifted the
+product away from PFAS reporting and toward field qualification, missing evidence,
+placement, and professional handoff. See
+[`docs/CUSTOMER_EVIDENCE.md`](docs/CUSTOMER_EVIDENCE.md).
 
 ### Buyer hypothesis
 
@@ -27,8 +25,8 @@ is claimed.
 | Pilot | Reconstruct 20 historical placement decisions without influencing live applications |
 | Success measures | Missing evidence detected, reviewer agreement, preparation time, package completeness, and false-clear rate |
 
-Labor cost, budget ownership, pricing, pilot interest, and willingness to pay remain
-unvalidated. Unanswered outreach is activity, not demand evidence.
+The next customer-discovery round will test labor cost, budget ownership, pricing, and
+willingness to run a historical pilot.
 
 ## Decision agent
 

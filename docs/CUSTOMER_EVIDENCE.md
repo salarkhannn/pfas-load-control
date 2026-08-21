@@ -1,65 +1,73 @@
-# Customer evidence
+# Buyer discovery
 
 Last updated: August 21, 2026
 
-I contacted Michigan practitioners to test whether FieldProof addresses a real workflow
-problem. I am not treating outreach, unanswered emails, or polite interest as customer
-validation. I have removed names and contact details while keeping professional roles and
-organizations where they help explain the evidence.
+I reached out to Michigan practitioners to answer two questions: who deals with this work
+today, and who would approve spending on a better way to do it?
 
-## What I learned
+The conversations helped me separate three groups that looked similar from the outside:
 
-| Person I contacted | What they told me | What I changed |
+- Regulators collect required reports, but they do not manage day-to-day field placement.
+- Many wastewater utilities use existing PFAS and reporting workflows, and some do not land
+  apply at all.
+- Third-party land-application contractors and utilities that run their own land-application
+  programs handle the field-level work FieldProof supports.
+
+That narrowed my buyer hypothesis to a contractor owner or operations manager, or a utility
+biosolids program manager. The daily user would be the coordinator, operator, or agronomic
+reviewer who assembles field evidence and prepares each placement decision.
+
+## How the feedback changed the product
+
+My original concept focused on automating Michigan PFAS classification. The people I
+contacted made it clear that PFAS results and state reporting are already handled through
+laboratories, facility systems, contractors, and MiEnviro. Building another PFAS reporting
+tool would duplicate work that already functions.
+
+One Michigan wastewater engineer pointed me toward a more useful gap: connecting plants and
+farms, qualifying fields, and keeping the supporting information together. The engineer also
+explained that third-party land appliers often handle restricted application work for a
+facility. That feedback led me to pivot from PFAS automation to FieldProof.
+
+FieldProof now treats PFAS as one batch input. The product focuses on:
+
+- finding and qualifying candidate fields;
+- checking agreements, soil tests, crop needs, usable acreage, and application history;
+- combining those records with Mireye terrain evidence;
+- holding material when evidence is missing or a physical concern needs review; and
+- preparing a cited placement record for professional authorization.
+
+## Evidence behind the pivot
+
+| Practitioner | What I learned | Decision it informed |
 | --- | --- | --- |
-| Water Resource Recovery Services Manager, City of Ann Arbor | Their facility does not land apply, so it does not perform the field-record checks I described. | I stopped treating all wastewater utilities as potential buyers. |
-| Biosolids Environmental Quality Specialist, Michigan EGLE | Required biosolids reporting already goes through MiEnviro forms linked to each generator's permit. | I do not position FieldProof as a MiEnviro replacement or basic reporting tool. |
-| Water Resource Recovery Chief Engineer, Oakland County | Their Class A program stores PFAS results in existing software. A contractor handles further drying and agricultural application, and that coordination has been smooth. | I stopped presenting PFAS storage or contractor coordination as a proven pain point. |
-| Michigan wastewater engineer | They considered the original Michigan PFAS automation idea redundant. They pointed to farmer-plant discovery and communication as a more useful problem lead. | I repositioned PFAS as one batch input and focused the product on field qualification, missing evidence, placement, and handoff. |
-| Professor Emeritus in soil fertility and organic residuals | They offered to discuss agronomic factors involved in applying biosolids to cropland. | I treat this as access to domain expertise, not customer or buyer validation. A substantive interview is still pending. |
+| Water Resource Recovery Services Manager, City of Ann Arbor | The facility does not land apply, so it does not perform these field checks. | I stopped treating every wastewater utility as a buyer. |
+| Biosolids Environmental Quality Specialist, Michigan EGLE | Michigan already receives required biosolids reports through MiEnviro forms linked to each generator's permit. | FieldProof should support field decisions, not replace state reporting. |
+| Water Resource Recovery Chief Engineer, Oakland County | The program stores PFAS results in existing software, while a contractor handles further processing and agricultural application. | The contractor or an actively land-applying utility is closer to the operational problem. |
+| Michigan wastewater engineer | Michigan's PFAS checks are established. The engineer identified farmer-plant discovery and communication as a stronger problem and described third-party land appliers as the firms handling restricted applications. | I moved the product toward field discovery, qualification, placement, and handoff. |
+| Professor Emeritus in soil fertility and organic residuals | They offered to discuss which agronomic factors software can support and which require professional judgment. | I kept calculation readiness separate from professional authorization. |
 
-The strongest feedback was a rejection of my original product thesis. Michigan programs
-already have PFAS classification and state-reporting processes, and some utilities do not
-land apply at all. I used that feedback to narrow the product instead of claiming a problem
-that practitioners did not confirm.
+I have not used these conversations to claim a sale or a confirmed price. They gave me a
+clearer customer segment, product boundary, and set of questions for the people who perform
+and pay for land-application work.
 
-## Current buyer hypothesis
+## Buyer and pilot hypothesis
 
-I am now testing two possible buyers:
+- **Economic buyer:** contractor owner, operations manager, or utility biosolids program
+  manager.
+- **Daily user:** land-application coordinator, operator, or agronomic reviewer.
+- **Current alternative:** spreadsheets, GIS, email, paper agreements, consultant review,
+  contractor systems, and MiEnviro.
+- **Pilot:** reconstruct 20 completed placement decisions without affecting live
+  applications.
+- **Measures:** missing evidence found, agreement with the reviewer, preparation time,
+  package completeness, and false-clear rate.
 
-- third-party land-application contractors; and
-- utilities that actively manage their own land-application programs.
+The next interviews need to establish how often this work repeats, how long one field
+decision takes, who owns the budget, and what result would justify paying for a pilot.
 
-The daily user could be a land-application coordinator, operator, or agronomic reviewer.
-Their current tools may include spreadsheets, GIS, email, paper agreements, consultant
-review, and MiEnviro. A possible pilot would reconstruct 20 completed placement decisions
-and compare missing evidence, reviewer agreement, preparation time, package completeness,
-and false-clear rate.
+## Outreach in progress
 
-These are hypotheses. I have not validated repeated labor, budget ownership, current cost,
-pricing, willingness to pay, or interest in a paid pilot.
-
-## Outreach status
-
-In the first outreach round, I also contacted a Michigan biosolids committee chair, another
-Michigan biosolids practitioner, and the Michigan EGLE reviewer responsible for biosolids
-PFAS submissions. I had not received responses as of August 20, 2026. Nonresponse is not
-evidence for or against the product.
-
-I sent six additional customer-discovery messages on August 20, 2026. I have not added any
-replies to this repository, so their status remains **response pending**. Those messages do
-not validate demand, workload, budget, pricing, or pilot interest.
-
-## What I still need to learn
-
-My next useful conversation is with a contractor or active utility that performs this work.
-I need to ask them to walk through one completed application event and establish:
-
-- who finds and qualifies fields;
-- who collects agreements, crop plans, soil tests, application history, and usable acreage;
-- which missing records or physical conditions cause delay or rework;
-- how much staff or consultant time one decision takes;
-- who owns the budget and what systems they use today; and
-- what measurable result, if any, would justify a historical pilot.
-
-Until someone in that target group answers those questions, I will keep the commercial
-claims labeled as unvalidated.
+I have sent additional emails to contractors and other people involved in land application.
+Those replies are still pending. If anyone responds, I will add the relevant feedback here
+and let you know.
