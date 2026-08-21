@@ -205,6 +205,10 @@
 .agent-loop strong { margin-top: 3px; font-size: 12px; line-height: 16px; }
 .agent-loop svg { position: absolute; z-index: 2; right: -9px; width: 17px; height: 17px; padding: 2px; border-radius: 50%; background: var(--accent-solid); color: white; transform: rotate(-90deg); }
 
+.demo-brief__commercial { border-top: 1px solid var(--border-default); }
+.demo-brief__commercial > summary { padding: 14px 24px; cursor: pointer; color: var(--fg-default); font-size: 13px; font-weight: 650; }
+.demo-brief__commercial[open] > summary { border-bottom: 1px solid var(--border-default); }
+
 .demo-brief__proof {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -255,10 +259,10 @@
   .agent-loop-mobile li { display: flex; gap: 7px; padding: 9px 14px; font-size: 12px; }
   .agent-loop-mobile li + li { border-top: 1px solid var(--border-default); }
   .agent-loop-mobile span { color: var(--accent-solid); font-weight: 700; text-transform: uppercase; }
-  .demo-brief__proof { grid-template-columns: 1fr 1fr; }
-  .demo-brief__proof > div, .demo-brief__proof > div:nth-child(3n + 2), .demo-brief__proof > div:nth-child(3n + 3) { display: block; padding: 14px; border-right: 0; border-bottom: 1px solid var(--border-default); border-left: 0; }
-  .demo-brief__proof > div:nth-child(even) { border-left: 1px solid var(--border-default); }
-  .demo-brief__proof > div:nth-last-child(-n + 2) { border-bottom: 0; }
+  .demo-brief__commercial > summary { padding-inline: 20px; }
+  .demo-brief__proof { grid-template-columns: 1fr; }
+  .demo-brief__proof > div, .demo-brief__proof > div:nth-child(3n + 2), .demo-brief__proof > div:nth-child(3n + 3) { display: block; padding: 14px 20px; border-right: 0; border-bottom: 1px solid var(--border-default); border-left: 0; }
+  .demo-brief__proof > div:last-child { border-bottom: 0; }
   .demo-brief__estimate { display: block; padding-inline: 16px; }
 }
 
@@ -374,6 +378,7 @@
 .agent-timeline a { display: flex; align-items: center; justify-content: flex-end; gap: 5px; color: var(--accent-solid); font-size: 11px; text-decoration: none; }
 .agent-timeline a svg { width: 13px; height: 13px; }
 .agent-timeline__receipt { background: var(--surface-subtle); }
+.agent-timeline__toggle { display: none; }
 
 .demo-package { padding: 24px; border: 1px solid var(--border-default); border-radius: var(--radius-card); background: var(--surface-default); }
 .demo-package > header b { color: var(--state-success); font-size: 12px; }
@@ -393,6 +398,8 @@
 .pilot-request p { max-width: 720px; margin: 0; color: var(--fg-muted); line-height: 21px; }
 
 @media (max-width: 820px) {
+  .demo-case__header { align-items: stretch; flex-direction: column; padding-block: 18px 24px; }
+  .demo-case__run { justify-items: start; }
   .changed-decision { grid-template-columns: 1fr; }
   .allocation-change { border-top: 1px solid var(--color-warning-light); border-left: 0; }
   .source-cards { grid-template-columns: 1fr 1fr; }
@@ -409,6 +416,34 @@
   .demo-case__run { justify-items: stretch; }
   .demo-case__run-actions { flex-direction: column; }
   .demo-case__run small { text-align: center; }
+  .demo-case__header span,
+  .demo-case__run small,
+  .demo-status-strip span,
+  .demo-status-strip strong,
+  .demo-progress a,
+  .run-comparison > button span,
+  .run-comparison > button small,
+  .changed-decision__copy > span,
+  .allocation-change span,
+  .demo-section header span,
+  .demo-section header small,
+  .effect-table__head,
+  .slope-conversion,
+  .slope-conversion code,
+  .source-cards article span,
+  .source-cards dt,
+  .source-cards dd,
+  .source-cards code,
+  .reviewed-evidence-record span,
+  .reviewed-evidence-record code,
+  .reviewed-evidence-record small,
+  .demo-field > div span,
+  .demo-field > b,
+  .demo-field dt,
+  .demo-run-record dt,
+  .demo-run-record dd {
+    font-size: 12px;
+  }
   .demo-status-strip { display: grid; grid-template-columns: 1fr; }
   .demo-progress { grid-template-columns: 1fr 1fr; }
   .demo-progress a { min-height: 42px; }
@@ -436,6 +471,8 @@
   .demo-field dl div + div { border-top: 1px solid var(--border-default); }
   .agent-timeline li { grid-template-columns: 48px minmax(0, 1fr); gap: 9px; align-items: start; padding: 12px 14px; }
   .agent-timeline a { grid-column: 2; justify-content: flex-start; }
+  .agent-timeline__toggle { display: inline-flex; width: 100%; margin-bottom: 8px; }
+  .agent-timeline:not(.is-expanded) .agent-timeline__secondary { display: none; }
   .demo-package { padding: 18px; }
   .demo-package__actions { width: 100%; align-items: stretch; flex-direction: column; }
   .pilot-request { grid-template-columns: 1fr; gap: 8px; }
@@ -1641,6 +1678,11 @@ summary:focus-visible,
 .source-pane > summary:focus-visible,
 .policy-context > summary:focus-visible {
   border-radius: 4px;
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+.ui-button:focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 3px;
 }

@@ -1,18 +1,22 @@
+import { useEffect, useState } from 'react';
+
 export function TopNav() {
   const path = window.location.pathname;
-  const caseHref = path === '/judge-demo' ? '/judge-demo' : '/';
-  const stageHref = (anchor: string) => `${path === '/judge-demo' ? '/judge-demo' : '/'}#${anchor}`;
+  const [hash, setHash] = useState(() => window.location.hash);
+  useEffect(() => {
+    const updateHash = () => setHash(window.location.hash);
+    window.addEventListener('hashchange', updateHash);
+    return () => window.removeEventListener('hashchange', updateHash);
+  }, []);
+
+  const onJudgePath = path === '/judge-demo';
   const navItems = [
-    { href: caseHref, label: 'Cases' },
-    { href: stageHref('evidence'), label: 'Evidence' },
-    { href: stageHref('fields'), label: 'Fields' },
-    { href: stageHref('decision-package'), label: 'Decision package' },
+    { href: onJudgePath ? '/judge-demo' : '/', label: 'Cases', path: onJudgePath ? '/judge-demo' : '/', hash: '' },
+    { href: onJudgePath ? '/judge-demo#evidence' : '/#evidence', label: 'Evidence', path: onJudgePath ? '/judge-demo' : '/', hash: '#evidence' },
+    { href: '/judge-demo#fields', label: 'Fields', path: '/judge-demo', hash: '#fields' },
+    { href: '/judge-demo#decision-package', label: 'Decision package', path: '/judge-demo', hash: '#decision-package' },
   ];
-  const current = (item: { href: string }) => {
-    if (item.href === '/' || item.href === '/judge-demo') return path === item.href;
-    if (item.href.includes('#')) return false;
-    return path.startsWith(item.href);
-  };
+  const current = (item: { path: string; hash: string }) => path === item.path && hash === item.hash;
   return (
     <header className="topbar">
       <a className="brand" href="/" aria-label="FieldProof home">
@@ -23,14 +27,14 @@ export function TopNav() {
       </a>
       <nav className="topnav" aria-label="Primary">
         {navItems.map((item) => (
-          <a key={item.href} className={`topnav__link${current(item) ? ' topnav__link--active' : ''}`} href={item.href} aria-current={current(item) ? 'page' : undefined}>
+          <a key={item.href} className={`topnav__link${current(item) ? ' topnav__link--active' : ''}`} href={item.href} aria-current={current(item) ? 'location' : undefined}>
             {item.label}
           </a>
         ))}
       </nav>
       <details className="mobile-stage-nav">
         <summary>Stages</summary>
-        <div>{navItems.slice(1).map((item) => <a key={item.href} href={item.href}>{item.label}</a>)}</div>
+        <div>{navItems.slice(1).map((item) => <a key={item.href} href={item.href} aria-current={current(item) ? 'location' : undefined}>{item.label}</a>)}</div>
       </details>
       <details className="utility-nav">
         <summary>Setup</summary>

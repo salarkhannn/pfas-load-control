@@ -81,34 +81,36 @@ function DemoBrief() {
         <ol>{AGENT_STEPS.map(([verb, object]) => <li key={object}><span>{verb}</span><strong>{object}</strong></li>)}</ol>
       </details>
 
-      <div className="demo-brief__proof">
-        <div>
-          <strong>Economic buyer</strong>
-          <p>Contractor owner, operations manager, or utility biosolids program manager.</p>
+      <details className="demo-brief__commercial">
+        <summary>Buyer and pilot hypothesis</summary>
+        <div className="demo-brief__proof">
+          <div>
+            <strong>Economic buyer</strong>
+            <p>Contractor owner, operations manager, or utility biosolids program manager.</p>
+          </div>
+          <div>
+            <strong>Daily user</strong>
+            <p>Land-application coordinator, operator, or configured program reviewer.</p>
+          </div>
+          <div>
+            <strong>Current alternative</strong>
+            <p>Spreadsheets, GIS, email, paper agreements, consultant review, and MiEnviro.</p>
+          </div>
+          <div>
+            <strong>Buying trigger</strong>
+            <p>Field shortages, expiring records, new farms, repeated evidence follow-up, or a failed review.</p>
+          </div>
+          <div>
+            <strong>Pilot</strong>
+            <p>Reconstruct 20 historical placement decisions without influencing live applications.</p>
+          </div>
+          <div>
+            <strong>Success measures</strong>
+            <p>Missing evidence, reviewer agreement, preparation time, package completeness, and false-clear rate.</p>
+          </div>
         </div>
-        <div>
-          <strong>Daily user</strong>
-          <p>Land-application coordinator, operator, or configured program reviewer.</p>
-        </div>
-        <div>
-          <strong>Current alternative</strong>
-          <p>Spreadsheets, GIS, email, paper agreements, consultant review, and MiEnviro.</p>
-        </div>
-        <div>
-          <strong>Buying trigger</strong>
-          <p>Field shortages, expiring records, new farms, repeated evidence follow-up, or a failed review.</p>
-        </div>
-        <div>
-          <strong>Pilot</strong>
-          <p>Reconstruct 20 historical placement decisions without influencing live applications.</p>
-        </div>
-        <div>
-          <strong>Success measures</strong>
-          <p>Missing evidence, reviewer agreement, preparation time, package completeness, and false-clear rate.</p>
-        </div>
-      </div>
-
-      <p className="demo-brief__estimate"><strong>Buyer-hypothesis status:</strong> labor cost, budget, pricing, pilot interest, and willingness to pay remain unvalidated. Unanswered outreach is not demand evidence.</p>
+        <p className="demo-brief__estimate"><strong>Status:</strong> labor cost, budget, pricing, pilot interest, and willingness to pay remain unvalidated. Unanswered outreach is not demand evidence.</p>
+      </details>
     </section>
   );
 }
